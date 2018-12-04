@@ -36,6 +36,13 @@
 			<artifactId>jeesite-module-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+
+		<!-- 自定义前端模块 -->
+		<dependency>
+			<groupId>com.jeesite</groupId>
+			<artifactId>jeesite-module-front</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		
 		<!-- 在线文档 -->
 		<dependency>
