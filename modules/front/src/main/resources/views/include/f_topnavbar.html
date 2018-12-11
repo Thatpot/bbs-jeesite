@@ -1,0 +1,58 @@
+<% var user = @UserUtils.getUser();%>
+<div class="fly-header layui-bg-black">
+    <div class="layui-container">
+        <a class="fly-logo" href="${ctx}/front/index">
+            <img src="${ctxStatic}/fly/images/logo.png" alt="layui">
+        </a>
+        <ul class="layui-nav fly-nav layui-hide-xs">
+            <li class="layui-nav-item layui-this">
+                <a href="${ctx}/front/index"><i class="iconfont icon-jiaoliu"></i>交流</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
+            </li>
+        </ul>
+
+        <ul class="layui-nav fly-nav-user">
+            <%  if(session.userCode == null) { %>
+                <!-- 未登入的状态 -->
+                <li class="layui-nav-item">
+                    <a class="iconfont icon-touxiang layui-hide-xs" href="${ctx}/front/user/login"></a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="${ctx}/front/user/login">登入</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="${ctx}/front/user/reg">注册</a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs">
+                    <a href="/app/qq/" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs">
+                    <a href="/app/weibo/" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" title="微博登入" class="iconfont icon-weibo"></a>
+                </li>
+            <% } else { %>
+                <!-- 登入后的状态 -->
+                <li class="layui-nav-item">
+                  <a class="fly-nav-avatar" href="javascript:;">
+                    <cite class="layui-hide-xs">${@user.getUserName()}</cite>
+                    <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
+                    <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>
+                      <img src="${@user.getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" class="user-image">
+                  </a>
+                  <dl class="layui-nav-child" style="text-align:center">
+                    <dd><a href="${ctx}/front/user/index">用户中心</a></dd>
+                    <dd><a href="${ctx}/front/user/set">基本设置</a></dd>
+                    <dd><a href="${ctx}/front/user/message">我的消息</a></dd>
+                    <dd><a href="${ctx}/front/user/home">我的主页</a></dd>
+                    <hr style="margin: 5px 0;">
+                    <dd><a href="javascript:return 0;" id="XYX_logoutBtn" style="text-align: center;">退出</a></dd>
+                  </dl>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+</div>

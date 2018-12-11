@@ -1,0 +1,17 @@
+<%/* Copyright (c) 2013-Now http://jeesite.com All rights reserved. */
+/*
+* 默认布局文件
+* @param title 页面标题
+* @param bodyClass body标签的class内容
+* @param libs 要引用的js或css类库
+*/
+%>
+<% print('<'+'!DOC'+'TYPE html'+'>'); %>
+<% print('<'+'html'+'><'+'head'+'>'); %>
+<% include('/include/f_head.html', {title: text(title!)}){} %>
+<% include('/include/f_header.html', {libs: libs!}){} %>
+</head>
+<body>
+    <% include('/include/f_topnavbar.html', {libs: libs!}){} %>
+    ${layoutContent}
+</body>

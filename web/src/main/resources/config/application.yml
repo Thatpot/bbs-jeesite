@@ -175,10 +175,10 @@ logging:
 #======================================#
 
 # 管理基础路径
-#adminPath: /a
+adminPath: /a
 
-# 前端基础路径
-#frontPath: /f
+# 前端基础路径s
+frontPath: /f
 
 # 分页相关
 #page:
