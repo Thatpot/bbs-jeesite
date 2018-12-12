@@ -164,22 +164,13 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   if($('.upload-img')[0]){
     layui.use('upload', function(upload){
       var avatarAdd = $('.avatar-add');
-
       upload.render({
         elem: '.upload-img'
         ,url: '/js/f/front/user/upload'
-          ,auto:false
+        ,auto:true
         ,size: 1024
-        ,data:{
-          avatarBase64:avatarAdd.find('#avatarBase64').val(),
-        }
         ,before: function(){
           avatarAdd.find('.loading').show();
-        }
-        ,choose:function(obj){
-            obj.preview(function(index, file, result){
-                avatarAdd.find('#avatarBase64').val(result);
-            });
         }
         ,done: function(res){
           if(res.result == "true"){
@@ -364,7 +355,43 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   };
 
   dom.minemsg[0] && gather.minemsg();
-
+  /*======================自定义方法区======================*/
+    //修改基本信息
+    form.on('submit(basicInfoForm)', function(data){
+        var action = $(data.form).attr('action'), button = $(data.elem);
+        fly.json(action, data.field, function(res){
+            if(res.result == "true"){
+                layer.msg(res.message, {
+                    icon: 6,
+                    shade: 0.01,
+                    time: 500
+                },function () {
+                    location.reload();
+                });
+            };
+        },{type:"post",dataType:"json"});
+        return false;
+    });
+    //修改密码
+    form.on('submit(passwordForm)', function(data){
+        var action = $(data.form).attr('action'), button = $(data.elem);
+        var secretKey = layui.cache.data.secretKey;
+        data.field.oldPassword = DesUtils.encode(data.field.oldPassword,secretKey);
+        data.field.newPassword = DesUtils.encode(data.field.newPassword, secretKey);
+        data.field.confirmNewPassword = DesUtils.encode(data.field.confirmNewPassword, secretKey);
+        fly.json(action, data.field, function(res){
+            if(res.result == "true"){
+                layer.msg(res.message, {
+                    icon: 6,
+                    shade: 0.01,
+                    time: 500
+                },function () {
+                    location.reload();
+                });
+            };
+        },{type:"post",dataType:"json"});
+        return false;
+    });
   exports('user', null);
   
 });

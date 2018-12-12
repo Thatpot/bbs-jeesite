@@ -33,11 +33,11 @@
                                     <input type="text" id="L_vercode" name="validCode" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
                                 </div>
                                 <div class="layui-form-mid">
-                                    <img src="/js/validCode" >
+                                    <a class="XYX_VALIDCODEBTN" href="#"><img src="/js/validCode" id="validCodeImg"></a>
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <button class="layui-btn" lay-filter="*" lay-submit alert>立即登录</button>
+                                <button class="layui-btn" lay-filter="loginForm" lay-submit alert>立即登录</button>
                                 <span style="padding-left:20px;"><a href="forget.html">忘记密码？</a></span>
                             </div>
                             <div class="layui-form-item fly-form-app">
@@ -64,36 +64,16 @@
         ,experience: 83
         ,sex: '男'
     };
+    layui.cache.data = {
+        secretKey:'${secretKey}'
+    };
 
     layui.config({
         version: "3.0.0"
         ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
     }).extend({
         fly: 'index'
-    }).use('fly', function(){
-        var fly = layui.fly;
-        var form = layui.form;
-        form.on('submit(*)', function(data){
-            var action = $(data.form).attr('action'), button = $(data.elem);
-            var secretKey = '${secretKey}';
-            data.field.username = DesUtils.encode(data.field.username,secretKey);
-            data.field.password = DesUtils.encode(data.field.password, secretKey);
-            data.field.validCode = DesUtils.encode(data.field.validCode, secretKey);
-            fly.json(action, data.field, function(res){
-                var end = function(res){
-                        location.href = "../index";
-                };
-                if(res.result == "true"){
-                    layer.msg('登录中', {
-                        icon: 16,
-                        shade: 0.01,
-                        end:end(res),
-                    });
-                };
-            },{type:"post",dataType:"json"});
-            return false;
-        });
-    });
+    }).use('fly');
 
 </script>
 <% } %>

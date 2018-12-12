@@ -1,0 +1,120 @@
+<%/* Copyright (c) 2013-Now http://jeesite.com All rights reserved. */
+var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
+%>
+<% layout('/layouts/f_default.html', {title: '注册',libs: ['']}){ %>
+<% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
+<!--主要内容区-->
+<div class="layui-container fly-marginTop">
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title">
+                <li><a href="login.html">登入</a></li>
+                <li class="layui-this">注册</li>
+            </ul>
+            <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form layui-form-pane">
+                        <form method="post" action="/js/account/getRegValidCode">
+                            <div class="layui-form-item">
+                                <label for="L_email" class="layui-form-label">邮箱</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" class="layui-input" value="xuyuxiang29@foxmail.com">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_username" class="layui-form-label">登录名</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_loginCode" name="loginCode" required lay-verify="required" autocomplete="off" class="layui-input" value="xyx">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_username" class="layui-form-label">昵称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_userName" name="userName" required lay-verify="required" autocomplete="off" class="layui-input" value="徐玉祥">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_password" class="layui-form-label">密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="L_password" name="password" required lay-verify="required" autocomplete="off" class="layui-input" value="XYX2014">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_repass" class="layui-form-label">确认密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input" value="XYX2014">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_vercode" class="layui-form-label">验证码</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_vercode" name="validCode" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid">
+                                    <a class="XYX_VALIDCODEBTN" href="#"><img src="/js/validCode" id="validCodeImg"></a>
+                                </div>
+                            </div>
+                            <input type="text" name="validType" value="email" hidden>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-filter="regForm" lay-submit>立即注册</button>
+                            </div>
+                            <div class="layui-form-item fly-form-app">
+                                <span>或者直接使用社交账号快捷注册</span>
+                                <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
+                                <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--引入页脚-->
+<% include('/include/f_footer.html', {libs: ['']}){} %>
+<script>
+
+    layui.cache.page = '';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+
+    layui.config({
+        version: "3.0.0"
+        ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
+    }).extend({
+        fly: 'index'
+    }).use('fly', function(){
+        var fly = layui.fly;
+        var form = layui.form;
+        form.on('submit(*)', function(data){
+            var action = $(data.form).attr('action'), button = $(data.elem);
+            var secretKey = '${secretKey}';
+            data.field.username = DesUtils.encode(data.field.username,secretKey);
+            data.field.password = DesUtils.encode(data.field.password, secretKey);
+            data.field.validCode = DesUtils.encode(data.field.validCode, secretKey);
+            fly.json(action, data.field, function(res){
+                var end = function(res){
+                    location.href = "../index";
+                };
+                if(res.result == "true"){
+                    layer.msg('登录中', {
+                        icon: 16,
+                        shade: 0.01,
+                        end:end(res),
+                    });
+                };
+            },{type:"post",dataType:"json"});
+            return false;
+        });
+    });
+
+</script>
+<% } %>

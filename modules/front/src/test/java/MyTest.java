@@ -1,3 +1,5 @@
+import com.jeesite.common.config.Global;
+
 /**
  * @ClassName MyTest
  * @Description TODO
@@ -6,8 +8,7 @@
  **/
 public class MyTest {
     public static void main(String[] args) {
-        System.out.println("t".equals("t"));
-        System.out.println("T".equals("Τ"));
-        System.out.println("T".equals("T"));
+       String s =  Global.getConfig("sys.account.registerUser.userTypes.userTypes", "-1");
+        System.out.println(s);
     }
 }

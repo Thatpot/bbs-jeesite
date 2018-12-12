@@ -618,8 +618,48 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         }
     });
 
-    /*自定义方法区*/
-    /*退出登陆*/
+    /*======================自定义方法区======================*/
+    //登录
+    form.on('submit(loginForm)', function(data){
+        var action = $(data.form).attr('action'), button = $(data.elem);
+        var secretKey = layui.cache.data.secretKey;
+        data.field.username = DesUtils.encode(data.field.username,secretKey);
+        data.field.password = DesUtils.encode(data.field.password, secretKey);
+        data.field.validCode = DesUtils.encode(data.field.validCode, secretKey);
+        fly.json(action, data.field, function(res){
+            var end = function(res){
+                location.href = "../index";
+            };
+            if(res.result == "true"){
+                layer.msg('登录中', {
+                    icon: 16,
+                    shade: 0.01,
+                    end:end(res),
+                });
+            };
+        },{type:"post",dataType:"json"});
+        return false;
+    });
+    //注册
+    form.on('submit(regForm)', function(data){
+        var action = $(data.form).attr('action'), button = $(data.elem);
+        fly.json(action, data.field, function(res){
+            if(res.result == "true"){
+                layer.msg('注册成功', {
+                    icon: 16,
+                    shade: 0.01,
+                });
+            }else{
+                layer.msg(res.message, {
+                    icon: 16,
+                    shade: 0.01,
+                    end:end(res),
+                });
+            }
+        },{type:"post",dataType:"json"});
+        return false;
+    });
+    //退出
     var logoutBtn = $('#XYX_logoutBtn');
     logoutBtn.on('click', function(){
         var url = "/js/a/logout?__ajax=json";
@@ -630,11 +670,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         });
         return false;
     });
-    var userSiderbarLi = $("#USER_SIDERBAR li");
-    userSiderbarLi.on('click',function(e){
-        $(e.currentTarget).addClass("layui-this");
-        console.log(e.currentTarget);
+    //刷新验证码
+    var revalidBtn = $('.XYX_VALIDCODEBTN');
+    revalidBtn.on('click', function(){
+        $("#validCodeImg").attr("src","/js/validCode?"+new Date().getTime());
     });
+
     exports('fly', fly);
 
 });
