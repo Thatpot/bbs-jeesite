@@ -360,16 +360,10 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     form.on('submit(basicInfoForm)', function(data){
         var action = $(data.form).attr('action'), button = $(data.elem);
         fly.json(action, data.field, function(res){
-            if(res.result == "true"){
-                layer.msg(res.message, {
-                    icon: 6,
-                    shade: 0.01,
-                    time: 500
-                },function () {
+                layer.msg(res.message, {icon: 6,shade: 0.01,time: 500},function () {
                     location.reload();
                 });
-            };
-        },{type:"post",dataType:"json"});
+        });
         return false;
     });
     //修改密码
@@ -380,16 +374,10 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
         data.field.newPassword = DesUtils.encode(data.field.newPassword, secretKey);
         data.field.confirmNewPassword = DesUtils.encode(data.field.confirmNewPassword, secretKey);
         fly.json(action, data.field, function(res){
-            if(res.result == "true"){
-                layer.msg(res.message, {
-                    icon: 6,
-                    shade: 0.01,
-                    time: 500
-                },function () {
-                    location.reload();
-                });
-            };
-        },{type:"post",dataType:"json"});
+              layer.msg(res.message, {icon: 6,shade: 0.01,time: 500},function () {
+                  location.reload();
+              });
+        });
         return false;
     });
   exports('user', null);

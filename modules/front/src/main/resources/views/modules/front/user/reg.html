@@ -8,25 +8,25 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
     <div class="fly-panel fly-panel-user" pad20>
         <div class="layui-tab layui-tab-brief" lay-filter="user">
             <ul class="layui-tab-title">
-                <li><a href="login.html">登入</a></li>
+                <li><a href="${ctxf}/front/user/login">登入</a></li>
                 <li class="layui-this">注册</li>
             </ul>
             <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
                 <div class="layui-tab-item layui-show">
                     <div class="layui-form layui-form-pane">
-                        <form method="post" action="/js/account/getRegValidCode">
+                        <form method="post" action="${ctxp}/account/getRegValidCode">
                             <div class="layui-form-item">
                                 <label for="L_email" class="layui-form-label">邮箱</label>
                                 <div class="layui-input-inline">
                                     <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" class="layui-input" value="xuyuxiang29@foxmail.com">
                                 </div>
-                                <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
                             </div>
                             <div class="layui-form-item">
                                 <label for="L_username" class="layui-form-label">登录名</label>
                                 <div class="layui-input-inline">
                                     <input type="text" id="L_loginCode" name="loginCode" required lay-verify="required" autocomplete="off" class="layui-input" value="xyx">
                                 </div>
+                                <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
                             </div>
                             <div class="layui-form-item">
                                 <label for="L_username" class="layui-form-label">昵称</label>
@@ -57,6 +57,7 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
                                 </div>
                             </div>
                             <input type="text" name="validType" value="email" hidden>
+                            <input type="text" name="userType" value="front" hidden>
                             <div class="layui-form-item">
                                 <button class="layui-btn" lay-filter="regForm" lay-submit>立即注册</button>
                             </div>
@@ -91,30 +92,7 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
         ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
     }).extend({
         fly: 'index'
-    }).use('fly', function(){
-        var fly = layui.fly;
-        var form = layui.form;
-        form.on('submit(*)', function(data){
-            var action = $(data.form).attr('action'), button = $(data.elem);
-            var secretKey = '${secretKey}';
-            data.field.username = DesUtils.encode(data.field.username,secretKey);
-            data.field.password = DesUtils.encode(data.field.password, secretKey);
-            data.field.validCode = DesUtils.encode(data.field.validCode, secretKey);
-            fly.json(action, data.field, function(res){
-                var end = function(res){
-                    location.href = "../index";
-                };
-                if(res.result == "true"){
-                    layer.msg('登录中', {
-                        icon: 16,
-                        shade: 0.01,
-                        end:end(res),
-                    });
-                };
-            },{type:"post",dataType:"json"});
-            return false;
-        });
-    });
+    }).use('fly');
 
 </script>
 <% } %>

@@ -5,20 +5,20 @@
             我的主页
         </a>
     </li>
-    <li class="layui-nav-item ${menuType=='index'?'layui-this'}">
-        <a href="index">
+    <li class="layui-nav-item <% if(has(menuType)&&menuType=='index'){ %> layui-this <% } %>">
+        <a href="${ctxf}/front/user/index">
             <i class="layui-icon">&#xe612;</i>
             用户中心
         </a>
     </li>
-    <li class="layui-nav-item ${menuType=='set'?'layui-this'}">
-        <a href="set">
+    <li class="layui-nav-item <% if(has(menuType)&&menuType=='set'){ %> layui-this <% } %>">
+        <a href="${ctxf}/front/user/set">
             <i class="layui-icon">&#xe620;</i>
             基本设置
         </a>
     </li>
-    <li class="layui-nav-item ${menuType=='message'?'layui-this'}">
-        <a href="message">
+    <li class="layui-nav-item <% if(has(menuType)&&menuType=='message'){ %> layui-this <% } %>">
+        <a href="${ctxf}/front/user/message">
             <i class="layui-icon">&#xe611;</i>
             我的消息
         </a>

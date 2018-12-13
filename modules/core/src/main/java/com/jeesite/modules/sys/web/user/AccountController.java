@@ -3,19 +3,6 @@
  */
 package com.jeesite.modules.sys.web.user;
 
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.jeesite.common.collect.MapUtils;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.lang.StringUtils;
@@ -28,6 +15,17 @@ import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.PwdUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
 import com.jeesite.modules.sys.utils.ValidCodeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 账号自助服务Controller
@@ -270,7 +268,7 @@ public class AccountController extends BaseController{
 		UserUtils.putCache("regLoginCode", user.getLoginCode());
 		// 账号注册类型
 		String[] userTypes = StringUtils.split(Global.getConfig(
-				"sys.account.registerUser.userTypes.userTypes", "-1"), ",");
+				"sys.account.registerUser.userTypes", "-1"), ",");
 		if (StringUtils.inString(user.getUserType(), userTypes)){
 			UserUtils.putCache("regUserType", user.getUserType());
 		}else{
@@ -280,9 +278,9 @@ public class AccountController extends BaseController{
 		UserUtils.putCache("regMobile", user.getMobile());
 		UserUtils.putCache("regValidCode", code);
 		// 发送邮箱或短信验证码
-		if("send_email".equals(validType)){
+		if("email".equals(validType)){
 			return sendEmailValidCode(user, code, "注册账号");
-		}else if("send_mobile".equals(validType)){
+		}else if("mobile".equals(validType)){
 			return sendSmsValidCode(user, code, "注册账号");
 		}
 		return null;
@@ -291,7 +289,7 @@ public class AccountController extends BaseController{
 	/**
 	 * 根据短信或邮件验证码注册用户（通过邮箱、手机号）
 	 * @param user 用户信息参数
-	 * @param validType 验证方式：mobile、email
+	 * @param regValidCode 验证码
 	 */
 	@PostMapping(value = "saveRegByValidCode")
 	@ResponseBody

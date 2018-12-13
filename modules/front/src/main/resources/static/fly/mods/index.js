@@ -637,36 +637,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                     end:end(res),
                 });
             };
-        },{type:"post",dataType:"json"});
-        return false;
-    });
-    //注册
-    form.on('submit(regForm)', function(data){
-        var action = $(data.form).attr('action'), button = $(data.elem);
-        fly.json(action, data.field, function(res){
-            if(res.result == "true"){
-                layer.msg('注册成功', {
-                    icon: 16,
-                    shade: 0.01,
-                });
-            }else{
-                layer.msg(res.message, {
-                    icon: 16,
-                    shade: 0.01,
-                    end:end(res),
-                });
-            }
-        },{type:"post",dataType:"json"});
-        return false;
-    });
-    //退出
-    var logoutBtn = $('#XYX_logoutBtn');
-    logoutBtn.on('click', function(){
-        var url = "/js/a/logout?__ajax=json";
-        fly.json(url, null, function(res){
-            if(res.result == "true"){
-                location.href = "/js/f/front/user/login";
-            };
         });
         return false;
     });
@@ -675,6 +645,33 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     revalidBtn.on('click', function(){
         $("#validCodeImg").attr("src","/js/validCode?"+new Date().getTime());
     });
+    //注册
+    form.on('submit(regForm)', function(data){
+        layui.cache.regFormData = data;
+        var action = $(data.form).attr('action'), button = $(data.elem);
+        fly.json(action, data.field, function(res){
+            layer.prompt({title: res.message, formType: 0}, function(regValidCode, index){
+                var data = parent.layui.cache.regFormData;
+                data.field.regValidCode = regValidCode;
+                fly.json("/js/account/saveRegByValidCode", data.field, function(res){
+                        layer.close(index);
+                        layer.alert(res.message, {icon: 6});
+                });
+
+            });
+        });
+        return false;
+    });
+    //退出
+    var logoutBtn = $('#XYX_logoutBtn');
+    logoutBtn.on('click', function(){
+        var url = "/js/a/logout?__ajax=json";
+        fly.json(url, null, function(res){
+            location.href = "/js/f/front/user/login";
+        });
+        return false;
+    });
+
 
     exports('fly', fly);
 
