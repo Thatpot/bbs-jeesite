@@ -1,9 +1,14 @@
-package com.jeesite.modules.front.user.web;
+package com.jeesite.modules.front.user;
 
 import com.jeesite.common.codec.EncodeUtils;
+import com.jeesite.common.lang.DateUtils;
 import com.jeesite.common.shiro.realm.LoginInfo;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.common.web.http.ServletUtils;
+import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.entity.FrontUser;
+import com.jeesite.modules.front.service.FrontService;
+import com.jeesite.modules.front.utils.FrontUtils;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.UserUtils;
@@ -20,18 +25,23 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ClassName FrontController
- * @Description TODO
+ * @Description 前台用户相关操作控制层
  * @Author xuyux
  * @Date 2018/12/5 9:46
  **/
 @Controller
 @RequestMapping(value = "${frontPath}/front/user")
-public class FrontUserController extends BaseController {
+public class WebUserController extends BaseController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private FrontService frontService;
     /**
      * @Author xuyuxiang
      * @Description 用户登录
@@ -165,5 +175,41 @@ public class FrontUserController extends BaseController {
         }
         userService.updateUserInfo(loginUser);
         return renderResult("true","修改成功");
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 前台用户签到
+     * @Date 9:35 2018/12/20
+     * @Param []
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("sign"), method = RequestMethod.POST)
+    @ResponseBody
+    public String sign() {
+        Front front = frontService.getCurrentFront();
+        if(front == null){
+            return renderResult("false","请登录");
+        }else if(FrontUtils.isSigned()){//判断是否签到过了
+            return renderResult("false","今天已签到");
+        }else{
+            front.setUpSignDate(new Date());
+            //判断是否断签
+            if(FrontUtils.isBreakSign()){
+                //断签从1开始计算
+                front.setUpSignCount(new Long(1));
+            }else{
+                //未断签天数加1
+                front.setUpSignCount(front.getUpSignCount() + new Long(1));
+            }
+            Long days = front.getUpSignCount();
+            Long experience = FrontUtils.getKissTodayBySignCount(days);
+            front.setUpKiss(front.getUpKiss() + experience);
+            frontService.save(front);
+            Map<String,Object> data = new HashMap<String,Object>();
+            data.put("days",days);
+            data.put("signed",true);
+            data.put("experience",experience);
+            return renderResult("true","签到成功",data);
+        }
     }
 }

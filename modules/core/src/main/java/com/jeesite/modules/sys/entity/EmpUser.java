@@ -27,7 +27,7 @@ import com.jeesite.common.utils.excel.fieldtype.OfficeType;
 		@JoinTable(type=Type.JOIN, entity=Employee.class, alias="e",
 			on="e.emp_code=a.ref_code AND a.user_type=#{USER_TYPE_EMPLOYEE}",
 			attrName="employee", columns={
-					@Column(includeEntity=Employee.class)
+					@Column( includeEntity=Employee.class)
 			}),
 		@JoinTable(type=Type.LEFT_JOIN, entity=Office.class, alias="o", 
 			on="o.office_code=e.office_code", attrName="employee.office",

@@ -5,11 +5,14 @@ package com.jeesite.modules.sys.web.user;
 
 import com.jeesite.common.collect.MapUtils;
 import com.jeesite.common.config.Global;
+import com.jeesite.common.idgen.IdGen;
 import com.jeesite.common.lang.StringUtils;
 import com.jeesite.common.msg.EmailUtils;
 import com.jeesite.common.msg.SmsUtils;
 import com.jeesite.common.service.ServiceException;
 import com.jeesite.common.web.BaseController;
+import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.PwdUtils;
@@ -39,6 +42,8 @@ public class AccountController extends BaseController{
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private FrontService frontService;
 
 	/**
 	 * 忘记密码页面
@@ -275,8 +280,12 @@ public class AccountController extends BaseController{
 			return renderResult(Global.FALSE, "非法的用户类型！");
 		}
 		UserUtils.putCache("regEmail", user.getEmail());
-		UserUtils.putCache("regMobile", user.getMobile());
+		//UserUtils.putCache("regMobile", user.getMobile());//TODO
 		UserUtils.putCache("regValidCode", code);
+
+		//设置默认的用户角色
+        UserUtils.putCache("regRoleString",Global.getConfig(
+                "sys.user.defaultRoleCodes.front", "front"));
 		// 发送邮箱或短信验证码
 		if("email".equals(validType)){
 			return sendEmailValidCode(user, code, "注册账号");
@@ -305,6 +314,8 @@ public class AccountController extends BaseController{
 		String mobile = (String)UserUtils.getCache("regMobile");
 		String validCode = (String)UserUtils.getCache("regValidCode");
 		Date date = (Date)UserUtils.getCache("regLastDate");
+		//设置默认角色
+		String roleString = (String)UserUtils.getCache("regRoleString");
 
 		// 一同验证保存的用户名和验证码是否正确（如果只校验验证码，不验证用户名，则会有获取验证码后修改用户名的漏洞）
 		if (!(loginCode != null && loginCode.equals(user.getLoginCode()))){
@@ -340,8 +351,26 @@ public class AccountController extends BaseController{
 		u.setMobile(mobile);
 		u.setUserType(userType);
 		u.setMgrType(User.MGR_TYPE_NOT_ADMIN);
+		u.setUserRoleString(roleString);
+
+
+		userService.genId(u, u.getLoginCode());
+		u.setUserCode(u.getUserCode()+"_"+ IdGen.randomBase62(4).toLowerCase());
+
+		//保存完成之后往前台用户表保存数据
+		Front front = new Front();
+		front.setIsNewRecord(true);
+
+		front.setUpCode(u.getUserCode());
+		front.setUpName(u.getUserName());
+		front.setUpKiss(new Long(10));
+		front.setUpSignCount(new Long(0));
+		front.setUpSignDate(new Date(0));
+		frontService.save(front);
+		u.setRefCode(front.getUpCode());
+		u.setRefName(front.getUpName());
 		userService.save(u);
-		
+
 		// 验证成功后清理验证码，验证码只允许使用一次。
 		UserUtils.removeCache("regUserType");
 		UserUtils.removeCache("regLoginCode");

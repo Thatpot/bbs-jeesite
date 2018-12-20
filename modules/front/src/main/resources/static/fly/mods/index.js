@@ -320,13 +320,13 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
 
         ,signRender = function(data){
-        laytpl(tplSignin).render(data, function(html){
-            elemSigninMain.html(html);
-        });
-        laytpl(tplSigninDay).render(data, function(html){
-            elemSigninDays.html(html);
-        });
-    }
+            laytpl(tplSignin).render(data, function(html){
+                elemSigninMain.html(html);
+            });
+            laytpl(tplSigninDay).render(data, function(html){
+                elemSigninDays.html(html);
+            });
+        }
 
         ,elemSigninHelp = $('#LAY_signinHelp')
         ,elemSigninTop = $('#LAY_signinTop')
@@ -346,10 +346,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         var othis = $(this);
         if(othis.hasClass(DISABLED)) return;
 
-        fly.json('/sign/in', {
-            token: signRender.token || 1
-        }, function(res){
-            signRender(res.data);
+        fly.json('/js/f/front/user/sign', null, function(res){
+            signRender(res);
         }, {
             error: function(){
                 othis.removeClass(DISABLED);
@@ -378,6 +376,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                 ,'<tr><td>≥5</td><td>10</td></tr>'
                 ,'<tr><td>≥15</td><td>15</td></tr>'
                 ,'<tr><td>≥30</td><td>20</td></tr>'
+                ,'<tr><td>≥100</td><td>30</td></tr>'
+                ,'<tr><td>≥365</td><td>50</td></tr>'
                 ,'</tbody>'
                 ,'</table>'
                 ,'<ul>'
@@ -637,7 +637,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                     end:end(res),
                 });
             };
-        });
+        },{error:function () {
+            revalidBtn.click();
+            $("#L_vercode").val("");
+        }});
         return false;
     });
     //刷新验证码
@@ -655,11 +658,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                 data.field.regValidCode = regValidCode;
                 fly.json("/js/account/saveRegByValidCode", data.field, function(res){
                         layer.close(index);
-                        layer.alert(res.message, {icon: 6});
+                        layer.alert(res.message, {icon: 6},function () {
+                            location.href = "/js/f/front/user/login";
+                        });
                 });
 
             });
-        });
+        },{error:function () {
+                revalidBtn.click();
+                $("#L_vercode").val("");
+            }});
         return false;
     });
     //退出

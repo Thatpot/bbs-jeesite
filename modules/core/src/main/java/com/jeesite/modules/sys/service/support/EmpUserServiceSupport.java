@@ -3,15 +3,6 @@
  */
 package com.jeesite.modules.sys.service.support;
 
-import java.util.List;
-
-import javax.validation.ConstraintViolationException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.idgen.IdGen;
 import com.jeesite.common.lang.StringUtils;
@@ -28,6 +19,13 @@ import com.jeesite.modules.sys.service.EmployeeService;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.EmpUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 /**
  * 员工管理Service
@@ -55,7 +53,7 @@ public class EmpUserServiceSupport extends CrudService<EmpUserDao, EmpUser>
 	
 	/**
 	 * 添加数据权限过滤条件
-	 * @param entity 控制对象
+	 * @param empUser 控制对象
 	 * @param ctrlPermi 控制权限类型（拥有的数据权限：DataScope.CTRL_PERMI_HAVE、可管理的数据权限：DataScope.CTRL_PERMI_HAVE）
 	 */
 	@Override

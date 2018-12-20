@@ -1,4 +1,8 @@
 import com.jeesite.common.config.Global;
+import com.jeesite.common.lang.DateUtils;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @ClassName MyTest
@@ -8,7 +12,6 @@ import com.jeesite.common.config.Global;
  **/
 public class MyTest {
     public static void main(String[] args) {
-       String s =  Global.getConfig("sys.account.registerUser.userTypes.userTypes", "-1");
-        System.out.println(s);
+        System.out.println(new Date(0));
     }
 }
