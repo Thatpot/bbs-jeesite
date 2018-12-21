@@ -7,9 +7,14 @@ import com.jeesite.common.entity.Page;
 import com.jeesite.common.service.CrudService;
 import com.jeesite.common.service.api.CrudServiceApi;
 import com.jeesite.modules.front.dao.FrontUserDao;
+import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.entity.FrontUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 前台用户表Service
@@ -55,5 +60,40 @@ public interface FrontUserService extends CrudServiceApi<FrontUser> {
 	 */
 	@Override
 	public void delete(FrontUser frontUser);
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description 签到活跃榜
+	 * @Date 17:53 2018/12/20
+	 * @Param []
+	 * @return java.util.List<java.util.List<com.jeesite.modules.front.entity.FrontUser>>
+	 **/
+	public List<List<FrontUser>> signin();
+	/**
+	 * @Author xuyuxiang
+	 * @Description 获取用户签到数据
+	 * @Date 17:55 2018/12/20
+	 * @Param
+	 * @return
+	 **/
+	public Map<String,Object> sign(Front front);
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description 获取当前登录的前台用户
+	 * @Date 11:24 2018/12/21
+	 * @Param []
+	 * @return com.jeesite.modules.front.entity.FrontUser
+	 **/
+	public FrontUser getCurrentFrontUser();
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description TODO
+	 * @Date 12:46 2018/12/21
+	 * @Param
+	 * @return
+	 **/
+	public void upload(HttpServletRequest request);
 	
 }

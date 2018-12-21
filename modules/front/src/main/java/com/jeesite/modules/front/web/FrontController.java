@@ -1,8 +1,14 @@
 package com.jeesite.modules.front.web;
 
+import com.jeesite.common.collect.ListUtils;
+import com.jeesite.common.collect.MapUtils;
+import com.jeesite.common.entity.Page;
+import com.jeesite.common.mybatis.mapper.query.QueryType;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontService;
+import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +16,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName FrontController
@@ -22,6 +32,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class FrontController extends BaseController {
     @Autowired
     private FrontService frontService;
+    @Autowired
+    private FrontUserService frontUserService;
     /**
      * @Author xuyuxiang
      * @Description 首页
@@ -45,9 +57,9 @@ public class FrontController extends BaseController {
      * @Param []
      * @return java.lang.String
      **/
-    @RequestMapping(value = ("signin"))
+    @RequestMapping(value = ("signin"), method = RequestMethod.GET)
     @ResponseBody
     public String signin(){
-        return null;
+        return renderResult("true","签到成功",frontUserService.signin());
     }
 }

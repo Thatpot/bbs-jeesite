@@ -387,9 +387,11 @@ public class AccountController extends BaseController{
 		String account = user.getEmail();
 		try {
 			title = user.getUserName() + "（" + user.getLoginCode() + "）"+title+"验证码";
-			String content = "尊敬的用户，您好!\n\n您的验证码是：" + code +"（请勿透露给其他人）\n\n"
-					+ "请复制后，填写在你的验证码窗口完成验证。\n\n本邮件由系统自动发出，请勿回复。\n\n感谢您的使用！";
-//			String receiveUserCode = "[CODE]"+account;
+			String content = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"width: 600px; border: 1px solid #ddd; border-radius: 3px; color: #555; font-family: 'Helvetica Neue Regular',Helvetica,Arial,Tahoma,'Microsoft YaHei','San Francisco','微软雅黑','Hiragino Sans GB',STHeitiSC-Light; font-size: 12px; height: auto; margin: auto; overflow: hidden; text-align: left; word-break: break-all; word-wrap: break-word;\"> <tbody style=\"margin: 0; padding: 0;\"> <tr style=\"background-color: #393D49; height: 60px; margin: 0; padding: 0;\"> <td style=\"margin: 0; padding: 0;\"> <div style=\"color: #5EB576; margin: 0; margin-left: 30px; padding: 0;\"><a style=\"font-size: 14px; margin: 0; padding: 0; color: #5EB576; text-decoration: none;\" href=\"http://fly.layui.com/\" target=\"_blank\" rel=\"noopener\">Fly社区 - Layui前端框架官方社区</a></div> </td> </tr> <tr style=\"margin: 0; padding: 0;\"> <td style=\"margin: 0; padding: 30px;\"> <p style=\"line-height: 20px; margin: 0; margin-bottom: 10px; padding: 0;\"> Hi，<span style=\"font-weight: 700;\">" +
+					user.getUserName() +
+					"</span>，您的邮箱验证码为:<br /><div style=\"font-weight: 700;font-size: 16px;margin-top: 10px;color:#5EB576\">" +
+					code +
+					"</div><br />请复制后，填写在你的验证码窗口完成验证。 </p>  <p style=\"line-height: 20px; margin-top: 20px; padding: 10px; background-color: #f2f2f2; font-size: 12px;\"> 如果该邮件不是由你本人操作，请忽略。 </p> </td> </tr> <tr style=\"background-color: #fafafa; color: #999; height: 35px; margin: 0; padding: 0; text-align: center;\"> <td style=\"margin: 0; padding: 0;\">系统邮件，请勿直接回复。</td> </tr> </tbody> </table>";
 //			MsgPushUtils.push(MsgPush.TYPE_EMAIL, title, content, null, null, receiveUserCode);
 			EmailUtils.send(account, title, content);
 		} catch (Exception e) {

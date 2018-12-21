@@ -1,6 +1,7 @@
 package com.jeesite.modules.front.user;
 
 import com.jeesite.common.codec.EncodeUtils;
+import com.jeesite.common.collect.MapUtils;
 import com.jeesite.common.lang.DateUtils;
 import com.jeesite.common.shiro.realm.LoginInfo;
 import com.jeesite.common.web.BaseController;
@@ -8,6 +9,7 @@ import com.jeesite.common.web.http.ServletUtils;
 import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontService;
+import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.service.UserService;
@@ -16,9 +18,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -42,6 +42,19 @@ public class WebUserController extends BaseController {
     private UserService userService;
     @Autowired
     private FrontService frontService;
+    @Autowired
+    private FrontUserService frontUserService;
+    /**
+     * @Author xuyuxiang
+     * @Description 获取用户
+     * @Date 11:53 2018/12/21
+     * @Param [userCode, isNewRecord]
+     * @return com.jeesite.modules.front.entity.FrontUser
+     **/
+    @ModelAttribute
+    public FrontUser get(String userCode, boolean isNewRecord) {
+        return frontUserService.get(userCode, isNewRecord);
+    }
     /**
      * @Author xuyuxiang
      * @Description 用户登录
@@ -102,6 +115,7 @@ public class WebUserController extends BaseController {
     @RequestMapping(value = ("set"), method = RequestMethod.GET)
     public String set(Model model) {
         model.addAttribute("menuType","set");
+        model.addAttribute("frontUser",frontUserService.getCurrentFrontUser());
         return "modules/front/user/set";
     }
     /**
@@ -124,10 +138,22 @@ public class WebUserController extends BaseController {
      * @Param [model]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:view")
-    @RequestMapping(value = ("home"), method = RequestMethod.GET)
-    public String home(Model model) {
-        return "modules/front/user/home";
+    @RequestMapping(value = ("{usercode}"), method = RequestMethod.GET)
+    public String home(@PathVariable String usercode,Model model,HttpServletRequest request, HttpServletResponse response) {
+        FrontUser frontUser = new FrontUser();
+        frontUser.setUserCode(usercode);
+        frontUser = frontUserService.get(frontUser);
+        if(frontUser!=null){
+            model.addAttribute("frontUser",frontUser);
+            return "modules/front/user/home";
+        }else{
+            try {
+                response.sendError(404);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
     /**
      * @Author xuyuxiang
@@ -136,23 +162,11 @@ public class WebUserController extends BaseController {
      * @Param [user, request]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:view")
+    @RequiresPermissions("front:user:edit")
     @RequestMapping(value = ("upload"), method = RequestMethod.POST)
     @ResponseBody
     public String upload(HttpServletRequest request) {
-        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
-        MultipartFile multipartFile = multipartHttpServletRequest.getFile("file");
-        String avatarBase64 = "";
-        try {
-            String base64Header = "data:"+multipartFile.getContentType()+";base64,";
-            String base64footer = EncodeUtils.encodeBase64(multipartFile.getBytes());
-            avatarBase64 = base64Header + base64footer;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        User user = UserUtils.getUser();
-        user.setAvatarBase64(avatarBase64);
-        userService.updateUserInfo(user);
+        frontUserService.upload(request);
         return renderResult("true","上传成功");
     }
     /**
@@ -162,18 +176,11 @@ public class WebUserController extends BaseController {
      * @Param [user]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:view")
+    @RequiresPermissions("front:user:edit")
     @RequestMapping(value = ("infoSaveBase"), method = RequestMethod.POST)
     @ResponseBody
-    public String infoSaveBase(User user) {
-        User loginUser = UserUtils.getUser();
-        if(loginUser!=null){
-            loginUser.setEmail(user.getEmail());
-            loginUser.setUserName(user.getUserName());
-            loginUser.setSex(user.getSex());
-            loginUser.setSign(user.getSign());
-        }
-        userService.updateUserInfo(loginUser);
+    public String infoSaveBase(FrontUser frontUser) {
+        frontUserService.save(frontUser);
         return renderResult("true","修改成功");
     }
     /**
@@ -192,24 +199,7 @@ public class WebUserController extends BaseController {
         }else if(FrontUtils.isSigned()){//判断是否签到过了
             return renderResult("false","今天已签到");
         }else{
-            front.setUpSignDate(new Date());
-            //判断是否断签
-            if(FrontUtils.isBreakSign()){
-                //断签从1开始计算
-                front.setUpSignCount(new Long(1));
-            }else{
-                //未断签天数加1
-                front.setUpSignCount(front.getUpSignCount() + new Long(1));
-            }
-            Long days = front.getUpSignCount();
-            Long experience = FrontUtils.getKissTodayBySignCount(days);
-            front.setUpKiss(front.getUpKiss() + experience);
-            frontService.save(front);
-            Map<String,Object> data = new HashMap<String,Object>();
-            data.put("days",days);
-            data.put("signed",true);
-            data.put("experience",experience);
-            return renderResult("true","签到成功",data);
+            return renderResult("true","签到成功",frontUserService.sign(front));
         }
     }
 }

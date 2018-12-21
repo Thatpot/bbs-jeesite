@@ -72,6 +72,7 @@ public class FrontUserController extends BaseController {
 	@ResponseBody
 	public Page<FrontUser> listData(FrontUser frontUser, HttpServletRequest request, HttpServletResponse response) {
 		frontUser.setPage(new Page<>(request, response));
+		frontUser.getSqlMap().getOrder().setOrderBy("f.create_date DESC");
 		Page<FrontUser> page = frontUserService.findPage(frontUser); 
 		return page;
 	}

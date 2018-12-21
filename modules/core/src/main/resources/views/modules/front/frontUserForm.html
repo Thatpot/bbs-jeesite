@@ -132,7 +132,8 @@
 							<label class="control-label col-sm-4" title="">
 								<span class="required hide">*</span> ${text('上次签到日期')}：<i class="fa icon-question hide"></i></label>
 							<div class="col-sm-8">
-								<#form:input path="front.upSignDate" readonly="${op=='auth'}" class="form-control"/>
+								<#form:input path="front.upSignDate" disabled="${op=='auth'}" readOnly="${op=='auth'}" maxlength="20" class="form-control Wdate"
+								dataFormat="datetime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',isShowClear:false});"/>
 							</div>
 						</div>
 					</div>

@@ -22,7 +22,7 @@ import com.jeesite.modules.sys.entity.User;
 				attrName = "front", columns = {
 				@Column(includeEntity = Front.class)
 		})
-	}, orderBy="a.update_date DESC"
+	}, extWhereKeys="extkeys"
 )
 public class FrontUser extends User {
 

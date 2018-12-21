@@ -3,7 +3,7 @@
 	<div class="box box-main">
 		<div class="box-header">
 			<div class="box-title">
-				<i class="fa fa-list-alt"></i> ${text('前台用户表管理')}
+				<i class="fa fa-list-alt"></i> ${text('前台用户管理')}
 			</div>
 			<div class="box-tools pull-right">
 				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
@@ -83,7 +83,7 @@ $('#dataGrid').dataGrid({
 	searchForm: $("#searchForm"),
 	columnModel: [
 		{header:'${text('昵称')}', name:'userName', index:'a.user_name', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
-			return '<a href="${ctx}/front/frontUser/form?upCode='+row.userCode+'&op=auth" class="btnList" data-title="${text('编辑前台用户表')}">'+(val||row.id)+'</a>';
+			return '<a href="${ctx}/front/frontUser/form?userCode='+row.userCode+'&op=auth" class="btnList" data-title="${text('编辑前台用户')}">'+(val||row.id)+'</a>';
 		}},
         {header:'${text('性别')}', name:'sex', index:'a.sex', width:150, align:"center", formatter: function(val, obj, row, act){
                 return js.getDictLabel(${@DictUtils.getDictListJson('sys_user_sex')}, val, '${text('未知')}', true);
