@@ -15,13 +15,6 @@ import com.jeesite.modules.Application;
  * @author ThinkGem
  * @version 2017-10-22
  */
-/**
- * @Author xuyuxiang
- * @Description TODO
- * @Date 22:57 2018/12/23
- * @Param 
- * @return 
- **/
 @ActiveProfiles("test")
 @SpringBootTest(classes=Application.class)
 @Rollback(false)
