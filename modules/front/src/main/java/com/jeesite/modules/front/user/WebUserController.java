@@ -115,7 +115,7 @@ public class WebUserController extends BaseController {
     @RequestMapping(value = ("set"), method = RequestMethod.GET)
     public String set(Model model) {
         model.addAttribute("menuType","set");
-        model.addAttribute("frontUser",frontUserService.getCurrentFrontUser());
+        model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
         return "modules/front/user/set";
     }
     /**
@@ -193,13 +193,13 @@ public class WebUserController extends BaseController {
     @RequestMapping(value = ("sign"), method = RequestMethod.POST)
     @ResponseBody
     public String sign() {
-        Front front = frontService.getCurrentFront();
-        if(front == null){
+        FrontUser frontUser =  FrontUtils.getCurrentFrontUser();
+        if(frontUser == null){
             return renderResult("false","请登录");
         }else if(FrontUtils.isSigned()){//判断是否签到过了
             return renderResult("false","今天已签到");
         }else{
-            return renderResult("true","签到成功",frontUserService.sign(front));
+            return renderResult("true","签到成功",frontUserService.sign(frontUser.getFront()));
         }
     }
 }

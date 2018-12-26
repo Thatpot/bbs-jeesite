@@ -3,7 +3,9 @@ package com.jeesite.modules.front.utils;
 import com.jeesite.common.lang.DateUtils;
 import com.jeesite.common.utils.SpringUtils;
 import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontService;
+import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.service.CompanyService;
 import com.jeesite.modules.sys.service.OfficeService;
@@ -24,8 +26,7 @@ public class FrontUtils {
      * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
      */
     private static final class Static {
-        private static FrontService frontService = SpringUtils.getBean(FrontService.class);
-        private static UserService userService = SpringUtils.getBean(UserService.class);
+        private static FrontUserService frontUserService = SpringUtils.getBean(FrontUserService.class);
     }
     /**
      * @Author xuyuxiang
@@ -35,9 +36,9 @@ public class FrontUtils {
      * @return boolean
      **/
     public static boolean isSigned(){
-        Front front = Static.frontService.getCurrentFront();
-        if(front != null){
-            return DateUtils.isSameDay(front.getUpSignDate(),new Date());
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
+        if(frontUser != null){
+            return DateUtils.isSameDay(frontUser.getFront().getUpSignDate(),new Date());
         }else{
             return false;
         }
@@ -50,9 +51,9 @@ public class FrontUtils {
      * @return boolean
      **/
     public static boolean isBreakSign(){
-        Front front = Static.frontService.getCurrentFront();
-        if(front != null){
-            Double spaceDay =  DateUtils.getDistanceOfTwoDate(front.getUpSignDate(),new Date());
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
+        if(frontUser != null){
+            Double spaceDay =  DateUtils.getDistanceOfTwoDate(frontUser.getFront().getUpSignDate(),new Date());
             if(spaceDay.intValue() > 1){
                 return true;
             }else{
@@ -85,5 +86,18 @@ public class FrontUtils {
         }
     }
 
-
+    /**
+     * @Author xuyuxiang
+     * @Description 获取当前登录的前台用户
+     * @Date 12:51 2018/12/21
+     * @Param []
+     * @return com.jeesite.modules.front.entity.FrontUser
+     **/
+    public static FrontUser getCurrentFrontUser() {
+        User loginUser = UserUtils.getUser();
+        FrontUser frontUser = new FrontUser();
+        frontUser.setUserCode(loginUser.getUserCode());
+        frontUser = Static.frontUserService.get(frontUser);
+        return frontUser;
+    }
 }

@@ -80,15 +80,6 @@ public interface FrontUserService extends CrudServiceApi<FrontUser> {
 
 	/**
 	 * @Author xuyuxiang
-	 * @Description 获取当前登录的前台用户
-	 * @Date 11:24 2018/12/21
-	 * @Param []
-	 * @return com.jeesite.modules.front.entity.FrontUser
-	 **/
-	public FrontUser getCurrentFrontUser();
-
-	/**
-	 * @Author xuyuxiang
 	 * @Description TODO
 	 * @Date 12:46 2018/12/21
 	 * @Param

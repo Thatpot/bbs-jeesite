@@ -1,6 +1,10 @@
+<%
+    var frontUser = @FrontUtils.getCurrentFrontUser();
+    var userCode = frontUser.userCode;
+%>
 <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
     <li class="layui-nav-item">
-        <a href="${@UserUtils.getUser().getUserCode()}">
+        <a href="${userCode}">
             <i class="layui-icon">&#xe609;</i>
             我的主页
         </a>

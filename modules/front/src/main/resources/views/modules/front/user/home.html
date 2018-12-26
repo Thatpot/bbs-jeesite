@@ -1,14 +1,21 @@
 <%/* Copyright (c) 2013-Now http://jeesite.com All rights reserved. */
 var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
+var userName = frontUser.userName;
+var sex = frontUser.sex;
+var sign = frontUser.sign;
+var upAuth = frontUser.front.upAuth;
+var upCity = frontUser.front.upCity;
+var upVlevel = frontUser.front.upVlevel;
+var upKiss = frontUser.front.upKiss;
+var createDate = @DateUtils.formatDate(frontUser.front.createDate);
+var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
 %>
 <% layout('/layouts/f_default.html', {title: '用户主页',libs: ['']}){ %>
 <% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
 <!--主要内容区-->
 <div class="fly-home fly-panel">
-    <img src="${@frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" alt="贤心">
-    <% if(frontUser.front.upAuth != null) {%>
-        <i class="iconfont icon-renzheng" title="Fly社区认证"></i>
-    <% } %>
+    <img src="${avatarUrl}" alt="贤心">
+    ${upAuth!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+upAuth+'"></i>'}
     <h1>
         ${frontUser.userName}
         <% if(frontUser.sex=='1') { %>
@@ -17,32 +24,20 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
         <% if(frontUser.sex=='2') { %>
             <i class="iconfont icon-nv"></i>
         <% } %>
-        <% if(frontUser.front.upVlevel != null) {%>
-            <i class="layui-badge fly-badge-vip">VIP${frontUser.front.upVlevel}</i>
-        <% } %>
+        ${upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+upVlevel+'</i>'}
         <!--
         <span style="color:#c00;">（管理员）</span>
         <span style="color:#5FB878;">（社区之光）</span>
         <span>（该号已被封）</span>
         -->
     </h1>
-
-    <% if(frontUser.front.upAuth != null) {%>
-        <p style="padding: 10px 0; color: #5FB878;">认证信息：${frontUser.front.upAuth}</p>
-    <% } %>
-
+    ${upAuth!=null?'<p style="padding: 10px 0; color: #5FB878;">认证信息：'+upAuth+'</p>'}
     <p class="fly-home-info">
-        <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;">${frontUser.front.upKiss}飞吻</span>
-        <i class="iconfont icon-shijian"></i><span>${@DateUtils.formatDate(frontUser.front.createDate)} 加入</span>
-        <% if(frontUser.front.upCity != null) {%>
-            <i class="iconfont icon-chengshi"></i><span>来自${frontUser.front.upCity}</span>
-        <% } %>
+        <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;">${upKiss}飞吻</span>
+        <i class="iconfont icon-shijian"></i><span>${createDate} 加入</span>
+        ${upCity!=null?'<i class="iconfont icon-chengshi"></i><span>来自'+upCity+'</span>'}
     </p>
-
-    <% if(frontUser.sign != null) {%>
-        <p class="fly-home-sign">${frontUser.sign}</p>
-    <% } %>
-
+    ${sign!=null?'<p class="fly-home-sign">'+sign+'</p>'}
 </div>
 
 <div class="layui-container">

@@ -78,21 +78,6 @@ public class FrontServiceSupport extends CrudService<FrontDao, Front> implements
 
     /**
      * @Author xuyuxiang
-     * @Description 获取当前登录用户
-     * @Date 11:07 2018/12/20
-     * @Param []
-     * @return com.jeesite.modules.front.entity.Front
-     **/
-    @Override
-    public Front getCurrentFront() {
-        User loginUser = UserUtils.getUser();
-        Front front = new Front();
-        front.setUpCode(loginUser.getRefCode());
-        front = this.get(front);
-        return front;
-    }
-    /**
-     * @Author xuyuxiang
      * @Description 根据用户获取签到天数和今天获得的飞吻数
      * @Date 14:33 2018/12/20
      * @Param [front]

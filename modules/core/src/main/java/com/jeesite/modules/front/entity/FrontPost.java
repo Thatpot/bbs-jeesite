@@ -34,7 +34,7 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
 		@Column(name="post_auth_avatar", attrName="postAuthAvatar", label="作者头像"),
 		@Column(name="post_auth_vlevel", attrName="postAuthVlevel", label="作者VIP等级"),
 		@Column(name="post_auth_info", attrName="postAuthInfo", label="作者认证信息"),
-	}, orderBy="a.update_date DESC"
+	}, orderBy="a.post_istop DESC,a.create_date DESC"
 )
 public class FrontPost extends DataEntity<FrontPost> {
 	

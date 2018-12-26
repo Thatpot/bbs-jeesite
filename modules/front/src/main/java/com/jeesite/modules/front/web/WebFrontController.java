@@ -47,10 +47,10 @@ public class WebFrontController extends BaseController {
      **/
     @RequestMapping(value = ("index"), method = RequestMethod.GET)
     public String index(Model model) {
-        Front front = frontService.getCurrentFront();
-        if(front!=null){
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
+        if(frontUser!=null){
             //用户签到数据
-            model.addAttribute("map",frontService.getCurrentFrontSignCountAndKiss(front));
+            model.addAttribute("map",frontService.getCurrentFrontSignCountAndKiss(frontUser.getFront()));
         }
         //查询所有的帖子
         //查询置顶的帖子
@@ -60,6 +60,7 @@ public class WebFrontController extends BaseController {
         frontPost = new FrontPost();
         frontPost.setPostIstop("0");
         model.addAttribute("indexPostList",postService.findList(frontPost));
+        model.addAttribute("category","all");
         return "modules/front/index";
     }
 

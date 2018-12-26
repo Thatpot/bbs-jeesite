@@ -29,6 +29,7 @@ import java.util.Date;
         @Column(name="up_vlevel", attrName="upVlevel", label="VIP等级"),
         @Column(name="up_sign_date", attrName="upSignDate", label="上次签到日期"),
         @Column(name="up_sign_count", attrName="upSignCount", label="连续签到天数"),
+        @Column(name="up_comment_count", attrName="upCommentCount", label="评论次数"),
 }, orderBy="a.update_date DESC"
 )
 public class Front extends DataEntity<Front> {
@@ -42,6 +43,7 @@ public class Front extends DataEntity<Front> {
     private Long upVlevel;		// UP主VIP等级
     private Date upSignDate;		// 上次签到日期
     private Long upSignCount;		// 连续签到天数
+    private Long upCommentCount;    //评论次数
 
     public Front() {
         this(null);
@@ -120,4 +122,11 @@ public class Front extends DataEntity<Front> {
         this.upSignCount = upSignCount;
     }
 
+    public Long getUpCommentCount() {
+        return upCommentCount;
+    }
+
+    public void setUpCommentCount(Long upCommentCount) {
+        this.upCommentCount = upCommentCount;
+    }
 }

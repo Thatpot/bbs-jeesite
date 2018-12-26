@@ -41,9 +41,11 @@ public class WebColumnController extends BaseController {
     @RequestMapping(value = ("{category}"), method = RequestMethod.GET)
     public String templateIndex(Model model, @PathVariable String category, HttpServletRequest request, HttpServletResponse response) {
         FrontPost frontPost = new FrontPost();
-        String dicLabel = DictUtils.getDictLabel("front_post_category",category,null);
-        if(dicLabel!=null){
-            frontPost.setPostCategory(dicLabel);
+        String dicCategoryLabel = DictUtils.getDictLabel("front_post_category",category,null);
+        if(dicCategoryLabel!=null){
+            if(!"6".equals(dicCategoryLabel)){
+                frontPost.setPostCategory(dicCategoryLabel);
+            }
             frontPost.setPage(new Page<>(request, response));
             model.addAttribute("postPage",postService.findPage(frontPost));
             model.addAttribute("category",category);
@@ -68,10 +70,17 @@ public class WebColumnController extends BaseController {
     public String templateSub(Model model,@PathVariable String category,@PathVariable String poststatus, HttpServletRequest request, HttpServletResponse response) {
         FrontPost frontPost = new FrontPost();
         String dicCategoryLabel = DictUtils.getDictLabel("front_post_category",category,null);
-        String dicPoststatusValue = DictUtils.getDictValue("front_post_category_status",poststatus,null);
-        if(dicCategoryLabel!=null && dicPoststatusValue!=null){
-            frontPost.setPostCategory(dicCategoryLabel);
-            frontPost.setPostStatus(dicPoststatusValue);
+        String dicPostStatusValue = DictUtils.getDictValue("front_post_category_status",poststatus,null);
+        if(dicCategoryLabel!=null && dicPostStatusValue!=null){
+            if(!"6".equals(dicCategoryLabel)){
+                frontPost.setPostCategory(dicCategoryLabel);
+            }
+            //精华，设置查询精贴为1
+            if("2".equals(dicPostStatusValue)){
+                frontPost.setPostIsgood("1");
+            }else{
+                frontPost.setPostStatus(dicPostStatusValue);
+            }
             frontPost.setPage(new Page<>(request, response));
             model.addAttribute("postPage",postService.findPage(frontPost));
             model.addAttribute("category",category);

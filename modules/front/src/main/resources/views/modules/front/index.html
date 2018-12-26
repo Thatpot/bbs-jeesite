@@ -13,41 +13,31 @@
                 </div>
                 <ul class="fly-list">
                     <% for(item in topPostList) { %>
-                        <li>
-                            <a href="${ctxf}/front/user/${item.createBy}" class="fly-avatar">
-                                <img src="${@item.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postAuth}">
+                    <li>
+                        <a href="${ctxf}/front/user/${item.createBy}" class="fly-avatar">
+                            <img src="${@item.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postAuth}">
+                        </a>
+                        <h2>
+                            <a class="layui-badge">${@DictUtils.getDictLabel("front_post_category",item.postCategory,"0")}</a>
+                            <a href="${ctxf}/front/jie/${item.id}">${item.postTitle}</a>
+                        </h2>
+                        <div class="fly-list-info">
+                            <a href="${ctxf}/front/user/${item.createBy}" link>
+                                <cite>${item.postAuth}</cite>
+                                ${item.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
+                                ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
                             </a>
-                            <h2>
-                                <a class="layui-badge">${@DictUtils.getDictLabel("front_post_category",item.postCategory,"0")}</a>
-                                <a href="jie/detail.html">${item.postTitle}</a>
-                            </h2>
-                            <div class="fly-list-info">
-                                <a href="${ctxf}/front/user/${item.createBy}" link>
-                                    <cite>${item.postAuth}</cite>
-                                    <% if(item.postAuthInfo!=null) { %>
-                                    <i class="iconfont icon-renzheng" title="认证信息：${item.postAuthInfo}"></i>
-                                    <% } %>
-                                    <% if(item.postAuthVlevel!=null) { %>
-                                        <i class="layui-badge fly-badge-vip">VIP${item.postAuthVlevel}</i>
-                                    <% } %>
-
-                                </a>
-                                <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
-
-                                <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> ${item.postKiss}</span>
-                                <% if(item.postStatus==1) { %>
-                                    <span class="layui-badge fly-badge-accept layui-hide-xs">${@DictUtils.getDictLabel("front_post_status",item.postCategory,"0")}</span>
-                                <% } %>
-                                <span class="fly-list-nums">
+                            <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
+                            <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> ${item.postKiss}</span>
+                            ${item.postStatus=="1"?'<span class="layui-badge fly-badge-accept layui-hide-xs">'+@DictUtils.getDictLabel("front_post_status",item.postStatus,"0")+'</span>'}
+                            <span class="fly-list-nums">
                                     <i class="iconfont icon-pinglun1" title="回答"></i> ${item.postCommentCount}
-                                </span>
-                            </div>
-                            <div class="fly-list-badge">
-                                <% if(item.postIsgood==1) { %>
-                                    <span class="layui-badge layui-bg-red">精帖</span>
-                                <% } %>
-                            </div>
-                        </li>
+                            </span>
+                        </div>
+                        <div class="fly-list-badge">
+                            ${item.postIsgood=="1"?'<span class="layui-badge layui-bg-red">精帖</span>'}
+                        </div>
+                    </li>
                     <% } %>
                 </ul>
             </div>
@@ -55,7 +45,7 @@
             <div class="fly-panel" style="margin-bottom: 0;">
 
                 <div class="fly-panel-title fly-filter">
-                    <a href="" class="layui-this">综合</a>
+                    <a href="${ctxf}/front/column/all" class="layui-this">综合</a>
                     <span class="fly-mid"></span>
                     <a href="${ctxf}/front/column/all/unsolved">未结</a>
                     <span class="fly-mid"></span>
@@ -74,40 +64,30 @@
                         </a>
                         <h2>
                             <a class="layui-badge">${@DictUtils.getDictLabel("front_post_category",item.postCategory,"0")}</a>
-                            <a href="jie/detail.html">${item.postTitle}</a>
+                            <a href="${ctxf}/front/jie/${item.id}">${item.postTitle}</a>
                         </h2>
                         <div class="fly-list-info">
                             <a href="${ctxf}/front/user/${item.createBy}" link>
                                 <cite>${item.postAuth}</cite>
-                                <% if(item.postAuthInfo!=null) { %>
-                                <i class="iconfont icon-renzheng" title="认证信息：${item.postAuthInfo}"></i>
-                                <% } %>
-                                <% if(item.postAuthVlevel!=null) { %>
-                                <i class="layui-badge fly-badge-vip">VIP${item.postAuthVlevel}</i>
-                                <% } %>
-
+                                ${item.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
+                                ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
-
                             <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> ${item.postKiss}</span>
-                            <% if(item.postStatus==1) { %>
-                            <span class="layui-badge fly-badge-accept layui-hide-xs">${@DictUtils.getDictLabel("front_post_status",item.postCategory,"0")}</span>
-                            <% } %>
+                            ${item.postStatus=="1"?'<span class="layui-badge fly-badge-accept layui-hide-xs">'+@DictUtils.getDictLabel("front_post_status",item.postStatus,"0")+'</span>'}
                             <span class="fly-list-nums">
                                     <i class="iconfont icon-pinglun1" title="回答"></i> ${item.postCommentCount}
-                                </span>
+                            </span>
                         </div>
                         <div class="fly-list-badge">
-                            <% if(item.postIsgood==1) { %>
-                            <span class="layui-badge layui-bg-red">精帖</span>
-                            <% } %>
+                            ${item.postIsgood=="1"?'<span class="layui-badge layui-bg-red">精帖</span>'}
                         </div>
                     </li>
                     <% } %>
                 </ul>
                 <div style="text-align: center">
                     <div class="laypage-main">
-                        <a href="jie/index.html" class="laypage-next">更多求解</a>
+                        <a href="${ctxf}/front/column/all?pageNo=2" class="laypage-next">更多求解</a>
                     </div>
                 </div>
 
@@ -161,7 +141,7 @@
                 <i class="fly-mid"></i>
                 <a href="javascript:;" class="fly-link" id="LAY_signinTop">活跃榜<span class="layui-badge-dot"></span></a>
                 <%  if(session.userCode != null) { %>
-                    <span class="fly-signin-days">已连续签到<cite><% if(has(map)) { %>${map.days}<% } %></cite>天</span>
+                    <span class="fly-signin-days">已连续签到<cite>${has(map)?map.days}</cite>天</span>
                 <% } else { %>
                     <span class="fly-signin-days"></span>
                 <% } %>
@@ -171,10 +151,10 @@
                     <% if(@FrontUtils.isSigned()) { %>
                         <!-- 已签到状态 -->
                         <button class="layui-btn layui-btn-disabled">今日已签到</button>
-                        <span>获得了<cite><% if(has(map)) { %>${map.experience}<% } %></cite>飞吻</span>
+                        <span>获得了<cite>${has(map)?map.experience}</cite>飞吻</span>
                     <% } else { %>
                         <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
-                        <span>可获得<cite><% if(has(map)) { %>${map.experienceShould}<% } %></cite>飞吻</span>
+                        <span>可获得<cite>${has(map)?map.experienceShould}</cite>飞吻</span>
                     <% } %>
                 <% } else { %>
                     <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>

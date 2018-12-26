@@ -151,21 +151,6 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
     }
     /**
      * @Author xuyuxiang
-     * @Description 获取当前登录的前台用户
-     * @Date 12:51 2018/12/21
-     * @Param []
-     * @return com.jeesite.modules.front.entity.FrontUser
-     **/
-    @Override
-    public FrontUser getCurrentFrontUser() {
-        User loginUser = UserUtils.getUser();
-        FrontUser frontUser = new FrontUser();
-        frontUser.setUserCode(loginUser.getUserCode());
-        frontUser = this.get(frontUser);
-        return frontUser;
-    }
-    /**
-     * @Author xuyuxiang
      * @Description 用户修改头像
      * @Date 12:51 2018/12/21
      * @Param [request]

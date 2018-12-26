@@ -1,4 +1,3 @@
-<% var user = @UserUtils.getUser();%>
 <div class="fly-header layui-bg-black">
     <div class="layui-container">
         <a class="fly-logo" href="${ctxf}/front/index">
@@ -17,7 +16,7 @@
         </ul>
 
         <ul class="layui-nav fly-nav-user">
-            <%  if(session.userCode == null) { %>
+            <%  if(session.userCode == null || @FrontUtils.getCurrentFrontUser()==null) { %>
                 <!-- 未登入的状态 -->
                 <li class="layui-nav-item">
                     <a class="iconfont icon-touxiang layui-hide-xs" href="${ctxf}/front/user/login"></a>
@@ -35,19 +34,27 @@
                     <a href="/app/weibo/" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" title="微博登入" class="iconfont icon-weibo"></a>
                 </li>
             <% } else { %>
+                <%
+                    var frontUser = @FrontUtils.getCurrentFrontUser();
+                    var userName = frontUser.userName;
+                    var userCode = frontUser.userCode;
+                    var upAuth = frontUser.front.upAuth;
+                    var upVlevel = frontUser.front.upVlevel;
+                    var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
+                %>
                 <!-- 登入后的状态 -->
                 <li class="layui-nav-item">
                   <a class="fly-nav-avatar" href="javascript:;">
-                    <cite class="layui-hide-xs">${@user.getUserName()}</cite>
-                    <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-                    <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>
-                      <img src="${@user.getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" class="user-image">
+                    <cite class="layui-hide-xs">${userName}</cite>
+                      ${upAuth!=null?'<i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：'+upAuth+'"></i>'}
+                      ${upVlevel!=null?'<i class="layui-badge fly-badge-vip layui-hide-xs">VIP'+upVlevel+'</i>'}
+                      <img src="${avatarUrl}" class="user-image">
                   </a>
                   <dl class="layui-nav-child" style="text-align:center">
                     <dd><a href="${ctxf}/front/user/index">用户中心</a></dd>
                     <dd><a href="${ctxf}/front/user/set">基本设置</a></dd>
                     <dd><a href="${ctxf}/front/user/message">我的消息</a></dd>
-                    <dd><a href="${ctxf}/front/user/${@UserUtils.getUser().getUserCode()}">我的主页</a></dd>
+                    <dd><a href="${ctxf}/front/user/${userCode}">我的主页</a></dd>
                     <hr style="margin: 5px 0;">
                     <dd><a href="javascript:return 0;" id="XYX_logoutBtn" style="text-align: center;">退出</a></dd>
                   </dl>

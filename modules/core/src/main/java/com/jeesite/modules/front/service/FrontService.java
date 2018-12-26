@@ -59,15 +59,6 @@ public interface FrontService extends CrudServiceApi<Front> {
 
     /**
      * @Author xuyuxiang
-     * @Description 获取当前登录的前台用户
-     * @Date 11:05 2018/12/20
-     * @Param []
-     * @return com.jeesite.modules.front.entity.Front
-     **/
-    public Front getCurrentFront();
-
-    /**
-     * @Author xuyuxiang
      * @Description 获取当前用户签到的天数以及今天获得的飞吻数
      * @Date 11:30 2018/12/20
      * @Param
