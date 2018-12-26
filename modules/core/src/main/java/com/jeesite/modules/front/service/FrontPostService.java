@@ -3,8 +3,12 @@
  */
 package com.jeesite.modules.front.service;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.jeesite.common.io.FileUtils;
+import com.jeesite.modules.file.entity.FileUploadParms;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,10 @@ import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.dao.FrontPostDao;
 import com.jeesite.modules.front.entity.FrontComment;
 import com.jeesite.modules.front.dao.FrontCommentDao;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 帖子表Service
@@ -47,7 +55,6 @@ public class FrontPostService extends CrudService<FrontPostDao, FrontPost> {
 	/**
 	 * 查询分页数据
 	 * @param frontPost 查询条件
-	 * @param frontPost.page 分页对象
 	 * @return
 	 */
 	@Override
@@ -102,5 +109,26 @@ public class FrontPostService extends CrudService<FrontPostDao, FrontPost> {
 		frontComment.setPostId(frontPost);
 		frontCommentDao.delete(frontComment);
 	}
-	
+	/**
+	 * @Author xuyuxiang
+	 * @Description 图片上传
+	 * @Date 16:42 2018/12/24
+	 * @Param [request]
+	 * @return void
+	 **/
+	public FileUploadParms upload(HttpServletRequest request) {
+		MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
+		MultipartFile multipartFile = multipartHttpServletRequest.getFile("file");
+		FileUploadParms params = new FileUploadParms();
+		params.setFileName(multipartFile.getOriginalFilename());
+		params.setUploadType("image");
+		params.setBizType("front_image");
+		try {
+			params.setFileMd5(DigestUtils.md5Hex(multipartFile.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return params;
+	}
 }

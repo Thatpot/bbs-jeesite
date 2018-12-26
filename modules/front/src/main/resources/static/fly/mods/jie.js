@@ -22,17 +22,12 @@ layui.define('fly', function(exports){
   //监听专栏选择
   form.on('select(column)', function(obj){
     var value = obj.value
-    ,elemQuiz = $('#LAY_quiz')
     ,tips = {
       tips: 1
       ,maxWidth: 250
-      ,time: 10000
+      ,time: 3000
     };
-    elemQuiz.addClass('layui-hide');
-    if(value === '0'){
-      layer.tips('下面的信息将便于您获得更好的答案', obj.othis, tips);
-      elemQuiz.removeClass('layui-hide');
-    } else if(value === '99'){
+    if(value === '1'){
       layer.tips('系统会对【分享】类型的帖子予以飞吻奖励，但我们需要审核，通过后方可展示', obj.othis, tips);
     }
   });
@@ -237,5 +232,21 @@ layui.define('fly', function(exports){
     $('html,body').scrollTop(replyTop);
   }
 
+  //*======================自定义方法区======================*/
+    //刷新验证码
+    var revalidBtn = $('.XYX_VALIDCODEBTN');
+    revalidBtn.on('click', function(){
+        $("#validCodeImg").attr("src","/js/validCode?"+new Date().getTime());
+    });
+    form.on('submit(JieForm)', function(data){
+        var action = $(data.form).attr('action'), button = $(data.elem);
+        fly.json(action, data.field, function(res){
+            location.href = "/js/f/front/index";
+        },{error:function () {
+            revalidBtn.click();
+            $("#L_vercode").val("");
+        }});
+        return false;
+    })
   exports('jie', null);
 });

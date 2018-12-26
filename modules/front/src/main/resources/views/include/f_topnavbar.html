@@ -47,7 +47,7 @@
                     <dd><a href="${ctxf}/front/user/index">用户中心</a></dd>
                     <dd><a href="${ctxf}/front/user/set">基本设置</a></dd>
                     <dd><a href="${ctxf}/front/user/message">我的消息</a></dd>
-                    <dd><a href="${ctxf}/front/user/home">我的主页</a></dd>
+                    <dd><a href="${ctxf}/front/user/${@UserUtils.getUser().getUserCode()}">我的主页</a></dd>
                     <hr style="margin: 5px 0;">
                     <dd><a href="javascript:return 0;" id="XYX_logoutBtn" style="text-align: center;">退出</a></dd>
                   </dl>

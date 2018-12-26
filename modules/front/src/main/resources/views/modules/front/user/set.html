@@ -65,6 +65,7 @@
                                 <i class="layui-icon">&#xe67c;</i>上传头像
                             </button>
                             <img src="${@frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}">
+                            <input type="text" id="base64" value="" hidden>
                             <span class="loading"></span>
                         </div>
                     </div>

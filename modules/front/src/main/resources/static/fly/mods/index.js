@@ -152,17 +152,26 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                             ,'</ul>'].join('')
                         ,success: function(layero, index){
                             var image =  layero.find('input[name="image"]');
-
                             //执行上传实例
                             upload.render({
                                 elem: '#uploadImg'
-                                ,url: '/api/upload/'
-                                ,size: 200
+                                ,url: '/js/a/file/upload'
+                                ,size: 2048
+                                ,acceptMime: 'image/*'
+                                ,choose:function (obj) {
+                                    var file = $(".layui-upload-file").get(0).files[0];
+                                    this.data = {
+                                        "fileName":file.name,
+                                        "fileMd5":Math.random(),
+                                        "uploadType":"image"
+                                    };
+                                    console.log(util.uid);
+                                }
                                 ,done: function(res){
-                                    if(res.status == 0){
-                                        image.val(res.url);
+                                    if(res.result == "true"){
+                                        image.val("/js" + res.fileUpload.fileUrl);
                                     } else {
-                                        layer.msg(res.msg, {icon: 5});
+                                        layer.msg(res.message, {icon: 5});
                                     }
                                 }
                             });
@@ -222,7 +231,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                         type: 1
                         ,title: '预览'
                         ,shade: false
-                        ,area: ['100%', '100%']
+                        ,offset: 'r'
+                        ,area: ['50%', '100%']
                         ,scrollbar: false
                         ,content: '<div class="detail-body" style="margin:20px;">'+ content +'</div>'
                     });
@@ -613,8 +623,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         ,bgcolor: '#009688'
         ,click: function(type){
             if(type === 'bar1'){
-                layer.msg('打开 index.js，开启发表新帖的路径');
-                //location.href = 'jie/add.html';
+                addPostBtn.click();
             }
         }
     });
@@ -629,7 +638,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         data.field.validCode = DesUtils.encode(data.field.validCode, secretKey);
         fly.json(action, data.field, function(res){
             var end = function(res){
-                location.href = "../index";
+                location.href = "/js/f/front/index";
             };
             if(res.result == "true"){
                 layer.msg('登录中', {
@@ -680,8 +689,15 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         });
         return false;
     });
-
-
+    //发表新帖按钮点击事件
+    var addPostBtn = $(".LAY_ADDPOST");
+    addPostBtn.on('click', function(){
+        var url = "/js/f/front/jie/toAdd";
+        fly.json(url, null, function(res){
+            location.href = "/js/f/front/jie/add";
+        });
+        return false;
+    });
     exports('fly', fly);
 
 });

@@ -551,4 +551,10 @@ body .fly-user-main{position: relative; min-height: 600px;}
   .site-mobile .site-tree-mobile{display: none !important;}
   .site-mobile .fly-user-main>.layui-nav{left: 0;}
   .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.9); z-index: 999;}
+
+  /* 温馨通道 */
+  .fly-list-quick{border: 1px solid #f2f2f2; border-bottom: none; border-right: 0;}
+  .fly-list-quick .layui-col-xs6{height: 40px; line-height: 40px; padding: 0 10px; border: 1px solid #f2f2f2; border-left: none; border-top: none; text-align: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+  .fly-list-quick a{display: block;}
+  .fly-list-quick a:hover{color: #5FB878;}
 }

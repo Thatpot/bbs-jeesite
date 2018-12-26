@@ -100,7 +100,7 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
 
         FrontUser frontUser = new FrontUser();
         frontUser.setPageSize(20);
-        frontUser.getSqlMap().put("extkeys","AND f.up_sign_count != 0");
+        frontUser.getSqlMap().put("extkeys","AND f.up_sign_count != 0 AND TO_DAYS(f.up_sign_date) = TO_DAYS(now())");
         frontUser.getSqlMap().getOrder().setOrderBy("f.up_sign_date DESC");
         List<FrontUser> newlist = this.findPage(frontUser).getList();
 

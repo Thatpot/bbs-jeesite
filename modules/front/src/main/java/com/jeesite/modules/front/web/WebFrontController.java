@@ -6,7 +6,9 @@ import com.jeesite.common.entity.Page;
 import com.jeesite.common.mybatis.mapper.query.QueryType;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.entity.FrontUser;
+import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
@@ -29,11 +31,13 @@ import java.util.List;
  **/
 @Controller
 @RequestMapping(value = "${frontPath}/front")
-public class FrontController extends BaseController {
+public class WebFrontController extends BaseController {
     @Autowired
     private FrontService frontService;
     @Autowired
     private FrontUserService frontUserService;
+    @Autowired
+    private FrontPostService postService;
     /**
      * @Author xuyuxiang
      * @Description 首页
@@ -45,8 +49,17 @@ public class FrontController extends BaseController {
     public String index(Model model) {
         Front front = frontService.getCurrentFront();
         if(front!=null){
+            //用户签到数据
             model.addAttribute("map",frontService.getCurrentFrontSignCountAndKiss(front));
         }
+        //查询所有的帖子
+        //查询置顶的帖子
+        FrontPost frontPost = new FrontPost();
+        frontPost.setPostIstop("1");
+        model.addAttribute("topPostList",postService.findList(frontPost));
+        frontPost = new FrontPost();
+        frontPost.setPostIstop("0");
+        model.addAttribute("indexPostList",postService.findList(frontPost));
         return "modules/front/index";
     }
 

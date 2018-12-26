@@ -1,0 +1,96 @@
+<% layout('/layouts/f_default.html', {title: '首页',libs: ['']}){ %>
+<% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
+<!--引入二级导航-->
+<% include('/include/f_secnavbar.html', {libs: ['']}){} %>
+<!--主要内容区-->
+<div class="layui-container">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md8">
+            <div class="fly-panel" style="margin-bottom: 0;">
+                <div class="fly-panel-title fly-filter">
+                    <a href="${ctxf}/front/column/${category}" ${poststatus==null?'class="layui-this"'}>综合</a>
+                    <span class="fly-mid"></span>
+                    <a href="${ctxf}/front/column/${category}/unsolved" ${poststatus=='unsolved'?'class="layui-this"'}>未结</a>
+                    <span class="fly-mid"></span>
+                    <a href="${ctxf}/front/column/${category}/solved" ${poststatus=='solved'?'class="layui-this"'}>已结</a>
+                    <span class="fly-mid"></span>
+                    <a href="${ctxf}/front/column/${category}/wonderful" ${poststatus=='wonderful'?'class="layui-this"'}>精华</a>
+                    <span class="fly-filter-right layui-hide-xs"></span>
+                </div>
+                <% if(postPage.list.~size == 0) { %>
+                    <div class="fly-none">没有相关数据</div>
+                <% } else { %>
+                    <ul class="fly-list">
+                        <% for(item in postPage.list) { %>
+                        <li>
+                            <a href="${ctxf}/front/user/${item.createBy}" class="fly-avatar">
+                                <img src="${@item.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postAuth}">
+                            </a>
+                            <h2>
+                                <a class="layui-badge">${@DictUtils.getDictLabel("front_post_category",item.postCategory,"0")}</a>
+                                <a href="jie/detail.html">${item.postTitle}</a>
+                            </h2>
+                            <div class="fly-list-info">
+                                <a href="${ctxf}/front/user/${item.createBy}" link>
+                                    <cite>${item.postAuth}</cite>
+                                    <% if(item.postAuthInfo!=null) { %>
+                                    <i class="iconfont icon-renzheng" title="认证信息：${item.postAuthInfo}"></i>
+                                    <% } %>
+                                    <% if(item.postAuthVlevel!=null) { %>
+                                    <i class="layui-badge fly-badge-vip">VIP${item.postAuthVlevel}</i>
+                                    <% } %>
+
+                                </a>
+                                <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
+
+                                <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> ${item.postKiss}</span>
+                                <% if(item.postStatus==1) { %>
+                                <span class="layui-badge fly-badge-accept layui-hide-xs">${@DictUtils.getDictLabel("front_post_status",item.postCategory,"0")}</span>
+                                <% } %>
+                                <span class="fly-list-nums">
+                                            <i class="iconfont icon-pinglun1" title="回答"></i> ${item.postCommentCount}
+                                        </span>
+                            </div>
+                            <div class="fly-list-badge">
+                                <% if(item.postIsgood==1) { %>
+                                <span class="layui-badge layui-bg-red">精帖</span>
+                                <% } %>
+                            </div>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <% frontPage(postPage,category,poststatus); %>
+                <% } %>
+
+            </div>
+        </div>
+        <!--首页侧边栏-->
+        <div class="layui-col-md4">
+            <!--引入公共侧边栏，本周热议-->
+            <% include('/include/f_siderbar.html', {libs: libs!}){} %>
+            <!--广告区域，钻级赞助商-->
+            <% include('/include/ad/f_diamondad.html', {libs: libs!}){} %>
+            <!--广告区域，官方二维码-->
+            <% include('/include/ad/f_qrcode.html', {libs: libs!}){} %>
+        </div>
+    </div>
+</div>
+<!--引入页脚-->
+<% include('/include/f_footer.html', {libs: ['']}){} %>
+<script>
+    layui.cache.page = '';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+<% } %>

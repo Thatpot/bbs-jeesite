@@ -1,0 +1,58 @@
+<%
+    var pageInfo = para0;
+    var category = para1;
+    var poststatus = para2;
+    var centerNum = 5;
+    var first = pageInfo.first;
+    var last = pageInfo.last;
+    var prev = pageInfo.prev;
+    var next = pageInfo.next;
+    var pageNo = pageInfo.pageNo;
+    var navigatepageNums = [0,0,0,0,0];
+    if(pageNo < 5){
+        for(var i=0;i<last;i++){
+            navigatepageNums[i] = i + 1;
+        }
+    }else if((pageNo+2) >= last){
+        for(var i=0;i<5;i++){
+            navigatepageNums[i] = last + i - 4;
+        }
+    }else{
+        for(var i=0;i<5;i++){
+            navigatepageNums[i] = pageNo + i - 2;
+        }
+    }
+%>
+<div style="text-align: center">
+    <div class="laypage-main">
+
+        <% if(pageNo != first) { %>
+            <a href="${ctxf}/front/column/${category}${poststatus!=null?'/'+poststatus}?pageNo=${first}" class="laypage-last" title="首页">首页</a>
+            <a href="${ctxf}/front/column/${category}${poststatus!=null?'/'+poststatus}?pageNo=${prev}" class="laypage-next">上一页</a>
+        <% } %>
+
+        <% if(pageNo >= 5) { %>
+            <span>…</span>
+        <% } %>
+
+        <% for(number in navigatepageNums) { %>
+          <% if(number!=0) { %>
+            <% if(number == pageNo){ %>
+                <span class="laypage-curr">${pageNo}</span>
+            <% } else { %>
+                <a href="${ctxf}/front/column/${category}${poststatus!=null?'/'+poststatus}?pageNo=${number}">${number}</a>
+            <% } %>
+          <% } %>
+        <% } %>
+
+        <% if((pageNo + 2)< last) { %>
+            <span>…</span>
+        <% } %>
+
+        <% if(pageNo != last) { %>
+            <a href="${ctxf}/front/column/${category}${poststatus!=null?'/'+poststatus}?pageNo=${next}" class="laypage-next">下一页</a>
+            <a href="${ctxf}/front/column/${category}${poststatus!=null?'/'+poststatus}?pageNo=${last}" class="laypage-last" title="尾页">尾页</a>
+        <% } %>
+
+    </div>
+</div>

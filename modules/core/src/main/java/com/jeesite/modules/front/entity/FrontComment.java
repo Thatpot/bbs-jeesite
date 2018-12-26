@@ -25,6 +25,7 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
 		@Column(name="comment_vlevel", attrName="commentVlevel", label="评论者VIP等级"),
 		@Column(name="comment_content", attrName="commentContent", label="评论内容"),
 		@Column(name="comment_isaccept", attrName="commentIsaccept", label="是否被采纳"),
+		@Column(name="comment_auth_info", attrName="commentAuthInfo", label="评论者认证信息"),
 	}, orderBy="a.create_date ASC"
 )
 public class FrontComment extends DataEntity<FrontComment> {
@@ -36,7 +37,8 @@ public class FrontComment extends DataEntity<FrontComment> {
 	private Long commentVlevel;		// 评论者VIP等级
 	private String commentContent;		// 评论内容
 	private String commentIsaccept;		// 是否被采纳
-	
+	private String commentAuthInfo;
+
 	public FrontComment() {
 		this(null);
 	}
@@ -98,5 +100,12 @@ public class FrontComment extends DataEntity<FrontComment> {
 	public void setCommentIsaccept(String commentIsaccept) {
 		this.commentIsaccept = commentIsaccept;
 	}
-	
+
+	public String getCommentAuthInfo() {
+		return commentAuthInfo;
+	}
+
+	public void setCommentAuthInfo(String commentAuthInfo) {
+		this.commentAuthInfo = commentAuthInfo;
+	}
 }

@@ -1,15 +1,12 @@
-<% layout('/layouts/default.html', {title: '帖子表管理', libs: ['dataGrid']}){ %>
+<% layout('/layouts/default.html', {title: '帖子管理', libs: ['dataGrid']}){ %>
 <div class="main-content">
 	<div class="box box-main">
 		<div class="box-header">
 			<div class="box-title">
-				<i class="fa fa-list-alt"></i> ${text('帖子表管理')}
+				<i class="fa fa-list-alt"></i> ${text('帖子管理')}
 			</div>
 			<div class="box-tools pull-right">
 				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
-				<% if(hasPermi('front:frontPost:edit')){ %>
-					<a href="${ctx}/front/frontPost/form" class="btn btn-default btnTool" title="${text('新增帖子表')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
-				<% } %>
 			</div>
 		</div>
 		<div class="box-body">
@@ -19,12 +16,6 @@
 					<label class="control-label">${text('帖子标题')}：</label>
 					<div class="control-inline">
 						<#form:input path="postTitle" maxlength="200" class="form-control width-120"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('帖子内容')}：</label>
-					<div class="control-inline">
-						<#form:input path="postContent" class="form-control width-120"/>
 					</div>
 				</div>
 				<div class="form-group">
@@ -40,21 +31,9 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label">${text('帖子悬赏飞吻数')}：</label>
-					<div class="control-inline">
-						<#form:input path="postKiss" class="form-control width-120"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('帖子评论数')}：</label>
-					<div class="control-inline">
-						<#form:input path="postCommentCount" class="form-control width-120"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('帖子查看人数')}：</label>
-					<div class="control-inline">
-						<#form:input path="postViewCount" class="form-control width-120"/>
+					<label class="control-label">${text('状态')}：</label>
+					<div class="control-inline width-120">
+						<#form:select path="status" dictType="sys_search_status" blankOption="true" class="form-control"/>
 					</div>
 				</div>
 				<div class="form-group">
@@ -67,36 +46,6 @@
 					<label class="control-label">${text('是否精贴')}：</label>
 					<div class="control-inline">
 						<#form:radio path="postIsgood" dictType="front_post_isgood" blankOption="true" class="form-control"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('状态')}：</label>
-					<div class="control-inline width-120">
-						<#form:select path="status" dictType="sys_search_status" blankOption="true" class="form-control"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('备注信息')}：</label>
-					<div class="control-inline">
-						<#form:input path="remarks" maxlength="500" class="form-control width-120"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('帖子作者')}：</label>
-					<div class="control-inline">
-						<#form:input path="postAuth" maxlength="100" class="form-control width-120"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('作者头像')}：</label>
-					<div class="control-inline">
-						<#form:input path="postAuthAvatar" maxlength="255" class="form-control width-120"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label">${text('作者VIP等级')}：</label>
-					<div class="control-inline">
-						<#form:input path="postAuthVlevel" class="form-control width-120"/>
 					</div>
 				</div>
 				<div class="form-group">
@@ -115,7 +64,9 @@
 $('#dataGrid').dataGrid({
 	searchForm: $("#searchForm"),
 	columnModel: [
-        {header:'${text('作者')}', name:'postAuth', index:'a.post_auth', width:150, align:"left"},
+        {header:'${text('作者')}', name:'postAuth', index:'a.post_auth', width:150, align:"left", formatter:function(val, obj, row, act){
+            return '<a href="${ctxf}/front/user/'+row.createBy+'" target="_blank">'+(val||row.id)+'</a>';
+        }},
 		{header:'${text('标题')}', name:'postTitle', index:'a.post_title', width:500, align:"left", frozen:true, formatter: function(val, obj, row, act){
 			return '<a href="${ctx}/front/frontPost/form?id='+row.id+'" class="btnList" data-title="${text('编辑帖子表')}">'+(val||row.id)+'</a>';
 		}},

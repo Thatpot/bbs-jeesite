@@ -33,6 +33,7 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
 		@Column(name="post_auth", attrName="postAuth", label="帖子作者"),
 		@Column(name="post_auth_avatar", attrName="postAuthAvatar", label="作者头像"),
 		@Column(name="post_auth_vlevel", attrName="postAuthVlevel", label="作者VIP等级"),
+		@Column(name="post_auth_info", attrName="postAuthInfo", label="作者认证信息"),
 	}, orderBy="a.update_date DESC"
 )
 public class FrontPost extends DataEntity<FrontPost> {
@@ -50,6 +51,7 @@ public class FrontPost extends DataEntity<FrontPost> {
 	private String postAuth;		// 帖子作者
 	private String postAuthAvatar;		// 作者头像
 	private Long postAuthVlevel;		// 作者VIP等级
+	private String postAuthInfo;
 	private List<FrontComment> frontCommentList = ListUtils.newArrayList();		// 子表列表
 	
 	public FrontPost() {
@@ -165,7 +167,15 @@ public class FrontPost extends DataEntity<FrontPost> {
 	public void setPostAuthVlevel(Long postAuthVlevel) {
 		this.postAuthVlevel = postAuthVlevel;
 	}
-	
+
+	public String getPostAuthInfo() {
+		return postAuthInfo;
+	}
+
+	public void setPostAuthInfo(String postAuthInfo) {
+		this.postAuthInfo = postAuthInfo;
+	}
+
 	public List<FrontComment> getFrontCommentList() {
 		return frontCommentList;
 	}
@@ -173,5 +183,5 @@ public class FrontPost extends DataEntity<FrontPost> {
 	public void setFrontCommentList(List<FrontComment> frontCommentList) {
 		this.frontCommentList = frontCommentList;
 	}
-	
+
 }
