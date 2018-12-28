@@ -29,6 +29,8 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
 		@Column(name="post_view_count", attrName="postViewCount", label="帖子查看人数"),
 		@Column(name="post_istop", attrName="postIstop", label="是否置顶"),
 		@Column(name="post_isgood", attrName="postIsgood", label="是否精贴"),
+		@Column(name="post_isreply", attrName="postIsreply", label="是否允许回复"),
+
 		@Column(includeEntity=DataEntity.class),
 		@Column(name="post_auth", attrName="postAuth", label="帖子作者"),
 		@Column(name="post_auth_avatar", attrName="postAuthAvatar", label="作者头像"),
@@ -51,7 +53,8 @@ public class FrontPost extends DataEntity<FrontPost> {
 	private String postAuth;		// 帖子作者
 	private String postAuthAvatar;		// 作者头像
 	private Long postAuthVlevel;		// 作者VIP等级
-	private String postAuthInfo;
+	private String postAuthInfo;		//作者认证信息
+	private String postIsreply;			//是否允许回复
 	private List<FrontComment> frontCommentList = ListUtils.newArrayList();		// 子表列表
 	
 	public FrontPost() {
@@ -184,4 +187,11 @@ public class FrontPost extends DataEntity<FrontPost> {
 		this.frontCommentList = frontCommentList;
 	}
 
+	public String getPostIsreply() {
+		return postIsreply;
+	}
+
+	public void setPostIsreply(String postIsreply) {
+		this.postIsreply = postIsreply;
+	}
 }

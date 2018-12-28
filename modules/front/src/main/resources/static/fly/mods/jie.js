@@ -71,11 +71,11 @@ layui.define('fly', function(exports){
     del: function(div){
       layer.confirm('确认删除该求解么？', function(index){
         layer.close(index);
-        fly.json('/api/jie-delete/', {
+        fly.json('/js/f/front/jie/delete', {
           id: div.data('id')
         }, function(res){
-          if(res.status === 0){
-            location.href = '/jie/';
+          if(res.result === "true"){
+            location.href = '/js/f/front/index';
           } else {
             layer.msg(res.msg);
           }
@@ -86,12 +86,12 @@ layui.define('fly', function(exports){
     //设置置顶、状态
     ,set: function(div){
       var othis = $(this);
-      fly.json('/api/jie-set/', {
+      fly.json('/js/f/front/jie/topOrGoodPost', {
         id: div.data('id')
-        ,rank: othis.attr('rank')
-        ,field: othis.attr('field')
+        ,postIsgood: othis.attr('postIsgood')
+        ,postIstop: othis.attr('postIstop')
       }, function(res){
-        if(res.status === 0){
+        if(res.result === "true"){
           location.reload();
         }
       });
@@ -100,8 +100,8 @@ layui.define('fly', function(exports){
     //收藏
     ,collect: function(div){
       var othis = $(this), type = othis.data('type');
-      fly.json('/collection/'+ type +'/', {
-        cid: div.data('id')
+      fly.json('/js/f/front/jie/collect?type='+ type, {
+          id: div.data('id')
       }, function(res){
         if(type === 'add'){
           othis.data('type', 'remove').html('取消收藏').addClass('layui-btn-danger');

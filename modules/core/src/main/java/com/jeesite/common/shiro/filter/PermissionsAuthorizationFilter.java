@@ -67,9 +67,14 @@ public class PermissionsAuthorizationFilter extends org.apache.shiro.web.filter.
 	public static void redirectToDefaultPath(ServletRequest request, ServletResponse response) throws IOException {
 		// AJAX不支持Redirect改用Forward
 		String loginUrl = Global.getProperty("shiro.defaultPath");
+		String frontLoginUrl = Global.getProperty("shiro.defaultFrontPath");
 		HttpServletRequest req = ((HttpServletRequest) request);
+		System.out.println(req.getRequestURI());
 		if (StringUtils.equals(req.getContextPath()+loginUrl, req.getRequestURI())){
 			loginUrl = Global.getProperty("shiro.loginUrl");
+		}
+		if (StringUtils.equals(req.getContextPath()+frontLoginUrl, req.getRequestURI())){
+			loginUrl = Global.getProperty("shiro.frontLoginUrl");
 		}
 		if (ServletUtils.isAjaxRequest(req)) {
 			try {
@@ -78,9 +83,11 @@ public class PermissionsAuthorizationFilter extends org.apache.shiro.web.filter.
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
+    	}else if(req.getRequestURI().contains( Global.getProperty("frontPath"))){
+    		WebUtils.issueRedirect(request, response, frontLoginUrl);
     	}else{
-    		WebUtils.issueRedirect(request, response, loginUrl);
-    	}
+			WebUtils.issueRedirect(request, response, loginUrl);
+		}
 	}
 	
 }

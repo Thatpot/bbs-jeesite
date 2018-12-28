@@ -64,9 +64,9 @@ public class WebUserController extends BaseController {
      **/
     @RequestMapping(value = ("login"), method = RequestMethod.GET)
     public String login(HttpServletRequest request, HttpServletResponse response,Model model) {
-        LoginInfo loginInfo = UserUtils.getLoginInfo();
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
         //如果没登录跳转到登录页
-        if(loginInfo == null){
+        if(frontUser == null){
             return "modules/front/user/login";
         }else{//如果登录了跳转到首页
             ServletUtils.redirectUrl(request, response,frontPath+"/front/index");
@@ -82,9 +82,9 @@ public class WebUserController extends BaseController {
      **/
     @RequestMapping(value = ("reg"), method = RequestMethod.GET)
     public String reg(HttpServletRequest request, HttpServletResponse response) {
-        LoginInfo loginInfo = UserUtils.getLoginInfo();
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
         //如果没登录跳转到注册页
-        if(loginInfo == null){
+        if(frontUser == null){
             return "modules/front/user/reg";
         }else{//如果登录了跳转到首页
             ServletUtils.redirectUrl(request, response,frontPath+"/front/index");
@@ -98,11 +98,13 @@ public class WebUserController extends BaseController {
      * @Param [model]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:view")
     @RequestMapping(value = ("index"), method = RequestMethod.GET)
     public String index(Model model) {
-         model.addAttribute("menuType","index");
-         return "modules/front/user/index";
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
+        model.addAttribute("menuType","index");
+        model.addAttribute("frontUser",frontUser);
+        model.addAttribute("map", frontService.getCurrentFrontSignCountAndKiss(frontUser.getFront()));
+        return "modules/front/user/index";
     }
     /**
      * @Author xuyuxiang
@@ -111,7 +113,6 @@ public class WebUserController extends BaseController {
      * @Param [model]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:view")
     @RequestMapping(value = ("set"), method = RequestMethod.GET)
     public String set(Model model) {
         model.addAttribute("menuType","set");
@@ -120,12 +121,23 @@ public class WebUserController extends BaseController {
     }
     /**
      * @Author xuyuxiang
+     * @Description 我的帖子
+     * @Date 17:11 2018/12/28
+     * @Param [model]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("post"), method = RequestMethod.GET)
+    public String post(Model model) {
+        model.addAttribute("menuType","post");
+        return "modules/front/user/post";
+    }
+    /**
+     * @Author xuyuxiang
      * @Description 用户_我的消息
      * @Date 9:08 2018/12/12
      * @Param [model]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:view")
     @RequestMapping(value = ("message"), method = RequestMethod.GET)
     public String message(Model model) {
         model.addAttribute("menuType","message");
@@ -162,11 +174,10 @@ public class WebUserController extends BaseController {
      * @Param [user, request]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:edit")
     @RequestMapping(value = ("upload"), method = RequestMethod.POST)
     @ResponseBody
-    public String upload(HttpServletRequest request) {
-        frontUserService.upload(request);
+    public String upload(HttpServletRequest request,FrontUser frontUser) {
+        frontUserService.upload(request,frontUser);
         return renderResult("true","上传成功");
     }
     /**
@@ -176,7 +187,6 @@ public class WebUserController extends BaseController {
      * @Param [user]
      * @return java.lang.String
      **/
-    @RequiresPermissions("front:user:edit")
     @RequestMapping(value = ("infoSaveBase"), method = RequestMethod.POST)
     @ResponseBody
     public String infoSaveBase(FrontUser frontUser) {
@@ -196,10 +206,14 @@ public class WebUserController extends BaseController {
         FrontUser frontUser =  FrontUtils.getCurrentFrontUser();
         if(frontUser == null){
             return renderResult("false","请登录");
+        }else if(!UserUtils.getSubject().isPermitted("front:view")){
+            return renderResult("false","您的操作权限不足");
         }else if(FrontUtils.isSigned()){//判断是否签到过了
             return renderResult("false","今天已签到");
         }else{
             return renderResult("true","签到成功",frontUserService.sign(frontUser.getFront()));
         }
     }
+
+
 }

@@ -33,7 +33,7 @@
                         <div class="fly-list-info">
                             <a href="${ctxf}/front/user/${item.createBy}" link>
                                 <cite>${item.postAuth}</cite>
-                                ${item.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
+                                ${@StringUtils.isNotEmpty(item.postAuthInfo)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
                                 ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>

@@ -1,18 +1,21 @@
+<% var frontUser = @FrontUtils.getCurrentFrontUser();
+    if(!has(category)){var category="all";}
+%>
 <div class="fly-panel fly-column">
     <div class="layui-container">
         <ul class="layui-clear">
-            <li class="layui-hide-xs ${category=='all'?'layui-this'}"><a href="${ctxf}/front/index">首页</a></li>
-            <li ${category=='quiz'?'class="layui-this"'}><a href="${ctxf}/front/column/quiz/ ">提问</a></li>
-            <li ${category=='share'?'class="layui-this"'}><a href="${ctxf}/front/column/share">分享<span class="layui-badge-dot"></span></a></li>
-            <li ${category=='discuss'?'class="layui-this"'}><a href="${ctxf}/front/column/discuss">讨论</a></li>
-            <li ${category=='suggest'?'class="layui-this"'}><a href="${ctxf}/front/column/suggest">建议</a></li>
-            <li ${category=='notice'?'class="layui-this"'}><a href="${ctxf}/front/column/notice">公告</a></li>
-            <li ${category=='news'?'class="layui-this"'}><a href="${ctxf}/front/column/news">动态</a></li>
+            <li class="layui-hide-xs ${has(category)&&category=='all'?'layui-this'}"><a href="${ctxf}/front/index">首页</a></li>
+            <li ${has(category)&&category=='quiz'?'class="layui-this"'}><a href="${ctxf}/front/column/quiz/ ">提问</a></li>
+            <li ${has(category)&&category=='share'?'class="layui-this"'}><a href="${ctxf}/front/column/share">分享<span class="layui-badge-dot"></span></a></li>
+            <li ${has(category)&&category=='discuss'?'class="layui-this"'}><a href="${ctxf}/front/column/discuss">讨论</a></li>
+            <li ${has(category)&&category=='suggest'?'class="layui-this"'}><a href="${ctxf}/front/column/suggest">建议</a></li>
+            <li ${has(category)&&category=='notice'?'class="layui-this"'}><a href="${ctxf}/front/column/notice">公告</a></li>
+            <li ${has(category)&&category=='news'?'class="layui-this"'}><a href="${ctxf}/front/column/news">动态</a></li>
             <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
-            <%  if(session.userCode != null) { %>
+            <%  if(frontUser != null) { %>
                 <!-- 用户登入后显示 -->
-                <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="${ctxf}/front/user/index">我发表的贴</a></li>
-                <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="${ctxf}/front/user/index#collection">我收藏的贴</a></li>
+                <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="${ctxf}/front/user/post">我发表的贴</a></li>
+                <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="${ctxf}/front/user/post#collection">我收藏的贴</a></li>
             <% } %>
         </ul>
 

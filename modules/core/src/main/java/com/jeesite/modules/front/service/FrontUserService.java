@@ -85,6 +85,6 @@ public interface FrontUserService extends CrudServiceApi<FrontUser> {
 	 * @Param
 	 * @return
 	 **/
-	public void upload(HttpServletRequest request);
+	public void upload(HttpServletRequest request,FrontUser frontUser);
 	
 }

@@ -2,60 +2,73 @@
 <div class="layui-container">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md8 content detail">
-            <div class="fly-panel detail-box">
-                <h1>${frontPost.postTitle}</h1>
-                <div class="fly-detail-info">
-                    <!--<span class="layui-badge">审核中</span>-->
-                    <span class="layui-badge layui-bg-green fly-detail-column">${@DictUtils.getDictLabel("front_post_category",frontPost.postCategory,"0")}</span>
-                    <span class="layui-badge" style="background-color: ${frontPost.postStatus=="0"?'#999;':'#5FB878;'}">${@DictUtils.getDictLabel("front_post_status",frontPost.postStatus,"0")}</span>
-                    ${frontPost.postIstop=="1"?'<span class="layui-badge layui-bg-black">置顶</span>'}
-                    ${frontPost.postIsgood=="1"?'<span class="layui-badge layui-bg-red">精帖</span>'}
-
-                    <!--<div class="fly-admin-box" data-id="123">
-                        <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
-
-                        <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
-                        <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span>
-
-                        <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>
-                        <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span>
-                    </div>-->
-                    <span class="fly-list-nums">
-            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> ${frontPost.postCommentCount}</a>
-            <i class="iconfont" title="人气">&#xe60b;</i> ${frontPost.postViewCount}
-          </span>
+            <% if(frontPost.status=='1'){ %>
+                <div class="fly-panel detail-box">
+                    <div class="fly-none">该帖子已被删除</div>
                 </div>
-                <div class="detail-about">
-                    <a class="fly-avatar" href="${ctxf}/front/user/${frontPost.createBy}">
-                        <img src="${@frontPost.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${frontPost.postAuth}">
-                    </a>
-                    <div class="fly-detail-user">
-                        <a href="../user/home.html" class="fly-link">
-                            <cite>${frontPost.postAuth}</cite>
-                            ${frontPost.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+frontPost.postAuthInfo+'"></i>'}
-                            ${frontPost.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+frontPost.postAuthVlevel+'</i>'}
+            <% } else { %>
+                <div class="fly-panel detail-box">
+                    <h1>${frontPost.postTitle}</h1>
+                    <div class="fly-detail-info">
+                        <!--<span class="layui-badge">审核中</span>-->
+                        <span class="layui-badge layui-bg-green fly-detail-column">${@DictUtils.getDictLabel("front_post_category",frontPost.postCategory,"0")}</span>
+                        <span class="layui-badge" style="background-color: ${frontPost.postStatus=="0"?'#999;':'#5FB878;'}">${@DictUtils.getDictLabel("front_post_status",frontPost.postStatus,"0")}</span>
+                        ${frontPost.postIstop=="1"?'<span class="layui-badge layui-bg-black">置顶</span>'}
+                        ${frontPost.postIsgood=="1"?'<span class="layui-badge layui-bg-red">精帖</span>'}
+                        <% if (hasPermi('front:admin')) { %>
+                        <div class="fly-admin-box" data-id="${frontPost.id}">
+                            <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+                            ${frontPost.postIstop=="0"?
+                            '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="postIstop" postIstop="1">置顶</span>':
+                            '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="postIstop" postIstop="0" style="background-color:#ccc;">取消置顶</span>'
+                            }
+                            ${frontPost.postIsgood=="0"?
+                            '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="postIsgood" postIsgood="1">加精</span>':
+                            '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="postIsgood" postIsgood="0" style="background-color:#ccc;">取消加精</span>'
+                            }
+                        </div>
+                        <% } %>
+                        <span class="fly-list-nums">
+                            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> ${frontPost.postCommentCount}</a>
+                            <i class="iconfont" title="人气">&#xe60b;</i> ${frontPost.postViewCount}
+                        </span>
+                    </div>
+                    <div class="detail-about">
+                        <a class="fly-avatar" href="${ctxf}/front/user/${frontPost.createBy}">
+                            <img src="${@frontPost.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${frontPost.postAuth}">
                         </a>
-                        <span>${@TimeUtils.formatTimeAgo(frontPost.createDate)}</span>
+                        <div class="fly-detail-user">
+                            <a href="${ctxf}/front/user/${frontPost.createBy}" class="fly-link">
+                                <cite>${frontPost.postAuth}</cite>
+                                ${frontPost.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+frontPost.postAuthInfo+'"></i>'}
+                                ${frontPost.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+frontPost.postAuthVlevel+'</i>'}
+                            </a>
+                            <span>${@TimeUtils.formatTimeAgo(frontPost.createDate)}</span>
+                        </div>
+                        <div class="detail-hits" id="LAY_jieAdmin" data-id="${frontPost.id}">
+                            <span style="padding-right: 10px; color: #FF7200">悬赏：${frontPost.postKiss}飞吻</span>
+                            <% if(frontUser!=null) { %>
+                                <% if(@StringUtils.equals(frontUser.userCode,frontPost.createBy)) { %>
+                                    <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="${ctxf}/front/jie/add?id=${frontPost.id}">编辑此贴</a></span>
+                                <% } %>
+                                <span class="layui-btn layui-btn-xs jie-admin " type="collect" data-type="add">收藏</span>
+                            <% } %>
+                        </div>
                     </div>
-                    <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
-                        <span style="padding-right: 10px; color: #FF7200">悬赏：${frontPost.postKiss}飞吻</span>
-                        <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="add.html">编辑此贴</a></span>
+                    <div class="detail-body photos">
+                        ${frontPost.postContent}
                     </div>
                 </div>
-                <div class="detail-body photos">
-                    ${frontPost.postContent}
-                </div>
-            </div>
 
-            <div class="fly-panel detail-box" id="flyReply">
-                <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
-                    <legend>回帖</legend>
-                </fieldset>
+                <div class="fly-panel detail-box" id="flyReply">
+                    <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+                        <legend>回帖</legend>
+                    </fieldset>
 
-                <ul class="jieda" id="jieda">
-                    <% if(frontPost.frontCommentList.~size==0) { %>
+                    <ul class="jieda" id="jieda">
+                        <% if(frontPost.frontCommentList.~size==0) { %>
                         <li class="fly-none">消灭零回复</li>
-                    <% } else { %>
+                        <% } else { %>
                         <li data-id="111" class="jieda-daan">
                             <a name="item-1111111111"></a>
                             <div class="detail-about detail-about-reply">
@@ -87,14 +100,14 @@
                                 <p>香菇那个蓝瘦，这是一条被采纳的回帖</p>
                             </div>
                             <div class="jieda-reply">
-                              <span class="jieda-zan zanok" type="zan">
-                                <i class="iconfont icon-zan"></i>
-                                <em>66</em>
-                              </span>
+                                  <span class="jieda-zan zanok" type="zan">
+                                    <i class="iconfont icon-zan"></i>
+                                    <em>66</em>
+                                  </span>
                                 <span type="reply">
-                                <i class="iconfont icon-svgmoban53"></i>
-                                回复
-                              </span>
+                                    <i class="iconfont icon-svgmoban53"></i>
+                                    回复
+                                  </span>
                                 <div class="jieda-admin">
                                     <span type="edit">编辑</span>
                                     <span type="del">删除</span>
@@ -122,14 +135,14 @@
                                 <p>蓝瘦那个香菇，这是一条没被采纳的回帖</p>
                             </div>
                             <div class="jieda-reply">
-                  <span class="jieda-zan" type="zan">
-                    <i class="iconfont icon-zan"></i>
-                    <em>0</em>
-                  </span>
+                      <span class="jieda-zan" type="zan">
+                        <i class="iconfont icon-zan"></i>
+                        <em>0</em>
+                      </span>
                                 <span type="reply">
-                    <i class="iconfont icon-svgmoban53"></i>
-                    回复
-                  </span>
+                        <i class="iconfont icon-svgmoban53"></i>
+                        回复
+                      </span>
                                 <div class="jieda-admin">
                                     <span type="edit">编辑</span>
                                     <span type="del">删除</span>
@@ -137,25 +150,32 @@
                                 </div>
                             </div>
                         </li>
-                    <% } %>
+                        <% } %>
 
-                </ul>
-
-                <div class="layui-form layui-form-pane">
-                    <form action="/jie/reply/" method="post">
-                        <div class="layui-form-item layui-form-text">
-                            <a name="comment"></a>
-                            <div class="layui-input-block">
-                                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                    </ul>
+                    <% if(frontPost.postIsreply=="1") { %>
+                    <blockquote class="layui-elem-quote layui-quote-nm layui-disabled"
+                                style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">
+                        本帖已设置禁止回复
+                    </blockquote>
+                    <% } else { %>
+                    <div class="layui-form layui-form-pane">
+                        <form action="/jie/reply/" method="post">
+                            <div class="layui-form-item layui-form-text">
+                                <a name="comment"></a>
+                                <div class="layui-input-block">
+                                    <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <input type="hidden" name="jid" value="123">
-                            <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
-                        </div>
-                    </form>
+                            <div class="layui-form-item">
+                                <input type="hidden" name="jid" value="123">
+                                <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
+                            </div>
+                        </form>
+                    </div>
+                    <% } %>
                 </div>
-            </div>
+            <% } %>
         </div>
         <div class="layui-col-md4">
         <!--引入公共侧边栏，本周热议-->

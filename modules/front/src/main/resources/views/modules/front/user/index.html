@@ -7,48 +7,71 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
 <div class="layui-container fly-marginTop fly-user-main">
     <!--引入用户左侧菜单栏-->
     <% layout('./include/f_user_siderbar.html', {}){ }%>
-    <div class="fly-panel fly-panel-user" pad20>
-        <!--
-        <div class="fly-msg" style="margin-top: 15px;">
-          您的邮箱尚未验证，这比较影响您的帐号安全，<a href="activate.html">立即去激活？</a>
+    <div class="fly-panel fly-panel-user" pad20="" style="padding-top:20px;">
+        <div class="fly-msg" style="margin-bottom: 20px;">
+            Hi，${frontUser.userName}，你已是我们的正式社员。
         </div>
-        -->
-        <div class="layui-tab layui-tab-brief" lay-filter="user">
-            <ul class="layui-tab-title" id="LAY_mine">
-                <li data-type="mine-jie" lay-id="index" class="layui-this">我发的帖（<span>89</span>）</li>
-                <li data-type="collection" data-url="/collection/find/" lay-id="collection">我收藏的帖（<span>16</span>）</li>
-            </ul>
-            <div class="layui-tab-content" style="padding: 20px 0;">
-                <div class="layui-tab-item layui-show">
-                    <ul class="mine-view jie-row">
-                        <li>
-                            <a class="jie-title" href="../jie/detail.html" target="_blank">基于 layui 的极简社区页面模版</a>
-                            <i>2017/3/14 上午8:30:00</i>
-                            <a class="mine-edit" href="/jie/edit/8116">编辑</a>
-                            <em>661阅/10答</em>
-                        </li>
-                        <li>
-                            <a class="jie-title" href="../jie/detail.html" target="_blank">基于 layui 的极简社区页面模版</a>
-                            <i>2017/3/14 上午8:30:00</i>
-                            <a class="mine-edit" href="/jie/edit/8116">编辑</a>
-                            <em>661阅/10答</em>
-                        </li>
-                        <li>
-                            <a class="jie-title" href="../jie/detail.html" target="_blank">基于 layui 的极简社区页面模版</a>
-                            <i>2017/3/14 上午8:30:00</i>
-                            <a class="mine-edit" href="/jie/edit/8116">编辑</a>
-                            <em>661阅/10答</em>
-                        </li>
-                    </ul>
-                    <div id="LAY_page"></div>
+        <div class="layui-row layui-col-space20">
+            <div class="layui-col-md6">
+                <div class="fly-panel fly-signin fly-panel-border">
+                    <div class="fly-panel-title">
+                        签到
+                        <i class="fly-mid"></i>
+                        <a href="javascript:;" class="fly-link" id="LAY_signinHelp">说明</a>
+                        <i class="fly-mid"></i>
+                        <a href="javascript:;" class="fly-link" id="LAY_signinTop">活跃榜<span class="layui-badge-dot"></span></a>
+                        ${frontUser!=null?'<span class="fly-signin-days">已连续签到<cite>'+map.days+'</cite>天</span>':'<span class="fly-signin-days"></span>'}
+                    </div>
+                    <div class="fly-panel-main fly-signin-main">
+                        <%  if(frontUser != null) { %>
+                        <% if(@FrontUtils.isSigned()) { %>
+                        <!-- 已签到状态 -->
+                        <button class="layui-btn layui-btn-disabled">今日已签到</button>
+                        <span>获得了<cite>${map.experience}</cite>飞吻</span>
+                        <% } else { %>
+                        <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
+                        <span>可获得<cite>${map.experienceShould}</cite>飞吻</span>
+                        <% } %>
+                        <% } else { %>
+                        <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
+                        <% } %>
+                    </div>
                 </div>
-                <div class="layui-tab-item">
-                    <ul class="mine-view jie-row">
-                        <li>
-                            <a class="jie-title" href="../jie/detail.html" target="_blank">基于 layui 的极简社区页面模版</a>
-                            <i>收藏于23小时前</i>  </li>
-                    </ul>
-                    <div id="LAY_page1"></div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="fly-panel fly-panel-border">
+                    <div class="fly-panel-title">
+                        我的会员信息
+                    </div>
+                    <div class="fly-panel-main layui-text" style="padding: 18px 15px; height: 50px; line-height: 26px;">
+                        <p>您的财富经验值：${frontUser.front.upWealth}</p>
+                        <p>
+                            您当前为：${frontUser.front.upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+frontUser.front.upVlevel+'</i>':'非 VIP'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12" style="margin-top: -20px;">
+                <div class="fly-panel fly-panel-border">
+                    <div class="fly-panel-title">
+                        快捷方式
+                    </div>
+                    <div class="fly-panel-main">
+                        <ul class="layui-row layui-col-space10 fly-shortcut">
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/user/set/"><i class="layui-icon"></i><cite>修改信息</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/user/set/#avatar"><i class="layui-icon"></i><cite>修改头像</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/user/set/#pass"><i class="layui-icon"></i><cite>修改密码</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/user/set/#bind"><i class="layui-icon"></i><cite>帐号绑定</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/jie/add/"><i class="layui-icon"></i><cite>发表新帖</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/column/share/"><i class="layui-icon"></i><cite>查看分享</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4 LAY_search"> <a href="javascript:;"><i class="layui-icon"></i><cite>搜索资源</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/user/post/#collection"><i class="layui-icon"></i><cite>我的收藏</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/jie/15697/"><i class="layui-icon"></i><cite>成为赞助商</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="/jie/2461/"><i class="layui-icon"></i><cite>关注公众号</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="http://www.layui.com/doc/"><i class="layui-icon"></i><cite>文档</cite></a> </li>
+                            <li class="layui-col-sm3 layui-col-xs4"> <a href="http://www.layui.com/demo/"><i class="layui-icon"></i><cite>示例</cite></a> </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

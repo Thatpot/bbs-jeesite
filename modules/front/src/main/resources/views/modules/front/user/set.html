@@ -1,5 +1,4 @@
 <%/* Copyright (c) 2013-Now http://jeesite.com All rights reserved. */
-    var user = @UserUtils.getUser();
     var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
 %>
 <% layout('/layouts/f_default.html', {title: '基本设置',libs: ['']}){ %>
@@ -19,7 +18,7 @@
             <div class="layui-tab-content" style="padding: 20px 0;">
                 <div class="layui-form layui-form-pane layui-tab-item layui-show">
                     <form method="post" action="${ctxf}/front/user/infoSaveBase">
-                        <input type="text" name="userCode" value="${frontUser.userCode}" hidden>
+                        <input type="text" id="userCode" name="userCode" value="${frontUser.userCode}" hidden>
                         <div class="layui-form-item">
                             <label for="L_email" class="layui-form-label">邮箱</label>
                             <div class="layui-input-inline">
@@ -65,7 +64,6 @@
                                 <i class="layui-icon">&#xe67c;</i>上传头像
                             </button>
                             <img src="${@frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}">
-                            <input type="text" id="base64" value="" hidden>
                             <span class="loading"></span>
                         </div>
                     </div>

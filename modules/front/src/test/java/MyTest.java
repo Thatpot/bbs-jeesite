@@ -1,4 +1,5 @@
 import com.jeesite.common.config.Global;
+import com.jeesite.common.io.PropertiesUtils;
 import com.jeesite.common.lang.DateUtils;
 
 import java.util.Calendar;
@@ -12,6 +13,6 @@ import java.util.Date;
  **/
 public class MyTest {
     public static void main(String[] args) {
-        System.out.println(new Date(0));
+        System.out.println(PropertiesUtils.getInstance().getProperty("shiro.filterChainDefinitions"));
     }
 }

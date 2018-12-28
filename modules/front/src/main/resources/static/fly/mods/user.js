@@ -170,6 +170,9 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
         ,auto:true
         ,size: 1024
         ,before: function(){
+          this.data = {
+              userCode:$("#userCode").val()
+          };
           avatarAdd.find('.loading').show();
         }
         ,done: function(res){
@@ -353,6 +356,8 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     });
 
   };
+
+/*  gather.mine(1,1,1);*/
 
   dom.minemsg[0] && gather.minemsg();
   /*======================自定义方法区======================*/

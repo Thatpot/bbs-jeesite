@@ -76,7 +76,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                         options.error && options.error();
                     }
                 }, error: function(e){
-                    layer.msg('请求异常，请重试', {shift: 6});
+                    layer.msg(e.responseJSON.message, {shift: 6});
                     options.error && options.error(e);
                 }
             });
@@ -692,9 +692,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     //发表新帖按钮点击事件
     var addPostBtn = $(".LAY_ADDPOST");
     addPostBtn.on('click', function(){
-        var url = "/js/f/front/jie/toAdd";
+        var url = "/js/f/front/jie/ajaxTurn";
         fly.json(url, null, function(res){
-            location.href = "/js/f/front/jie/add";
+            location.href = res.data;
         });
         return false;
     });

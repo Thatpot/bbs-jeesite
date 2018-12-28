@@ -158,7 +158,7 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
      **/
     @Override
     @Transactional(readOnly=false)
-    public void upload(HttpServletRequest request) {
+    public void upload(HttpServletRequest request,FrontUser frontUser) {
         MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
         MultipartFile multipartFile = multipartHttpServletRequest.getFile("file");
         String avatarBase64 = "";
@@ -169,8 +169,7 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
         } catch (IOException e) {
             e.printStackTrace();
         }
-        User user = UserUtils.getUser();
-        user.setAvatarBase64(avatarBase64);
-        userService.updateUserInfo(user);
+        frontUser.setAvatarBase64(avatarBase64);
+        userService.updateUserInfo(frontUser);
     }
 }

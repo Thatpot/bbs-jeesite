@@ -31,7 +31,7 @@ import java.util.List;
  **/
 @Controller
 @RequestMapping(value = "${frontPath}/front")
-public class WebFrontController extends BaseController {
+public class FrontController extends BaseController {
     @Autowired
     private FrontService frontService;
     @Autowired
@@ -48,9 +48,9 @@ public class WebFrontController extends BaseController {
     @RequestMapping(value = ("index"), method = RequestMethod.GET)
     public String index(Model model) {
         FrontUser frontUser = FrontUtils.getCurrentFrontUser();
-        if(frontUser!=null){
+        if(frontUser!=null) {
             //用户签到数据
-            model.addAttribute("map",frontService.getCurrentFrontSignCountAndKiss(frontUser.getFront()));
+            model.addAttribute("map", frontService.getCurrentFrontSignCountAndKiss(frontUser.getFront()));
         }
         //查询所有的帖子
         //查询置顶的帖子
@@ -74,6 +74,6 @@ public class WebFrontController extends BaseController {
     @RequestMapping(value = ("signin"), method = RequestMethod.GET)
     @ResponseBody
     public String signin(){
-        return renderResult("true","签到成功",frontUserService.signin());
+        return renderResult("true","查询签到排行榜成功",frontUserService.signin());
     }
 }

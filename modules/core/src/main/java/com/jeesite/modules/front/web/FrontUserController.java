@@ -12,7 +12,9 @@ import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.sys.entity.EmpUser;
+import com.jeesite.modules.sys.entity.Role;
 import com.jeesite.modules.sys.entity.User;
+import com.jeesite.modules.sys.service.RoleService;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -45,7 +47,8 @@ public class FrontUserController extends BaseController {
 	private UserService userService;
 	@Autowired
 	private FrontService frontService;
-	
+	@Autowired
+	private RoleService roleService;
 	/**
 	 * 获取数据
 	 */
@@ -83,6 +86,14 @@ public class FrontUserController extends BaseController {
 	@RequiresPermissions("front:frontUser:view")
 	@RequestMapping(value = "form")
 	public String form(FrontUser frontUser,String op, Model model) {
+		// 获取当前编辑用户的角色和权限
+		if (StringUtils.inString(op, Global.OP_AUTH)) {
+			// 获取当前用户所拥有的角色
+			Role role = new Role();
+			role.setUserCode(frontUser.getUserCode());
+			model.addAttribute("roleList", roleService.findListByUserCode(role));
+
+		}
 		model.addAttribute("op", op);
 		model.addAttribute("frontUser", frontUser);
 		return "modules/front/frontUserForm";
@@ -101,9 +112,11 @@ public class FrontUserController extends BaseController {
 		if (!FrontUser.USER_TYPE_FRONT.equals(frontUser.getUserType())){
 			return renderResult(Global.FALSE, "非法操作，不能够操作此用户！");
 		}
-		if (StringUtils.inString(op, Global.OP_ADD, Global.OP_EDIT)
-				&& UserUtils.getSubject().isPermitted("front:frontUser:edit")){
+		if (StringUtils.inString(op, Global.OP_EDIT)&& UserUtils.getSubject().isPermitted("front:frontUser:edit")){
 			frontUserService.save(frontUser);
+		}
+		if (StringUtils.inString(op, Global.OP_AUTH)&& UserUtils.getSubject().isPermitted("sys:empUser:authRole")){
+			userService.saveAuth(frontUser);
 		}
 		return renderResult(Global.TRUE, text("保存用户''{0}''成功", frontUser.getUserName()));
 	}
@@ -146,7 +159,7 @@ public class FrontUserController extends BaseController {
 	@ResponseBody
 	public String delete(FrontUser frontUser) {
 		frontUserService.delete(frontUser);
-		return renderResult(Global.TRUE, text("删除前台用户表成功！"));
+		return renderResult(Global.TRUE, text("删除前台用户成功！"));
 	}
 
 }

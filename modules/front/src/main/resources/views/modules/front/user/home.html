@@ -7,6 +7,7 @@ var upAuth = frontUser.front.upAuth;
 var upCity = frontUser.front.upCity;
 var upVlevel = frontUser.front.upVlevel;
 var upKiss = frontUser.front.upKiss;
+var status = frontUser.status;
 var createDate = @DateUtils.formatDate(frontUser.front.createDate);
 var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
 %>
@@ -15,36 +16,37 @@ var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
 <!--主要内容区-->
 <div class="fly-home fly-panel">
     <img src="${avatarUrl}" alt="贤心">
-    ${upAuth!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+upAuth+'"></i>'}
+    ${@StringUtils.isNotEmpty(upAuth)?'<i class="iconfont icon-renzheng" title="认证信息：'+upAuth+'"></i>'}
     <h1>
-        ${frontUser.userName}
-        <% if(frontUser.sex=='1') { %>
+        ${userName}
+        <% if(sex=='1') { %>
             <i class="iconfont icon-nan"></i>
         <% } %>
-        <% if(frontUser.sex=='2') { %>
+        <% if(sex=='2') { %>
             <i class="iconfont icon-nv"></i>
         <% } %>
         ${upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+upVlevel+'</i>'}
+        ${status=='2'?'<span>（该号已被封）</span>'}
         <!--
         <span style="color:#c00;">（管理员）</span>
         <span style="color:#5FB878;">（社区之光）</span>
-        <span>（该号已被封）</span>
+
         -->
     </h1>
-    ${upAuth!=null?'<p style="padding: 10px 0; color: #5FB878;">认证信息：'+upAuth+'</p>'}
+    ${@StringUtils.isNotEmpty(upAuth)?'<p style="padding: 10px 0; color: #5FB878;">认证信息：'+upAuth+'</p>'}
     <p class="fly-home-info">
         <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;">${upKiss}飞吻</span>
         <i class="iconfont icon-shijian"></i><span>${createDate} 加入</span>
-        ${upCity!=null?'<i class="iconfont icon-chengshi"></i><span>来自'+upCity+'</span>'}
+        ${@StringUtils.isNotEmpty(upCity)?'<i class="iconfont icon-chengshi"></i><span>来自'+upCity+'</span>'}
     </p>
-    ${sign!=null?'<p class="fly-home-sign">'+sign+'</p>'}
+    ${@StringUtils.isNotEmpty(sign)?'<p class="fly-home-sign">'+sign+'</p>'}
 </div>
 
 <div class="layui-container">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md6 fly-home-jie">
             <div class="fly-panel">
-                <h3 class="fly-panel-title">${frontUser.userName} 最近的提问</h3>
+                <h3 class="fly-panel-title">${userName} 最近的提问</h3>
                 <ul class="jie-row">
                     <li>
                         <span class="fly-jing">精</span>

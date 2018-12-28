@@ -268,9 +268,12 @@ shiro:
 
   #索引页路径
   defaultPath: ${shiro.loginUrl}
+  #前台索引页路径
+  defaultFrontPath: ${shiro.frontLoginUrl}
 
   # 登录相关设置
   loginUrl: ${adminPath}/login
+  frontLoginUrl: ${frontPath}/front/user/login
   logoutUrl: ${shiro.loginUrl}
   successUrl: ${adminPath}/index
 
@@ -285,7 +288,7 @@ shiro:
   sso:
   
     # 如果启用/sso/{username}/{token}单点登录，请修改此安全key并与单点登录系统key一致。
-    secretKey: ~
+    secretKey: thinkgem,jeesite,com
 
     # 是否加密单点登录安全Key
     encryptKey: true
@@ -341,6 +344,20 @@ shiro:
   filterChainDefinitions: |
     /ReportServer/** = user
     ${adminPath}/** = user
+    ${frontPath}/front/user/index = perms[front:view]
+    ${frontPath}/front/user/infoSaveBase = perms[front:edit]
+    ${frontPath}/front/user/message = perms[front:view]
+    ${frontPath}/front/user/set = perms[front:view]
+    ${frontPath}/front/user/post = perms[front:view]
+    ${frontPath}/front/user/upload = perms[front:edit]
+
+    ${frontPath}/front/jie/add = perms[front:view]
+    ${frontPath}/front/jie/post = perms[front:edit]
+    ${frontPath}/front/jie/reply = perms[front:edit]
+
+    ${frontPath}/front/jie/delete = perms[front:admin]
+    ${frontPath}/front/jie/topOrGoodPost = perms[front:admin]
+
   
   # 默认的授权过滤定义，如果在filterChainDefinitions中已经定义，则该定义会被覆盖。
   defaultFilterChainDefinitions: |

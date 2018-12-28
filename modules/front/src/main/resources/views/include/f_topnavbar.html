@@ -1,3 +1,4 @@
+<% var frontUser = @FrontUtils.getCurrentFrontUser(); %>
 <div class="fly-header layui-bg-black">
     <div class="layui-container">
         <a class="fly-logo" href="${ctxf}/front/index">
@@ -16,7 +17,7 @@
         </ul>
 
         <ul class="layui-nav fly-nav-user">
-            <%  if(session.userCode == null || @FrontUtils.getCurrentFrontUser()==null) { %>
+            <%  if(frontUser == null) { %>
                 <!-- 未登入的状态 -->
                 <li class="layui-nav-item">
                     <a class="iconfont icon-touxiang layui-hide-xs" href="${ctxf}/front/user/login"></a>
@@ -35,7 +36,6 @@
                 </li>
             <% } else { %>
                 <%
-                    var frontUser = @FrontUtils.getCurrentFrontUser();
                     var userName = frontUser.userName;
                     var userCode = frontUser.userCode;
                     var upAuth = frontUser.front.upAuth;
@@ -46,7 +46,7 @@
                 <li class="layui-nav-item">
                   <a class="fly-nav-avatar" href="javascript:;">
                     <cite class="layui-hide-xs">${userName}</cite>
-                      ${upAuth!=null?'<i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：'+upAuth+'"></i>'}
+                      ${@StringUtils.isNotEmpty(upAuth)?'<i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：'+upAuth+'"></i>'}
                       ${upVlevel!=null?'<i class="layui-badge fly-badge-vip layui-hide-xs">VIP'+upVlevel+'</i>'}
                       <img src="${avatarUrl}" class="user-image">
                   </a>

@@ -3,6 +3,7 @@
  */
 package com.jeesite.modules.sys.web.user;
 
+import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.collect.MapUtils;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.idgen.IdGen;
@@ -13,7 +14,9 @@ import com.jeesite.common.service.ServiceException;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.service.FrontService;
+import com.jeesite.modules.sys.entity.Role;
 import com.jeesite.modules.sys.entity.User;
+import com.jeesite.modules.sys.service.RoleService;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.PwdUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +48,8 @@ public class AccountController extends BaseController{
 	private UserService userService;
 	@Autowired
 	private FrontService frontService;
+	@Autowired
+	private RoleService roleService;
 
 	/**
 	 * 忘记密码页面
@@ -351,9 +357,6 @@ public class AccountController extends BaseController{
 		u.setMobile(mobile);
 		u.setUserType(userType);
 		u.setMgrType(User.MGR_TYPE_NOT_ADMIN);
-		u.setUserRoleString(roleString);
-
-
 		userService.genId(u, u.getLoginCode());
 		u.setUserCode(u.getUserCode()+"_"+ IdGen.randomBase62(4).toLowerCase());
 
@@ -366,10 +369,14 @@ public class AccountController extends BaseController{
 		front.setUpKiss(new Long(10));
 		front.setUpSignCount(new Long(0));
 		front.setUpSignDate(new Date(0));
+		front.setUpWealth(new Long(0));
 		frontService.save(front);
 		u.setRefCode(front.getUpCode());
 		u.setRefName(front.getUpName());
 		userService.save(u);
+		//给用户分配前台角色
+		u.setUserRoleString(roleString);
+		userService.saveAuth(u);
 
 		// 验证成功后清理验证码，验证码只允许使用一次。
 		UserUtils.removeCache("regUserType");

@@ -1,8 +1,10 @@
 <% layout('/layouts/f_default.html', {title: '发表新帖',libs: ['']}){ %>
 <div class="layui-container fly-marginTop">
     <div class="fly-panel" pad20 style="padding-top: 5px;">
-        <!--<div class="fly-none">没有权限</div>-->
-        <div class="layui-form layui-form-pane">
+        <% if (!hasPermi('front:view')) { %>
+            <div class="fly-none">没有权限</div>
+        <% } else { %>
+            <div class="layui-form layui-form-pane">
             <div class="layui-tab layui-tab-brief" lay-filter="user">
                 <ul class="layui-tab-title">
                     <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
@@ -10,44 +12,60 @@
                 <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
                     <div class="layui-tab-item layui-show">
                         <form action="${ctxf}/front/jie/post" method="post">
+                            <input type="text" id="id" name="id" value="${frontPost.id}" hidden>
                             <div class="layui-row layui-col-space15 layui-form-item">
                                 <div class="layui-col-md3">
                                     <label class="layui-form-label">所在专栏</label>
                                     <div class="layui-input-block">
                                         <select lay-verify="required" name="postCategory" lay-filter="column">
                                             <option></option>
-                                            <option value="0">提问</option>
-                                            <option value="1">分享</option>
-                                            <option value="2">讨论</option>
-                                            <option value="3">建议</option>
-                                            <option value="4">公告</option>
-                                            <option value="5">动态</option>
+                                            <option value="0" ${frontPost.postCategory=='0'?'selected'}>提问</option>
+                                            <option value="1" ${frontPost.postCategory=='1'?'selected'}>分享</option>
+                                            <option value="2" ${frontPost.postCategory=='2'?'selected'}>讨论</option>
+                                            <option value="3" ${frontPost.postCategory=='3'?'selected'}>建议</option>
+                                            <% if (hasPermi('front:admin')) { %>
+                                            <option value="4" ${frontPost.postCategory=='4'?'selected'}>公告</option>
+                                            <option value="5" ${frontPost.postCategory=='5'?'selected'}>动态</option>
+                                            <% } %>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="layui-col-md9">
                                     <label for="L_title" class="layui-form-label">标题</label>
                                     <div class="layui-input-block">
-                                        <input type="text" id="L_title" name="postTitle" required lay-verify="required" autocomplete="off" class="layui-input">
+                                        <input type="text" id="L_title" name="postTitle" required lay-verify="required" autocomplete="off" class="layui-input" value="${frontPost.postTitle}">
                                         <!-- <input type="hidden" name="id" value="{{d.edit.id}}"> -->
                                     </div>
                                 </div>
                             </div>
                             <div class="layui-form-item layui-form-text">
                                 <div class="layui-input-block">
-                                    <textarea id="L_content" name="postContent" required lay-verify="required" placeholder="详细描述" class="layui-textarea fly-editor" style="height: 260px;"></textarea>
+                                    <textarea id="L_content" name="postContent" required lay-verify="required" placeholder="详细描述" class="layui-textarea fly-editor" style="height: 260px;">${frontPost.postContent}</textarea>
                                 </div>
                             </div>
+                            <% if (hasPermi('front:admin')) { %>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">允许评论</label>
+                                    <div class="layui-input-inline" style="width: 190px;">
+                                        <select name="postIsreply">
+                                            <option value="0" ${frontPost.postIsreply=='0'?'selected'}>是</option>
+                                            <option value="1" ${frontPost.postIsreply=='1'?'selected'}>否</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
                             <div class="layui-form-item">
                                 <div class="layui-inline">
                                     <label class="layui-form-label">悬赏飞吻</label>
                                     <div class="layui-input-inline" style="width: 190px;">
-                                        <select name="postKiss">
-                                            <option value="20">20</option>
-                                            <option value="30">30</option>
-                                            <option value="50">50</option>
-                                            <option value="60">60</option>
-                                            <option value="80">80</option>
+                                        <select name="postKiss" ${@frontPost.getIsNewRecord()?'':'disabled'}>
+                                            <option value=20 ${frontPost.postKiss==20?'selected'}>20</option>
+                                            <option value=30 ${frontPost.postKiss==30?'selected'}>30</option>
+                                            <option value=50 ${frontPost.postKiss==50?'selected'}>50</option>
+                                            <option value=60 ${frontPost.postKiss==60?'selected'}>60</option>
+                                            <option value=80 ${frontPost.postKiss==80?'selected'}>80</option>
                                         </select>
                                     </div>
                                     <div class="layui-form-mid layui-word-aux">发表后无法更改飞吻</div>
@@ -70,6 +88,7 @@
                 </div>
             </div>
         </div>
+        <% } %>
     </div>
 </div>
 <!--引入页脚-->

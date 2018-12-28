@@ -2,6 +2,7 @@
 <% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
     <!--引入二级导航-->
     <% include('/include/f_secnavbar.html', {libs: ['']}){} %>
+    <% var frontUser = @FrontUtils.getCurrentFrontUser(); %>
     <!--主要内容区-->
     <div class="layui-container">
     <div class="layui-row layui-col-space15">
@@ -24,7 +25,7 @@
                         <div class="fly-list-info">
                             <a href="${ctxf}/front/user/${item.createBy}" link>
                                 <cite>${item.postAuth}</cite>
-                                ${item.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
+                                ${@StringUtils.isNotEmpty(item.postAuthInfo)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
                                 ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
@@ -69,7 +70,7 @@
                         <div class="fly-list-info">
                             <a href="${ctxf}/front/user/${item.createBy}" link>
                                 <cite>${item.postAuth}</cite>
-                                ${item.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
+                                ${@StringUtils.isNotEmpty(item.postAuthInfo)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
                                 ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
@@ -140,21 +141,17 @@
                 <a href="javascript:;" class="fly-link" id="LAY_signinHelp">说明</a>
                 <i class="fly-mid"></i>
                 <a href="javascript:;" class="fly-link" id="LAY_signinTop">活跃榜<span class="layui-badge-dot"></span></a>
-                <%  if(session.userCode != null) { %>
-                    <span class="fly-signin-days">已连续签到<cite>${has(map)?map.days}</cite>天</span>
-                <% } else { %>
-                    <span class="fly-signin-days"></span>
-                <% } %>
+                ${frontUser!=null?'<span class="fly-signin-days">已连续签到<cite>'+map.days+'</cite>天</span>':'<span class="fly-signin-days"></span>'}
             </div>
             <div class="fly-panel-main fly-signin-main">
-                <%  if(session.userCode != null) { %>
+                <%  if(frontUser != null) { %>
                     <% if(@FrontUtils.isSigned()) { %>
                         <!-- 已签到状态 -->
                         <button class="layui-btn layui-btn-disabled">今日已签到</button>
-                        <span>获得了<cite>${has(map)?map.experience}</cite>飞吻</span>
+                        <span>获得了<cite>${map.experience}</cite>飞吻</span>
                     <% } else { %>
                         <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
-                        <span>可获得<cite>${has(map)?map.experienceShould}</cite>飞吻</span>
+                        <span>可获得<cite>${map.experienceShould}</cite>飞吻</span>
                     <% } %>
                 <% } else { %>
                     <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>

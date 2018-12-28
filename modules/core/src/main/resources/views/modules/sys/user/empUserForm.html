@@ -170,17 +170,17 @@
 					</div>
 				</div>
 				<% } %>
-				<% if(op == 'add' || op == 'auth') { %>
-				<div class="form-unit">${text('分配角色')}</div>
-				<div class="pl10 pb20">
-					<table id="roleGrid"></table>
-					<#form:hidden name="userRoleString"/>
-				</div>
-			    <% } %>
-				<% if(op == 'add' || op == 'edit') { %>
-				<#form:extend collapsed="true" />
-				<% } %>
-			</div>
+
+			</div><% if(op == 'add' || op == 'auth') { %>
+		<div class="form-unit">${text('分配角色')}</div>
+		<div class="pl10 pb20">
+			<table id="roleGrid"></table>
+			<#form:hidden name="userRoleString"/>
+		</div>
+		<% } %>
+		<% if(op == 'add' || op == 'edit') { %>
+		<#form:extend collapsed="true" />
+		<% } %>
 			<div class="box-footer">
 				<div class="row">
 					<div class="col-sm-offset-2 col-sm-10">
