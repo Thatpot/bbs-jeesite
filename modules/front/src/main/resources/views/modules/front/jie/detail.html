@@ -34,14 +34,14 @@
                         </span>
                     </div>
                     <div class="detail-about">
-                        <a class="fly-avatar" href="${ctxf}/front/user/${frontPost.createBy}">
-                            <img src="${@frontPost.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${frontPost.postAuth}">
+                        <a class="fly-avatar" href="${ctxf}/front/user/${frontPost.postUp.userCode}">
+                            <img src="${@frontPost.getPostUp().getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" alt="${frontPost.postUp.userName}">
                         </a>
                         <div class="fly-detail-user">
-                            <a href="${ctxf}/front/user/${frontPost.createBy}" class="fly-link">
-                                <cite>${frontPost.postAuth}</cite>
-                                ${frontPost.postAuthInfo!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+frontPost.postAuthInfo+'"></i>'}
-                                ${frontPost.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+frontPost.postAuthVlevel+'</i>'}
+                            <a href="${ctxf}/front/user/${frontPost.postUp.userCode}" class="fly-link">
+                                <cite>${frontPost.postUp.userName}</cite>
+                                ${frontPost.postUp.front.upAuth!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+frontPost.postUp.front.upAuth+'"></i>'}
+                                ${frontPost.postUp.front.upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+frontPost.postUp.front.upVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(frontPost.createDate)}</span>
                         </div>
@@ -51,7 +51,6 @@
                                 <% if(@StringUtils.equals(frontUser.userCode,frontPost.createBy)) { %>
                                     <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="${ctxf}/front/jie/add?id=${frontPost.id}">编辑此贴</a></span>
                                 <% } %>
-                                <span class="layui-btn layui-btn-xs jie-admin " type="collect" data-type="add">收藏</span>
                             <% } %>
                         </div>
                     </div>

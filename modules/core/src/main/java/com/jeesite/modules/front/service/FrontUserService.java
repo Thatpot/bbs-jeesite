@@ -86,5 +86,13 @@ public interface FrontUserService extends CrudServiceApi<FrontUser> {
 	 * @return
 	 **/
 	public void upload(HttpServletRequest request,FrontUser frontUser);
-	
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description 根据用户获取签到天数和今天获得的飞吻数
+	 * @Date 14:33 2018/12/20
+	 * @Param [front]
+	 * @return java.util.Map<java.lang.String,java.lang.Long>
+	 **/
+	Map<String, Long> getCurrentFrontSignCountAndKiss(FrontUser frontUser);
 }

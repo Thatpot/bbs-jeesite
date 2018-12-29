@@ -101,7 +101,7 @@ layui.define('fly', function(exports){
     ,collect: function(div){
       var othis = $(this), type = othis.data('type');
       fly.json('/js/f/front/jie/collect?type='+ type, {
-          id: div.data('id')
+          'collectPost': div.data('id')
       }, function(res){
         if(type === 'add'){
           othis.data('type', 'remove').html('取消收藏').addClass('layui-btn-danger');
@@ -120,12 +120,13 @@ layui.define('fly', function(exports){
   //异步渲染
   var asyncRender = function(){
     var div = $('.fly-admin-box'), jieAdmin = $('#LAY_jieAdmin');
+    var collectSpan = $(jieAdmin[0]).find('span')[1];
     //查询帖子是否收藏
-    if(jieAdmin[0] && layui.cache.user.uid != -1){
-      fly.json('/collection/find/', {
-        cid: div.data('id')
+    if(collectSpan){
+      fly.json('/js/f/front/jie/isCollected', {
+          'collectPost': div.data('id')
       }, function(res){
-        jieAdmin.append('<span class="layui-btn layui-btn-xs jie-admin '+ (res.data.collection ? 'layui-btn-danger' : '') +'" type="collect" data-type="'+ (res.data.collection ? 'remove' : 'add') +'">'+ (res.data.collection ? '取消收藏' : '收藏') +'</span>');
+        jieAdmin.append('<span class="layui-btn layui-btn-xs jie-admin '+ (res.data ? 'layui-btn-danger' : '') +'" type="collect" data-type="'+ (res.data ? 'remove' : 'add') +'">'+ (res.data ? '取消收藏' : '收藏') +'</span>');
       });
     }
   }();

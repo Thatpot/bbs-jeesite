@@ -56,13 +56,4 @@ public interface FrontService extends CrudServiceApi<Front> {
      */
     @Override
     public void delete(Front front);
-
-    /**
-     * @Author xuyuxiang
-     * @Description 获取当前用户签到的天数以及今天获得的飞吻数
-     * @Date 11:30 2018/12/20
-     * @Param
-     * @return
-     **/
-    public Map<String,Long> getCurrentFrontSignCountAndKiss(Front front);
 }

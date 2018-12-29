@@ -3,15 +3,14 @@ package com.jeesite.modules.front.jie;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.lang.StringUtils;
 import com.jeesite.common.web.BaseController;
-import com.jeesite.common.web.http.ServletUtils;
+import com.jeesite.modules.front.entity.FrontCollect;
 import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.entity.FrontUser;
+import com.jeesite.modules.front.service.FrontCollectService;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +33,8 @@ public class WebJieController extends BaseController {
     private FrontPostService frontPostService;
     @Autowired
     private FrontUserService frontUserService;
+    @Autowired
+    private FrontCollectService frontCollectService;
 
     /**
      * @Author xuyuxiang
@@ -43,8 +44,12 @@ public class WebJieController extends BaseController {
      * @return com.jeesite.modules.front.entity.FrontPost
      **/
     @ModelAttribute
-    public FrontPost getFrontPost(String id, boolean isNewRecord){
-        return frontPostService.get(id, isNewRecord);
+    public FrontPost getFrontPost(String id, boolean isNewRecord,String postUpCode){
+        FrontPost frontPost = frontPostService.get(id, isNewRecord);
+        if(frontPost.getPostUp()==null && StringUtils.isNotBlank(postUpCode)){
+            frontPost.setPostUp(frontUserService.get(postUpCode));
+        }
+        return frontPost;
     }
     /**
      * @Author xuyuxiang
@@ -75,6 +80,7 @@ public class WebJieController extends BaseController {
     @RequestMapping(value = ("add"), method = RequestMethod.GET)
     public String add(FrontPost frontPost,HttpServletRequest request, HttpServletResponse response, Model model) {
         model.addAttribute("frontPost",frontPost);
+        model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
         return "modules/front/jie/add";
     }
 
@@ -88,19 +94,8 @@ public class WebJieController extends BaseController {
     @RequestMapping(value = ("post"), method = RequestMethod.POST)
     @ResponseBody
     public String post(Model model, FrontPost post) {
-        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
-        if(frontUser==null){
-            return renderResult("false","请登录");
-        }
+        //postUpCode.upCode
         if(post.getIsNewRecord()) {
-            //作者
-            post.setPostAuth(frontUser.getUserName());
-            //头像
-            post.setPostAuthAvatar(frontUser.getAvatarUrl());
-            //VIP等级
-            post.setPostAuthVlevel(frontUser.getFront().getUpVlevel());
-            //认证信息
-            post.setPostAuthInfo(frontUser.getFront().getUpAuth());
             //结束状态
             post.setPostStatus("0");
             //评论人数
@@ -198,13 +193,34 @@ public class WebJieController extends BaseController {
      **/
     @RequestMapping(value = ("collect"), method = RequestMethod.POST)
     @ResponseBody
-    public String collect(FrontPost frontPost,String type) {
+    public String collect(FrontCollect frontCollect,String type) {
         if("add".equals(type)){
-
+            frontCollect.setIsNewRecord(true);
+            frontCollect.setUserCode(FrontUtils.getCurrentFrontUser().getUserCode());
+            frontCollectService.save(frontCollect);
         }
         if("remove".equals(type)){
-
+            frontCollect.setUserCode(FrontUtils.getCurrentFrontUser().getUserCode());
+            frontCollect = frontCollectService.getByEntity(frontCollect);
+            frontCollectService.delete(frontCollect);
         }
         return renderResult(Global.TRUE, text("操作成功！"));
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 异步加载该帖子是否被收藏
+     * @Date 15:59 2018/12/29
+     * @Param [frontPost]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("isCollected"), method = RequestMethod.POST)
+    @ResponseBody
+    public String isCollected(FrontCollect frontCollect) {
+        frontCollect.setUserCode(FrontUtils.getCurrentFrontUser().getUserCode());
+        frontCollect = frontCollectService.getByEntity(frontCollect);
+        if(frontCollect != null){
+            return renderResult(Global.TRUE, text("该帖子已被收藏"),true);
+        }
+        return renderResult(Global.TRUE, text("该帖子未被收藏"),false);
     }
 }

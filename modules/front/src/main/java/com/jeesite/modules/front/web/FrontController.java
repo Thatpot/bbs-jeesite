@@ -50,17 +50,18 @@ public class FrontController extends BaseController {
         FrontUser frontUser = FrontUtils.getCurrentFrontUser();
         if(frontUser!=null) {
             //用户签到数据
-            model.addAttribute("map", frontService.getCurrentFrontSignCountAndKiss(frontUser.getFront()));
+            model.addAttribute("map", frontUserService.getCurrentFrontSignCountAndKiss(frontUser));
         }
         //查询所有的帖子
         //查询置顶的帖子
         FrontPost frontPost = new FrontPost();
+        frontPost.setPage(new Page<FrontPost>());
         frontPost.setPostIstop("1");
-        model.addAttribute("topPostList",postService.findList(frontPost));
-        frontPost = new FrontPost();
+        model.addAttribute("topPostList",postService.findPage(frontPost).getList());
         frontPost.setPostIstop("0");
-        model.addAttribute("indexPostList",postService.findList(frontPost));
+        model.addAttribute("indexPostList",postService.findPage(frontPost).getList());
         model.addAttribute("category","all");
+        model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
         return "modules/front/index";
     }
 

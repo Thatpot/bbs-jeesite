@@ -64,8 +64,9 @@
 $('#dataGrid').dataGrid({
 	searchForm: $("#searchForm"),
 	columnModel: [
-        {header:'${text('作者')}', name:'postAuth', index:'a.post_auth', width:150, align:"left", formatter:function(val, obj, row, act){
-            return '<a href="${ctxf}/front/user/'+row.createBy+'" target="_blank">'+(val||row.id)+'</a>';
+        {header:'${text('作者')}', name:'postUp.userName', index:'a.postUp.userName', width:150, align:"left", formatter:function(val, obj, row, act){
+           	console.log(row.postUp.userCode)
+            return '<a href="${ctxf}/front/user/'+row.postUp.userCode+'" target="_blank">'+(val||row.id)+'</a>';
         }},
 		{header:'${text('标题')}', name:'postTitle', index:'a.post_title', width:500, align:"left", frozen:true, formatter: function(val, obj, row, act){
 			return '<a href="${ctx}/front/frontPost/form?id='+row.id+'" class="btnList" data-title="${text('编辑帖子表')}">'+(val||row.id)+'</a>';

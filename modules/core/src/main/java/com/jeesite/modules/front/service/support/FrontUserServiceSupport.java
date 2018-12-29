@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -172,4 +173,31 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
         frontUser.setAvatarBase64(avatarBase64);
         userService.updateUserInfo(frontUser);
     }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 根据用户获取签到天数和今天获得的飞吻数
+     * @Date 14:33 2018/12/20
+     * @Param [front]
+     * @return java.util.Map<java.lang.String,java.lang.Long>
+     **/
+    @Override
+    public Map<String, Long> getCurrentFrontSignCountAndKiss(FrontUser frontUser) {
+        Map<String,Long> map = new HashMap<String,Long>();
+        Long days = new Long(0);
+        //没断签
+        if(!FrontUtils.isBreakSign()){
+            days =  frontUser.getFront().getUpSignCount();
+        }
+        Long experience = FrontUtils.getKissTodayBySignCount(days);
+        Long experienceShould = FrontUtils.getKissTodayBySignCount(days + 1);
+        //连续签到天数
+        map.put("days",days);
+        //今天已签到获得的飞吻数
+        map.put("experience",experience);
+        //今天签到可以获得的飞吻数
+        map.put("experienceShould",experienceShould);
+        return map;
+    }
+
 }

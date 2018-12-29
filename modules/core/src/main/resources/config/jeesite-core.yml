@@ -350,10 +350,13 @@ shiro:
     ${frontPath}/front/user/set = perms[front:view]
     ${frontPath}/front/user/post = perms[front:view]
     ${frontPath}/front/user/upload = perms[front:edit]
+    ${frontPath}/front/user/postapi = perms[front:view]
+    ${frontPath}/front/user/collectapi = perms[front:view]
 
     ${frontPath}/front/jie/add = perms[front:view]
     ${frontPath}/front/jie/post = perms[front:edit]
     ${frontPath}/front/jie/reply = perms[front:edit]
+    ${frontPath}/front/jie/collect = perms[front:edit]
 
     ${frontPath}/front/jie/delete = perms[front:admin]
     ${frontPath}/front/jie/topOrGoodPost = perms[front:admin]

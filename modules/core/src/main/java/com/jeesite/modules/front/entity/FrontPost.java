@@ -4,6 +4,10 @@
 package com.jeesite.modules.front.entity;
 
 import javax.validation.constraints.NotBlank;
+
+import com.jeesite.common.mybatis.annotation.JoinTable;
+import com.jeesite.common.mybatis.annotation.JoinTable.Type;
+import com.jeesite.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 import java.util.List;
 import com.jeesite.common.collect.ListUtils;
@@ -32,11 +36,15 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
 		@Column(name="post_isreply", attrName="postIsreply", label="是否允许回复"),
 
 		@Column(includeEntity=DataEntity.class),
-		@Column(name="post_auth", attrName="postAuth", label="帖子作者"),
-		@Column(name="post_auth_avatar", attrName="postAuthAvatar", label="作者头像"),
-		@Column(name="post_auth_vlevel", attrName="postAuthVlevel", label="作者VIP等级"),
-		@Column(name="post_auth_info", attrName="postAuthInfo", label="作者认证信息"),
-	}, orderBy="a.post_istop DESC,a.create_date DESC"
+		@Column(name="post_up", attrName="postUp.userCode", label="帖子作者"),
+	}, joinTable= {
+		@JoinTable(type = Type.LEFT_JOIN, entity = User.class, alias = "u",
+				on = "u.user_code = a.post_up ", attrName = "postUp", columns = {
+				@Column(includeEntity= User.class)}),
+		@JoinTable(type = Type.LEFT_JOIN, entity = Front.class, alias = "f",
+				on = "f.up_code = u.ref_code ", attrName = "postUp.front", columns = {
+				@Column(includeEntity= Front.class)}),
+	},orderBy="a.post_istop DESC,a.create_date DESC"
 )
 public class FrontPost extends DataEntity<FrontPost> {
 	
@@ -50,10 +58,7 @@ public class FrontPost extends DataEntity<FrontPost> {
 	private Long postViewCount;		// 帖子查看人数
 	private String postIstop;		// 是否置顶
 	private String postIsgood;		// 是否精贴
-	private String postAuth;		// 帖子作者
-	private String postAuthAvatar;		// 作者头像
-	private Long postAuthVlevel;		// 作者VIP等级
-	private String postAuthInfo;		//作者认证信息
+	private FrontUser postUp;		// 帖子作者
 	private String postIsreply;			//是否允许回复
 	private List<FrontComment> frontCommentList = ListUtils.newArrayList();		// 子表列表
 	
@@ -126,8 +131,7 @@ public class FrontPost extends DataEntity<FrontPost> {
 	public void setPostViewCount(Long postViewCount) {
 		this.postViewCount = postViewCount;
 	}
-	
-	@Length(min=0, max=1, message="是否置顶长度不能超过 1 个字符")
+
 	public String getPostIstop() {
 		return postIstop;
 	}
@@ -135,8 +139,7 @@ public class FrontPost extends DataEntity<FrontPost> {
 	public void setPostIstop(String postIstop) {
 		this.postIstop = postIstop;
 	}
-	
-	@Length(min=0, max=1, message="是否精贴长度不能超过 1 个字符")
+
 	public String getPostIsgood() {
 		return postIsgood;
 	}
@@ -144,39 +147,13 @@ public class FrontPost extends DataEntity<FrontPost> {
 	public void setPostIsgood(String postIsgood) {
 		this.postIsgood = postIsgood;
 	}
-	
-	@Length(min=0, max=100, message="帖子作者长度不能超过 100 个字符")
-	public String getPostAuth() {
-		return postAuth;
+
+	public FrontUser getPostUp() {
+		return postUp;
 	}
 
-	public void setPostAuth(String postAuth) {
-		this.postAuth = postAuth;
-	}
-	
-	@Length(min=0, max=255, message="作者头像长度不能超过 255 个字符")
-	public String getPostAuthAvatar() {
-		return postAuthAvatar;
-	}
-
-	public void setPostAuthAvatar(String postAuthAvatar) {
-		this.postAuthAvatar = postAuthAvatar;
-	}
-	
-	public Long getPostAuthVlevel() {
-		return postAuthVlevel;
-	}
-
-	public void setPostAuthVlevel(Long postAuthVlevel) {
-		this.postAuthVlevel = postAuthVlevel;
-	}
-
-	public String getPostAuthInfo() {
-		return postAuthInfo;
-	}
-
-	public void setPostAuthInfo(String postAuthInfo) {
-		this.postAuthInfo = postAuthInfo;
+	public void setPostUp(FrontUser postUp) {
+		this.postUp = postUp;
 	}
 
 	public List<FrontComment> getFrontCommentList() {

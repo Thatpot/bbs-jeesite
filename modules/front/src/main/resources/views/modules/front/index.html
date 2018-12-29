@@ -2,7 +2,6 @@
 <% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
     <!--引入二级导航-->
     <% include('/include/f_secnavbar.html', {libs: ['']}){} %>
-    <% var frontUser = @FrontUtils.getCurrentFrontUser(); %>
     <!--主要内容区-->
     <div class="layui-container">
     <div class="layui-row layui-col-space15">
@@ -15,18 +14,18 @@
                 <ul class="fly-list">
                     <% for(item in topPostList) { %>
                     <li>
-                        <a href="${ctxf}/front/user/${item.createBy}" class="fly-avatar">
-                            <img src="${@item.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postAuth}">
+                        <a href="${ctxf}/front/user/${item.postUp.userCode}" class="fly-avatar">
+                            <img src="${@item.getPostUp().getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postUp.userName}">
                         </a>
                         <h2>
                             <a class="layui-badge">${@DictUtils.getDictLabel("front_post_category",item.postCategory,"0")}</a>
                             <a href="${ctxf}/front/jie/${item.id}">${item.postTitle}</a>
                         </h2>
                         <div class="fly-list-info">
-                            <a href="${ctxf}/front/user/${item.createBy}" link>
-                                <cite>${item.postAuth}</cite>
-                                ${@StringUtils.isNotEmpty(item.postAuthInfo)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
-                                ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
+                            <a href="${ctxf}/front/user/${item.postUp.userCode}" link>
+                                <cite>${item.postUp.userName}</cite>
+                                ${@StringUtils.isNotEmpty(item.postUp.front.upAuth)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postUp.front.upAuth+'"></i>'}
+                                ${item.postUp.front.upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postUp.front.upVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
                             <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> ${item.postKiss}</span>
@@ -60,18 +59,18 @@
                 <ul class="fly-list">
                     <% for(item in indexPostList) { %>
                     <li>
-                        <a href="${ctxf}/front/user/${item.createBy}" class="fly-avatar">
-                            <img src="${@item.getPostAuthAvatar().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postAuth}">
+                        <a href="${ctxf}/front/user/${item.postUp.userCode}" class="fly-avatar">
+                            <img src="${@item.getPostUp().getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" alt="${item.postUp.userName}">
                         </a>
                         <h2>
                             <a class="layui-badge">${@DictUtils.getDictLabel("front_post_category",item.postCategory,"0")}</a>
                             <a href="${ctxf}/front/jie/${item.id}">${item.postTitle}</a>
                         </h2>
                         <div class="fly-list-info">
-                            <a href="${ctxf}/front/user/${item.createBy}" link>
-                                <cite>${item.postAuth}</cite>
-                                ${@StringUtils.isNotEmpty(item.postAuthInfo)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postAuthInfo+'"></i>'}
-                                ${item.postAuthVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postAuthVlevel+'</i>'}
+                            <a href="${ctxf}/front/user/${item.postUp.userCode}" link>
+                                <cite>${item.postUp.userName}</cite>
+                                ${@StringUtils.isNotEmpty(item.postUp.front.upAuth)?'<i class="iconfont icon-renzheng" title="认证信息：'+item.postUp.front.upAuth+'"></i>'}
+                                ${item.postUp.front.upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.postUp.front.upVlevel+'</i>'}
                             </a>
                             <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
                             <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> ${item.postKiss}</span>

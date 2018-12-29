@@ -4,7 +4,7 @@
 
  */
  
-layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
+layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
 
   var $ = layui.jquery;
   var layer = layui.layer;
@@ -16,6 +16,88 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   var flow = layui.flow;
   var element = layui.element;
   var upload = layui.upload;
+  var table = layui.table;
+
+    //我发的贴
+  table.render({
+      elem: '#LAY_mySendCard'
+      ,url: '/js/f/front/user/postapi'
+      ,method: 'post'
+      ,request:{
+        pageName:'pageNo',
+        limitName:'pageSize'
+      },
+      parseData:function(res){
+        return {
+            "code":"0",
+            "msg":res.data.message,
+            "count":res.data.count,
+            "data":res.data.list
+        }
+      }
+      ,cols: [[
+          {field: 'title', title: '帖子标题', minWidth: 300, templet: '<div><a href="/js/f/front/jie/{{ d.id }}" target="_blank" class="layui-table-link">{{ d.postTitle }}</a></div>'}
+          ,{field: 'postStatus', title: '状态', width: 100, align: 'center', templet: function(d){
+                  if(d.postIstop == '1'){
+                      return '<span style="color: #FF5722;">加精</span>';
+                  } else if(d.status == "-1"){
+                      return '<span style="color: #ccc;">审核中</span>';
+                  } else {
+                      return '<span style="color: #999;">正常</span>'
+                  }
+           }}
+          ,{field: 'postStatus', title: '结贴', width: 100, align: 'center', templet: function(d){
+                  return d.postStatus >= 1 ? '<span style="color: #5FB878;">已结</span>' : '<span style="color: #ccc;">未结</span>'
+              }}
+          ,{field: 'createDate', title: '发表时间', width: 120, align: 'center', templet: '<div>{{ layui.util.timeAgo(d.createDate, 1) }}</div>'}
+          ,{title: '数据', width: 150, templet: '<div><span style="font-size: 12px;">{{d.postViewCount}}阅/{{d.postCommentCount}}答</span></div>'}
+          ,{title: '操作', width: 100, templet: function(d){
+                  return d.postStatus == 0 ? '<a class="layui-btn layui-btn-xs" href="/js/f/front/jie/add?id='+ d.id +'" target="_blank">编辑</a>' : ''
+              }}
+      ]]
+      ,page: true
+      ,skin: 'line'
+  });
+
+  //我收藏的帖
+  if($('#LAY_myCollectioncard')[0]){
+      table.render({
+          elem: '#LAY_myCollectioncard'
+          ,url: '/js/f/front/user/collectapi'
+          ,method: 'post'
+          ,request:{
+              pageName:'pageNo',
+              limitName:'pageSize'
+          }
+          ,parseData:function(res){
+              return {
+                  "code":"0",
+                  "msg":res.data.message,
+                  "count":res.data.count,
+                  "data":res.data.list
+              }
+          }
+          ,cols: [[
+              {field: 'collectPost.postTitle', title: '帖子标题', minWidth: 300, templet: '<div><a href="/js/f/front/jie/{{ d.collectPost.id }}" target="_blank" class="layui-table-link">{{ d.collectPost.postTitle }}</a></div>'}
+              ,{field: 'createDate', title: '收藏时间', width: 120, align: 'center', templet: '<div>{{ layui.util.timeAgo(d.createDate, 1) }}</div>'}
+          ]]
+          ,page: true
+          ,skin: 'line'
+      });
+
+  }
+
+  //显示当前tab
+  if(location.hash){
+      element.tabChange('user', location.hash.replace(/^#/, ''));
+  }
+
+  element.on('tab(user)', function(){
+      var othis = $(this), layid = othis.attr('lay-id');
+      if(layid){
+          location.hash = layid;
+      }
+  });
 
   var gather = {}, dom = {
     mine: $('#LAY_mine')
@@ -23,135 +105,6 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     ,minemsg: $('#LAY_minemsg')
     ,infobtn: $('#LAY_btninfo')
   };
-
-  //我的相关数据
-  var elemUC = $('#LAY_uc'), elemUCM = $('#LAY_ucm');
-  gather.minelog = {};
-  gather.mine = function(index, type, url){
-    var tpl = [
-      //求解
-      '{{# for(var i = 0; i < d.rows.length; i++){ }}\
-      <li>\
-        {{# if(d.rows[i].collection_time){ }}\
-          <a class="jie-title" href="/jie/{{d.rows[i].id}}/" target="_blank">{{= d.rows[i].title}}</a>\
-          <i>{{ d.rows[i].collection_time }} 收藏</i>\
-        {{# } else { }}\
-          {{# if(d.rows[i].status == 1){ }}\
-          <span class="fly-jing layui-hide-xs">精</span>\
-          {{# } }}\
-          {{# if(d.rows[i].accept >= 0){ }}\
-            <span class="jie-status jie-status-ok">已结</span>\
-          {{# } else { }}\
-            <span class="jie-status">未结</span>\
-          {{# } }}\
-          {{# if(d.rows[i].status == -1){ }}\
-            <span class="jie-status">审核中</span>\
-          {{# } }}\
-          <a class="jie-title" href="/jie/{{d.rows[i].id}}/" target="_blank">{{= d.rows[i].title}}</a>\
-          <i class="layui-hide-xs">{{ layui.util.timeAgo(d.rows[i].time, 1) }}</i>\
-          {{# if(d.rows[i].accept == -1){ }}\
-          <a class="mine-edit layui-hide-xs" href="/jie/edit/{{d.rows[i].id}}" target="_blank">编辑</a>\
-          {{# } }}\
-          <em class="layui-hide-xs">{{d.rows[i].hits}}阅/{{d.rows[i].comment}}答</em>\
-        {{# } }}\
-      </li>\
-      {{# } }}'
-    ];
-
-    var view = function(res){
-      var html = laytpl(tpl[0]).render(res);
-      dom.mine.children().eq(index).find('span').html(res.count);
-      elemUCM.children().eq(index).find('ul').html(res.rows.length === 0 ? '<div class="fly-msg">没有相关数据</div>' : html);
-    };
-
-    var page = function(now){
-      var curr = now || 1;
-      if(gather.minelog[type + '-page-' + curr]){
-        view(gather.minelog[type + '-page-' + curr]);
-      } else {
-        //我收藏的帖
-        if(type === 'collection'){
-          var nums = 10; //每页出现的数据量
-          fly.json(url, {}, function(res){
-            res.count = res.rows.length;
-
-            var rows = layui.sort(res.rows, 'collection_timestamp', 'desc')
-            ,render = function(curr){
-              var data = []
-              ,start = curr*nums - nums
-              ,last = start + nums - 1;
-
-              if(last >= rows.length){
-                last = curr > 1 ? start + (rows.length - start - 1) : rows.length - 1;
-              }
-
-              for(var i = start; i <= last; i++){
-                data.push(rows[i]);
-              }
-
-              res.rows = data;
-              
-              view(res);
-            };
-
-            render(curr)
-            gather.minelog['collect-page-' + curr] = res;
-
-            now || laypage.render({
-              elem: 'LAY_page1'
-              ,count: rows.length
-              ,curr: curr
-              ,jump: function(e, first){
-                if(!first){
-                  render(e.curr);
-                }
-              }
-            });
-          });
-        } else {
-          fly.json('/api/'+ type +'/', {
-            page: curr
-          }, function(res){
-            view(res);
-            gather.minelog['mine-jie-page-' + curr] = res;
-            now || laypage.render({
-              elem: 'LAY_page'
-              ,count: res.count
-              ,curr: curr
-              ,jump: function(e, first){
-                if(!first){
-                  page(e.curr);
-                }
-              }
-            });
-          });
-        }
-      }
-    };
-
-    if(!gather.minelog[type]){
-      page();
-    }
-  };
-
-  if(elemUC[0]){
-    layui.each(dom.mine.children(), function(index, item){
-      var othis = $(item)
-      gather.mine(index, othis.data('type'), othis.data('url'));
-    });
-  }
-
-  //显示当前tab
-  if(location.hash){
-    element.tabChange('user', location.hash.replace(/^#/, ''));
-  }
-
-  element.on('tab(user)', function(){
-    var othis = $(this), layid = othis.attr('lay-id');
-    if(layid){
-      location.hash = layid;
-    }
-  });
 
   //根据ip获取城市
   if($('#L_city').val() === ''){
