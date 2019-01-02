@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.annotation.XmlElementDecl;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @ClassName FrontController
@@ -139,7 +140,7 @@ public class WebUserController extends BaseController {
         FrontPost frontPost = new FrontPost();
         frontPost.getSqlMap().getWhere().disableAutoAddStatusWhere();
         frontPost.setStatus("");
-        frontPost.setCreateBy(userCode);
+        frontPost.setPostUp(frontUser);
         frontPost.setPage(new Page<>(request, response));
         Page<FrontPost> pageData = frontPostService.findPage(frontPost);
         return renderResult("true","查询成功",pageData);
@@ -190,6 +191,16 @@ public class WebUserController extends BaseController {
         frontUser = frontUserService.get(frontUser);
         if(frontUser!=null){
             model.addAttribute("frontUser",frontUser);
+            //最近的提问
+            String userCode = frontUser.getUserCode();
+            FrontPost frontPost = new FrontPost();
+            frontPost.setPostUp(frontUser);
+            frontPost.setPostCategory("0");
+            Page<FrontPost> page = new Page<>();
+            page.setPageSize(10);
+            frontPost.setPage(page);
+            List<FrontPost> recentPostList = frontPostService.findPage(frontPost).getList();
+            model.addAttribute("recentPostList",recentPostList);
             return "modules/front/user/home";
         }else{
             try {
@@ -239,7 +250,7 @@ public class WebUserController extends BaseController {
         FrontUser frontUser =  FrontUtils.getCurrentFrontUser();
         if(frontUser == null){
             return renderResult("false","请登录");
-        }else if(!UserUtils.getSubject().isPermitted("front:view")){
+        }else if(!UserUtils.getSubject().isPermitted("front:edit")){
             return renderResult("false","您的操作权限不足");
         }else if(FrontUtils.isSigned()){
             //判断是否签到过了

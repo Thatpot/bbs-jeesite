@@ -1,12 +1,15 @@
 package com.jeesite.modules.front.jie;
 
+import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.lang.StringUtils;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.FrontCollect;
+import com.jeesite.modules.front.entity.FrontComment;
 import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontCollectService;
+import com.jeesite.modules.front.service.FrontCommentService;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @ClassName FrontController
@@ -35,6 +39,8 @@ public class WebJieController extends BaseController {
     private FrontUserService frontUserService;
     @Autowired
     private FrontCollectService frontCollectService;
+    @Autowired
+    private FrontCommentService frontCommentService;
 
     /**
      * @Author xuyuxiang
@@ -146,8 +152,22 @@ public class WebJieController extends BaseController {
      **/
     @RequestMapping(value = ("reply"), method = RequestMethod.POST)
     @ResponseBody
-    public String reply(Model model, FrontPost frontPost) {
-        //评论
+    public String reply(Model model, FrontPost frontPost, FrontComment frontComment) {
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
+        if(frontUser == null){
+            return renderResult(Global.FALSE,"请登录");
+        }else if(!UserUtils.getSubject().isPermitted("front:edit")){
+            return renderResult(Global.FALSE,"您的操作权限不足");
+        }
+        //设置id为空，防止post的id带来的影响
+        frontComment.setId("");
+        frontComment.setCommentIsaccept("0");
+        frontComment.setCommentUp(frontUser);
+        frontComment.setIsNewRecord(true);
+        List<FrontComment> list = ListUtils.newArrayList();
+        list.add(frontComment);
+        frontPost.setFrontCommentList(list);
+        frontPostService.save(frontPost);
         return renderResult(Global.TRUE,"评论成功");
     }
 
@@ -223,4 +243,36 @@ public class WebJieController extends BaseController {
         }
         return renderResult(Global.TRUE, text("该帖子未被收藏"),false);
     }
+    /**
+     * @Author xuyuxiang
+     * @Description 删除回帖
+     * @Date 11:37 2019/1/2
+     * @Param [frontComment]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("deleteReply"), method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteReply(FrontComment frontComment) {
+        frontCommentService.delete(frontComment);
+        return renderResult(Global.TRUE, text("删除评论成功！"));
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 采纳为最佳答案
+     * @Date 11:44 2019/1/2
+     * @Param [frontComment]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("acceptReply"), method = RequestMethod.POST)
+    @ResponseBody
+    public String acceptReply(FrontComment frontComment) {
+        frontComment = frontCommentService.get(frontComment);
+        frontComment.setCommentIsaccept("1");
+        frontCommentService.save(frontComment);
+        FrontPost frontPost = frontPostService.get(frontComment.getPostId());
+        frontPost.setPostStatus("1");
+        frontPostService.save(frontPost);
+        return renderResult(Global.TRUE, text("采纳成功！"));
+    }
+
 }

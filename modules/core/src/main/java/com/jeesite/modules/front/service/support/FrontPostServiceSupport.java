@@ -4,12 +4,16 @@ import com.jeesite.common.entity.Page;
 import com.jeesite.common.service.CrudService;
 import com.jeesite.modules.front.dao.FrontCommentDao;
 import com.jeesite.modules.front.dao.FrontPostDao;
+import com.jeesite.modules.front.dao.FrontUserDao;
 import com.jeesite.modules.front.entity.FrontComment;
 import com.jeesite.modules.front.entity.FrontPost;
+import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @ClassName FrontPostServiceSupport
@@ -23,6 +27,8 @@ public class FrontPostServiceSupport extends CrudService<FrontPostDao, FrontPost
 
     @Autowired
     private FrontCommentDao frontCommentDao;
+    @Autowired
+    private FrontUserDao frontUserDao;
 
     /**
      * 获取单条数据
@@ -35,7 +41,13 @@ public class FrontPostServiceSupport extends CrudService<FrontPostDao, FrontPost
         if (entity != null){
             FrontComment frontComment = new FrontComment(entity);
             frontComment.setStatus(FrontComment.STATUS_NORMAL);
-            entity.setFrontCommentList(frontCommentDao.findList(frontComment));
+            List<FrontComment> list = frontCommentDao.findList(frontComment);
+            for (FrontComment item : list) {
+                FrontUser frontUser = frontUserDao.get(item.getCommentUp());
+                item.setCommentUp(frontUser);
+            }
+            entity.setFrontCommentList(list);
+
         }
         return entity;
     }

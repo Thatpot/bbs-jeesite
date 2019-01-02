@@ -42,17 +42,19 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                       return '<span style="color: #FF5722;">加精</span>';
                   } else if(d.status == "-1"){
                       return '<span style="color: #ccc;">审核中</span>';
-                  } else {
+                  } else if(d.status == "1"){
+                      return '<span style="color: #ccc;">已删除</span>';
+                  }else {
                       return '<span style="color: #999;">正常</span>'
                   }
            }}
           ,{field: 'postStatus', title: '结贴', width: 100, align: 'center', templet: function(d){
-                  return d.postStatus >= 1 ? '<span style="color: #5FB878;">已结</span>' : '<span style="color: #ccc;">未结</span>'
+                  return d.postStatus >= 1? '<span style="color: #5FB878;">已结</span>' : '<span style="color: #ccc;">未结</span>'
               }}
           ,{field: 'createDate', title: '发表时间', width: 120, align: 'center', templet: '<div>{{ layui.util.timeAgo(d.createDate, 1) }}</div>'}
           ,{title: '数据', width: 150, templet: '<div><span style="font-size: 12px;">{{d.postViewCount}}阅/{{d.postCommentCount}}答</span></div>'}
           ,{title: '操作', width: 100, templet: function(d){
-                  return d.postStatus == 0 ? '<a class="layui-btn layui-btn-xs" href="/js/f/front/jie/add?id='+ d.id +'" target="_blank">编辑</a>' : ''
+                  return d.postStatus == 0 && d.status == 0  ? '<a class="layui-btn layui-btn-xs" href="/js/f/front/jie/add?id='+ d.id +'" target="_blank">编辑</a>' : ''
               }}
       ]]
       ,page: true

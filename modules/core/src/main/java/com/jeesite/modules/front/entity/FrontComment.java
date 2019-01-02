@@ -20,10 +20,10 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
 		@Column(name="id", attrName="id", label="编号", isPK=true),
 		@Column(name="post_id", attrName="postId.id", label="编号"),
 		@Column(includeEntity=DataEntity.class),
-		@Column(name="comment_up", attrName="commentUp.upCode", label="评论者"),
+		@Column(name="comment_up", attrName="commentUp.userCode", label="评论者"),
 		@Column(name="comment_content", attrName="commentContent", label="评论内容"),
 		@Column(name="comment_isaccept", attrName="commentIsaccept", label="是否被采纳"),
-	}, orderBy="a.comment_isaccept DESC,a.create_date ASC"
+	}, orderBy="a.comment_isaccept DESC,a.create_date DESC"
 )
 public class FrontComment extends DataEntity<FrontComment> {
 	
