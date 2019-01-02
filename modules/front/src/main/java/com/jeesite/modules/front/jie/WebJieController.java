@@ -132,6 +132,7 @@ public class WebJieController extends BaseController {
             frontPost.setPostViewCount(frontPost.getPostViewCount()+1);
             frontPostService.save(frontPost);
             model.addAttribute("frontPost",frontPost);
+            model.addAttribute("hasAccept",frontPostService.hasAccept(frontPost));
             model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
             return "modules/front/jie/detail";
         }else {
@@ -166,6 +167,7 @@ public class WebJieController extends BaseController {
         frontComment.setIsNewRecord(true);
         List<FrontComment> list = ListUtils.newArrayList();
         list.add(frontComment);
+        frontPost.setPostCommentCount(frontPost.getPostCommentCount()+1);
         frontPost.setFrontCommentList(list);
         frontPostService.save(frontPost);
         return renderResult(Global.TRUE,"评论成功");

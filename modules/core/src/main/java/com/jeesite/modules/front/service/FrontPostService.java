@@ -55,4 +55,12 @@ public interface FrontPostService extends CrudServiceApi<FrontPost> {
 	@Override
 	@Transactional(readOnly=false)
 	public void delete(FrontPost frontPost);
+	/**
+	 * @Author xuyuxiang
+	 * @Description 查询该帖子是否有最佳答案
+	 * @Date 16:13 2019/1/2
+	 * @Param [frontPost]
+	 * @return boolean
+	 **/
+	public boolean hasAccept(FrontPost frontPost);
 }

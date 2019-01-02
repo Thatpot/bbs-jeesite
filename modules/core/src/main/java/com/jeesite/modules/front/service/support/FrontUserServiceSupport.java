@@ -3,29 +3,20 @@
  */
 package com.jeesite.modules.front.service.support;
 
-import com.jeesite.common.codec.EncodeUtils;
 import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.collect.MapUtils;
 import com.jeesite.common.entity.Page;
-import com.jeesite.common.mybatis.mapper.query.QueryType;
 import com.jeesite.common.service.CrudService;
+import com.jeesite.modules.front.dao.FrontDao;
 import com.jeesite.modules.front.dao.FrontUserDao;
 import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.entity.FrontUser;
-import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
-import com.jeesite.modules.sys.entity.User;
-import com.jeesite.modules.sys.service.UserService;
-import com.jeesite.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,9 +31,9 @@ import java.util.Map;
 @Transactional(readOnly=true)
 public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser> implements FrontUserService {
     @Autowired
-    private FrontService frontService;
+    private FrontDao frontDao;
     @Autowired
-    private UserService userService;
+    private FrontUserDao frontUserDao;
     /**
      * 获取单条数据
      * @param frontUser
@@ -71,8 +62,12 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
     @Transactional(readOnly=false)
     public void save(FrontUser frontUser) {
         super.save(frontUser);
-        frontService.save(frontUser.getFront());
-
+        Front front = frontUser.getFront();
+        if(front.getIsNewRecord()){
+            frontDao.insert(front);
+        }else{
+            frontDao.update(front);
+        }
     }
 
     /**
@@ -129,6 +124,7 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
      * @Param
      * @return
      **/
+    @Override
     @Transactional(readOnly=false)
     public Map<String, Object> sign(Front front) {
         front.setUpSignDate(new Date());
@@ -143,35 +139,12 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
         Long days = front.getUpSignCount();
         Long experience = FrontUtils.getKissTodayBySignCount(days);
         front.setUpKiss(front.getUpKiss() + experience);
-        frontService.save(front);
+        frontDao.update(front);
         Map<String,Object> data = MapUtils.newHashMap();
         data.put("days",days);
         data.put("signed",true);
         data.put("experience",experience);
         return data;
-    }
-    /**
-     * @Author xuyuxiang
-     * @Description 用户修改头像
-     * @Date 12:51 2018/12/21
-     * @Param [request]
-     * @return void
-     **/
-    @Override
-    @Transactional(readOnly=false)
-    public void upload(HttpServletRequest request,FrontUser frontUser) {
-        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
-        MultipartFile multipartFile = multipartHttpServletRequest.getFile("file");
-        String avatarBase64 = "";
-        try {
-            String base64Header = "data:"+multipartFile.getContentType()+";base64,";
-            String base64footer = EncodeUtils.encodeBase64(multipartFile.getBytes());
-            avatarBase64 = base64Header + base64footer;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        frontUser.setAvatarBase64(avatarBase64);
-        userService.updateUserInfo(frontUser);
     }
 
     /**
@@ -198,6 +171,10 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
         //今天签到可以获得的飞吻数
         map.put("experienceShould",experienceShould);
         return map;
+    }
+    @Override
+    public FrontUser getByEntity(FrontUser frontUser) {
+        return frontUserDao.getByEntity(frontUser);
     }
 
 }

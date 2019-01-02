@@ -80,19 +80,19 @@ public interface FrontUserService extends CrudServiceApi<FrontUser> {
 
 	/**
 	 * @Author xuyuxiang
-	 * @Description TODO
-	 * @Date 12:46 2018/12/21
-	 * @Param
-	 * @return
-	 **/
-	public void upload(HttpServletRequest request,FrontUser frontUser);
-
-	/**
-	 * @Author xuyuxiang
 	 * @Description 根据用户获取签到天数和今天获得的飞吻数
 	 * @Date 14:33 2018/12/20
 	 * @Param [front]
 	 * @return java.util.Map<java.lang.String,java.lang.Long>
 	 **/
 	Map<String, Long> getCurrentFrontSignCountAndKiss(FrontUser frontUser);
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description 根据字段查询model
+	 * @Date 17:12 2019/1/2
+	 * @Param [frontUser]
+	 * @return com.jeesite.modules.front.entity.FrontUser
+	 **/
+	public FrontUser getByEntity(FrontUser frontUser);
 }

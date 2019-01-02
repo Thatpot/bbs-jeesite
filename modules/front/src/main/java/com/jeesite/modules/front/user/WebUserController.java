@@ -1,5 +1,6 @@
 package com.jeesite.modules.front.user;
 
+import com.jeesite.common.codec.EncodeUtils;
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.common.web.http.ServletUtils;
@@ -10,11 +11,15 @@ import com.jeesite.modules.front.service.FrontCollectService;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
+import com.jeesite.modules.sys.entity.User;
+import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +36,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "${frontPath}/front/user")
 public class WebUserController extends BaseController {
+    @Autowired
+    private UserService userService;
     @Autowired
     private FrontUserService frontUserService;
     @Autowired
@@ -179,6 +186,32 @@ public class WebUserController extends BaseController {
     }
     /**
      * @Author xuyuxiang
+     * @Description 根据用户名跳转到用户主页
+     * @Date 16:46 2019/1/2
+     * @Param [request, response, username]
+     * @return void
+     **/
+    @RequestMapping(value = ("jump"), method = RequestMethod.GET)
+    public void jump(HttpServletRequest request, HttpServletResponse response,String username){
+        FrontUser frontUser = new FrontUser();
+        frontUser.setUserName(username);
+        frontUser = frontUserService.getByEntity(frontUser);
+        if(frontUser==null){
+            try {
+                response.sendError(404);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            String usercode = frontUser.getUserCode();
+            ServletUtils.redirectUrl(request, response,frontPath+"/front/user/"+usercode);
+        }
+
+    }
+
+
+    /**
+     * @Author xuyuxiang
      * @Description 用户_我的主页
      * @Date 9:09 2018/12/12
      * @Param [model]
@@ -186,9 +219,7 @@ public class WebUserController extends BaseController {
      **/
     @RequestMapping(value = ("{usercode}"), method = RequestMethod.GET)
     public String home(@PathVariable String usercode,Model model,HttpServletRequest request, HttpServletResponse response) {
-        FrontUser frontUser = new FrontUser();
-        frontUser.setUserCode(usercode);
-        frontUser = frontUserService.get(frontUser);
+        FrontUser frontUser = frontUserService.get(usercode);
         if(frontUser!=null){
             model.addAttribute("frontUser",frontUser);
             //最近的提问
@@ -221,7 +252,18 @@ public class WebUserController extends BaseController {
     @RequestMapping(value = ("upload"), method = RequestMethod.POST)
     @ResponseBody
     public String upload(HttpServletRequest request,FrontUser frontUser) {
-        frontUserService.upload(request,frontUser);
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
+        MultipartFile multipartFile = multipartHttpServletRequest.getFile("file");
+        String avatarBase64 = "";
+        try {
+            String base64Header = "data:"+multipartFile.getContentType()+";base64,";
+            String base64footer = EncodeUtils.encodeBase64(multipartFile.getBytes());
+            avatarBase64 = base64Header + base64footer;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        frontUser.setAvatarBase64(avatarBase64);
+        userService.updateUserInfo(frontUser);
         return renderResult("true","上传成功");
     }
     /**

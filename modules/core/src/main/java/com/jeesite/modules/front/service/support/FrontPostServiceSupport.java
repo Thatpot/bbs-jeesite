@@ -109,4 +109,22 @@ public class FrontPostServiceSupport extends CrudService<FrontPostDao, FrontPost
         frontComment.setPostId(frontPost);
         frontCommentDao.delete(frontComment);
     }
+    /**
+     * @Author xuyuxiang
+     * @Description 查询该帖子是否有最佳答案
+     * @Date 16:14 2019/1/2
+     * @Param [frontPost]
+     * @return boolean
+     **/
+    @Override
+    public boolean hasAccept(FrontPost frontPost) {
+        boolean flag = false;
+        for (FrontComment frontComment: frontPost.getFrontCommentList()) {
+            if(frontComment.getCommentIsaccept()=="1"){
+                flag = true;
+                continue;
+            }
+        }
+        return flag;
+    }
 }

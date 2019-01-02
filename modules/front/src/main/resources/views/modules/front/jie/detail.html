@@ -108,16 +108,20 @@
                                             <div class="jieda-admin">
                                                 <span type="edit">编辑</span>
                                                 <span type="del">删除</span>
-                                                <% if(@StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
+                                                <% if(hasAccept=="false") { %>
+                                                    <% if(@StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
                                                     <span class="jieda-accept" type="accept">采纳</span>
+                                                    <% } %>
                                                 <% } %>
                                             </div>
                                         <% } else { %>
-                                            <div class="jieda-admin">
+                                            <% if(hasAccept=="false") { %>
                                                 <% if(frontUser!=null && @StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
-                                                    <span class="jieda-accept" type="accept">采纳</span>
+                                                <div class="jieda-admin">
+                                                     <span class="jieda-accept" type="accept">采纳</span>
+                                                </div>
                                                 <% } %>
-                                            </div>
+                                            <% } %>
                                         <% } %>
                                     </div>
                                 </li>
@@ -174,7 +178,7 @@
     };
     layui.config({
         version: "3.0.0"
-        ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
+        ,base: '${ctxStatic}/fly/mods/'
     }).extend({
         fly: 'index'
     }).use('fly',function(){
