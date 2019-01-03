@@ -48,8 +48,8 @@
                         <div class="detail-hits" id="LAY_jieAdmin" data-id="${frontPost.id}">
                             <span style="padding-right: 10px; color: #FF7200">悬赏：${frontPost.postKiss}飞吻</span>
                             <% if(frontUser!=null) { %>
-                                <% if(@StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode)) { %>
-                                    <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="${ctxf}/front/jie/add?id=${frontPost.id}">编辑此贴</a></span>
+                                <% if(frontPost.postStatus=='0' && @StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode)) { %>
+                                    <span class="layui-btn layui-btn-xs jie-admin jie-btn-edit" type="edit"><a href="${ctxf}/front/jie/add?id=${frontPost.id}">编辑此贴</a></span>
                                 <% } %>
                             <% } %>
                         </div>
@@ -68,7 +68,7 @@
                         <% if(frontPost.frontCommentList.~size==0) { %>
                         <li class="fly-none">消灭零回复</li>
                         <% } else { %>
-                            <% for(item in frontPost.frontCommentList) { %>
+                            <% for(item in commentPage.list) { %>
                                 <li data-id="${item.id}" ${item.commentIsaccept=="1"?'class="jieda-daan"'}>
                                     <a name="item-${item.id}"></a>
                                     <div class="detail-about detail-about-reply">
@@ -108,15 +108,15 @@
                                             <div class="jieda-admin">
                                                 <span type="edit">编辑</span>
                                                 <span type="del">删除</span>
-                                                <% if(hasAccept=="false") { %>
+                                                <% if(!hasAccept) { %>
                                                     <% if(@StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
                                                     <span class="jieda-accept" type="accept">采纳</span>
                                                     <% } %>
                                                 <% } %>
                                             </div>
                                         <% } else { %>
-                                            <% if(hasAccept=="false") { %>
-                                                <% if(frontUser!=null && @StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
+                                            <% if(frontUser!=null) { %>
+                                                <% if(!hasAccept && @StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
                                                 <div class="jieda-admin">
                                                      <span class="jieda-accept" type="accept">采纳</span>
                                                 </div>
@@ -129,6 +129,10 @@
                         <% } %>
 
                     </ul>
+                    <%
+                        var url = ctxf + '/front/jie/' + frontPost.id;
+                        frontPage(commentPage,url);
+                    %>
                     <% if(frontPost.postIsreply=="1") { %>
                     <blockquote class="layui-elem-quote layui-quote-nm layui-disabled"
                                 style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">
@@ -169,13 +173,7 @@
 <% include('/include/f_footer.html', {libs: ['']}){} %>
 <script>
     layui.cache.page = 'jie';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
+    layui.cache.user = '${frontUser}';
     layui.config({
         version: "3.0.0"
         ,base: '${ctxStatic}/fly/mods/'

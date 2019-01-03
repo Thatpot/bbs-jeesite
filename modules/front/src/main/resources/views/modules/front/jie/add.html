@@ -96,16 +96,7 @@
 <% include('/include/f_footer.html', {libs: ['']}){} %>
 <script>
     layui.cache.page = 'jie';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
-    layui.cache.data = {
-        Md5Utils:'${@Md5Utils}'
-    }
+    layui.cache.user = '${frontUser}';
     layui.config({
         version: "3.0.0"
         ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径

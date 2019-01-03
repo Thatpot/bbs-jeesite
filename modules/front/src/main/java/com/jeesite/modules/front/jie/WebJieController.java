@@ -2,6 +2,7 @@ package com.jeesite.modules.front.jie;
 
 import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.config.Global;
+import com.jeesite.common.entity.Page;
 import com.jeesite.common.lang.StringUtils;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.FrontCollect;
@@ -132,6 +133,9 @@ public class WebJieController extends BaseController {
             frontPost.setPostViewCount(frontPost.getPostViewCount()+1);
             frontPostService.save(frontPost);
             model.addAttribute("frontPost",frontPost);
+            FrontComment frontComment = new FrontComment(frontPost);
+            frontComment.setPage(new Page<>(request, response));
+            model.addAttribute("commentPage",frontCommentService.findPage(frontComment));
             model.addAttribute("hasAccept",frontPostService.hasAccept(frontPost));
             model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
             return "modules/front/jie/detail";
@@ -237,13 +241,24 @@ public class WebJieController extends BaseController {
      **/
     @RequestMapping(value = ("isCollected"), method = RequestMethod.POST)
     @ResponseBody
-    public String isCollected(FrontCollect frontCollect) {
-        frontCollect.setUserCode(FrontUtils.getCurrentFrontUser().getUserCode());
-        frontCollect = frontCollectService.getByEntity(frontCollect);
-        if(frontCollect != null){
-            return renderResult(Global.TRUE, text("该帖子已被收藏"),true);
+    public String isCollected(String collectPostId) {
+        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
+        if(frontUser!=null){
+            FrontCollect frontCollect = new FrontCollect();
+            FrontPost frontPost = new FrontPost();
+            frontPost.setId(collectPostId);
+            frontCollect.setCollectPost(frontPost);
+            frontCollect.setUserCode(frontUser.getUserCode());
+            frontCollect = frontCollectService.getByEntity(frontCollect);
+            if(frontCollect != null){
+                return renderResult(Global.TRUE, text("该帖子已被收藏"),true);
+            }else{
+                return renderResult(Global.TRUE, text("该帖子未被收藏"),false);
+            }
+        }else{
+            return renderResult(Global.TRUE, text("未登录"));
         }
-        return renderResult(Global.TRUE, text("该帖子未被收藏"),false);
+
     }
     /**
      * @Author xuyuxiang
@@ -255,7 +270,14 @@ public class WebJieController extends BaseController {
     @RequestMapping(value = ("deleteReply"), method = RequestMethod.POST)
     @ResponseBody
     public String deleteReply(FrontComment frontComment) {
+        frontComment = frontCommentService.get(frontComment);
         frontCommentService.delete(frontComment);
+        //如果删除的是最佳答案，则
+        if(frontComment.getCommentIsaccept()=="1"){
+            FrontPost frontPost = frontPostService.get(frontComment.getPostId());
+            frontPost.setPostStatus("0");
+            frontPostService.save(frontPost);
+        }
         return renderResult(Global.TRUE, text("删除评论成功！"));
     }
     /**

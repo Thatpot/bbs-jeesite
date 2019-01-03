@@ -101,7 +101,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                 ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
                 ,'<span type="code" title="插入代码或引用"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
                 ,'<span type="hr" title="插入水平线">hr</span>'
-                ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
+                ,'<span type="preview" title="预览"><i class="iconfont icon-yulan1"></i></span>'
                 ,'</div>'].join('');
 
             var log = {}, mod = {
@@ -220,21 +220,41 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                 ,hr: function(editor){ //插入水平分割线
                     layui.focusInsert(editor[0], '[hr]');
                 }
-                ,yulan: function(editor){ //预览
-                    var content = editor.val();
+                ,preview: function(editor, span){ //预览
+                    var othis = $(span), getContent = function(){
+                        var content = editor.val();
+                        return /^\{html\}/.test(content)
+                            ? content.replace(/^\{html\}/, '')
+                            : fly.content(content)
+                    }, isMobile = device.ios || device.android;
 
-                    content = /^\{html\}/.test(content)
-                        ? content.replace(/^\{html\}/, '')
-                        : fly.content(content);
+                    if(mod.preview.isOpen) return layer.close(mod.preview.index);
 
-                    layer.open({
+                    mod.preview.index = layer.open({
                         type: 1
                         ,title: '预览'
                         ,shade: false
                         ,offset: 'r'
-                        ,area: ['50%', '100%']
-                        ,scrollbar: false
-                        ,content: '<div class="detail-body" style="margin:20px;">'+ content +'</div>'
+                        ,id: 'LAY_flyedit_preview'
+                        ,area: [
+                            isMobile ? '100%' : '775px'
+                            ,'100%'
+                        ]
+                        ,scrollbar: isMobile ? false : true
+                        ,anim: -1
+                        ,isOutAnim: false
+                        ,content: '<div class="detail-body layui-text" style="margin:20px;">'+ getContent() +'</div>'
+                        ,success: function(layero){
+                            editor.on('keyup', function(val){
+                                layero.find('.detail-body').html(getContent());
+                            });
+                            mod.preview.isOpen = true;
+                            othis.addClass('layui-this');
+                        }
+                        ,end: function(){
+                            delete mod.preview.isOpen;
+                            othis.removeClass('layui-this');
+                        }
                     });
                 }
             };

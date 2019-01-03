@@ -87,16 +87,17 @@ layui.define('fly', function(exports){
 
   //异步渲染
   var asyncRender = function(){
-    var div = $('.fly-admin-box'), jieAdmin = $('#LAY_jieAdmin');
-    var collectSpan = $(jieAdmin[0]).find('span')[1];
+    var jieAdmin = $('#LAY_jieAdmin');
     //查询帖子是否收藏
-    if(collectSpan){
-      fly.json('/js/f/front/jie/isCollected', {
-          'collectPost': div.data('id')
-      }, function(res){
-        jieAdmin.append('<span class="layui-btn layui-btn-xs jie-admin '+ (res.data ? 'layui-btn-danger' : '') +'" type="collect" data-type="'+ (res.data ? 'remove' : 'add') +'">'+ (res.data ? '取消收藏' : '收藏') +'</span>');
-      });
-    }
+      if(jieAdmin[0] && layui.cache.user!= '') {
+          fly.json('/js/f/front/jie/isCollected', {
+              'collectPostId': jieAdmin.data('id')
+          }, function (res) {
+              if (typeof res.data != "undefined") {
+                  jieAdmin.append('<span class="layui-btn layui-btn-xs jie-admin ' + (res.data ? 'layui-btn-danger' : '') + '" type="collect" data-type="' + (res.data ? 'remove' : 'add') + '">' + (res.data ? '取消收藏' : '收藏') + '</span>');
+              }
+          });
+      }
   }();
 
   //解答操作
@@ -131,11 +132,7 @@ layui.define('fly', function(exports){
           id: li.data('id')
         }, function(res){
           if(res.result === "true"){
-            $('.jieda-accept').remove();
-            $('.status-span').text("已结");
-            $('.status-span').css("background-color","#5FB878");
-            li.addClass('jieda-daan');
-            li.find('.detail-about').append('<i class="iconfont icon-caina" title="最佳答案"></i>');
+              location.reload();
           } else {
             layer.msg(res.msg);
           }

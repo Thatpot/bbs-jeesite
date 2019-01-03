@@ -80,16 +80,7 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
 <!--引入页脚-->
 <% include('/include/f_footer.html', {libs: ['']}){} %>
 <script>
-
     layui.cache.page = 'user';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
-
     layui.config({
         version: "3.0.0"
         ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径

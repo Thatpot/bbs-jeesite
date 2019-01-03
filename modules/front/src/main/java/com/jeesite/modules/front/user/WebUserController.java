@@ -2,12 +2,15 @@ package com.jeesite.modules.front.user;
 
 import com.jeesite.common.codec.EncodeUtils;
 import com.jeesite.common.entity.Page;
+import com.jeesite.common.shiro.x.F;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.common.web.http.ServletUtils;
 import com.jeesite.modules.front.entity.FrontCollect;
+import com.jeesite.modules.front.entity.FrontComment;
 import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontCollectService;
+import com.jeesite.modules.front.service.FrontCommentService;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
@@ -44,6 +47,8 @@ public class WebUserController extends BaseController {
     private FrontPostService frontPostService;
     @Autowired
     private FrontCollectService frontCollectService;
+    @Autowired
+    private FrontCommentService frontCommentService;
     /**
      * @Author xuyuxiang
      * @Description 获取用户
@@ -223,7 +228,6 @@ public class WebUserController extends BaseController {
         if(frontUser!=null){
             model.addAttribute("frontUser",frontUser);
             //最近的提问
-            String userCode = frontUser.getUserCode();
             FrontPost frontPost = new FrontPost();
             frontPost.setPostUp(frontUser);
             frontPost.setPostCategory("0");
@@ -231,7 +235,13 @@ public class WebUserController extends BaseController {
             page.setPageSize(10);
             frontPost.setPage(page);
             List<FrontPost> recentPostList = frontPostService.findPage(frontPost).getList();
+            //最近的回答
+            FrontComment frontComment = new FrontComment();
+            frontComment.setCommentUp(frontUser);
+            frontComment.setPage(page);
+            List<FrontComment> recentCommentList = frontCommentService.findPage(frontComment).getList();
             model.addAttribute("recentPostList",recentPostList);
+            model.addAttribute("recentCommentList",recentCommentList);
             return "modules/front/user/home";
         }else{
             try {

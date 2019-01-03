@@ -120,7 +120,7 @@ public class FrontPostServiceSupport extends CrudService<FrontPostDao, FrontPost
     public boolean hasAccept(FrontPost frontPost) {
         boolean flag = false;
         for (FrontComment frontComment: frontPost.getFrontCommentList()) {
-            if(frontComment.getCommentIsaccept()=="1"){
+            if("1".equals(frontComment.getCommentIsaccept())){
                 flag = true;
                 continue;
             }

@@ -57,13 +57,7 @@
 <script>
 
     layui.cache.page = '';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
+    layui.cache.user = '${frontUser}';
     layui.cache.data = {
         secretKey:'${secretKey}'
     };

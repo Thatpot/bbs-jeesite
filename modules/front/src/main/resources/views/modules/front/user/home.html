@@ -70,30 +70,21 @@ var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
             <div class="fly-panel">
                 <h3 class="fly-panel-title">${frontUser.userName} 最近的回答</h3>
                 <ul class="home-jieda">
-                    <li>
-                        <p>
-                            <span>1分钟前</span>
-                            在<a href="" target="_blank">tips能同时渲染多个吗?</a>中回答：
-                        </p>
-                        <div class="home-dacontent">
-                            尝试给layer.photos加上这个属性试试：
-                            <pre>
-full: true
-</pre>
-                            文档没有提及
-                        </div>
+                    <% if(recentCommentList.~size == 0) { %>
+                        <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div>
+                    <% } else { %>
+                        <% for(item in recentCommentList) { %>
+                            <li>
+                                <p>
+                                    <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
+                                    在<a href="${ctxf}/front/jie/${item.postId}" target="_blank">${item.postId.postTitle}</a>中回答：
+                                </p>
+                                <div class="home-dacontent">
+                                    ${item.commentContent}
+                                </div>
                     </li>
-                    <li>
-                        <p>
-                            <span>5分钟前</span>
-                            在<a href="" target="_blank">在Fly社区用的是什么系统啊?</a>中回答：
-                        </p>
-                        <div class="home-dacontent">
-                            Fly社区采用的是NodeJS。分享出来的只是前端模版
-                        </div>
-                    </li>
-
-                    <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
+                        <% } %>
+                    <% } %>
                 </ul>
             </div>
         </div>
@@ -104,43 +95,14 @@ full: true
 <script>
 
     layui.cache.page = '';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '${ctxStatic}/fly/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
+    layui.cache.user = '${frontUser}';
 
     layui.config({
         version: "3.0.0"
         ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
     }).extend({
         fly: 'index'
-    }).use('fly', function(){
-        var fly = layui.fly;
-        var form = layui.form;
-        form.on('submit(*)', function(data){
-            var action = $(data.form).attr('action'), button = $(data.elem);
-            var secretKey = '${secretKey}';
-            data.field.username = DesUtils.encode(data.field.username,secretKey);
-            data.field.password = DesUtils.encode(data.field.password, secretKey);
-            data.field.validCode = DesUtils.encode(data.field.validCode, secretKey);
-            fly.json(action, data.field, function(res){
-                var end = function(res){
-                    location.href = "../index";
-                };
-                if(res.result == "true"){
-                    layer.msg('登录中', {
-                        icon: 16,
-                        shade: 0.01,
-                        end:end(res),
-                    });
-                };
-            },{type:"post",dataType:"json"});
-            return false;
-        });
-    });
+    }).use('fly');
 
 </script>
 <% } %>
