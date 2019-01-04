@@ -61,6 +61,48 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
       ,skin: 'line'
   });
 
+  //帖子管理
+  table.render({
+        elem: '#LAY_postManager'
+        ,url: '/js/f/front/user/postmanagerapi'
+        ,method: 'post'
+        ,request:{
+            pageName:'pageNo',
+            limitName:'pageSize'
+        },
+        parseData:function(res){
+            return {
+                "code":"0",
+                "msg":res.data.message,
+                "count":res.data.count,
+                "data":res.data.list
+            }
+        }
+        ,cols: [[
+            {field: 'title', title: '帖子标题', minWidth: 300, templet: '<div><a href="/js/f/front/jie/{{ d.id }}" target="_blank" class="layui-table-link">{{ d.postTitle }}</a></div>'}
+            ,{field: 'postUp', title: '作者', minWidth: 100, templet: '<div><a href="/js/f/front/user/{{ d.postUp.userCode }}" target="_blank" class="layui-table-link">{{ d.postUp.userName }}</a></div>'}
+            ,{field: 'postStatus', title: '状态', width: 100, align: 'center', templet: function(d){
+                    if(d.postIstop == '1'){
+                        return '<span style="color: #FF5722;">加精</span>';
+                    } else if(d.status == "-1"){
+                        return '<span style="color: #ccc;">审核中</span>';
+                    } else if(d.status == "1"){
+                        return '<span style="color: #ccc;">已删除</span>';
+                    }else {
+                        return '<span style="color: #999;">正常</span>'
+                    }
+                }}
+            ,{field: 'postStatus', title: '结贴', width: 100, align: 'center', templet: function(d){
+                    return d.postStatus >= 1? '<span style="color: #5FB878;">已结</span>' : '<span style="color: #ccc;">未结</span>'
+                }}
+            ,{field: 'createDate', title: '发表时间', width: 120, align: 'center', templet: '<div>{{ layui.util.timeAgo(d.createDate, 1) }}</div>'}
+            ,{title: '数据', width: 100, templet: '<div><span style="font-size: 12px;">{{d.postViewCount}}阅/{{d.postCommentCount}}答</span></div>'}
+            ,{title: '操作', width: 100, toolbar:'<div><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a></div>'}
+        ]]
+        ,page: true
+        ,skin: 'line'
+    });
+
   //我收藏的帖
   if($('#LAY_myCollectioncard')[0]){
       table.render({
@@ -100,6 +142,29 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
           location.hash = layid;
       }
   });
+
+//监听工具条
+table.on("tool(LAY_postManager)", function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+    var data = obj.data; //获得当前行数据
+    var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+    var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+    if(layEvent === 'del'){ //删除
+        layer.confirm('真的删除行么', function(index){
+            obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+            layer.close(index);
+            //向服务端发送删除指令
+        });
+    } else if(layEvent === 'edit'){ //编辑
+        //do something
+
+        //同步更新缓存对应的值
+        obj.update({
+            username: '123'
+            ,title: 'xxx'
+        });
+    }
+});
 
   var gather = {}, dom = {
     mine: $('#LAY_mine')

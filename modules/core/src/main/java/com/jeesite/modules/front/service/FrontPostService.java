@@ -8,6 +8,8 @@ import com.jeesite.common.service.api.CrudServiceApi;
 import com.jeesite.modules.front.entity.FrontPost;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 帖子表Service
  * @author xuyuxiang
@@ -63,4 +65,13 @@ public interface FrontPostService extends CrudServiceApi<FrontPost> {
 	 * @return boolean
 	 **/
 	public boolean hasAccept(FrontPost frontPost);
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description 根据分类查询本周热议
+	 * @Date 13:40 2019/1/4
+	 * @Param [frontPost]
+	 * @return java.util.List<com.jeesite.modules.front.entity.FrontPost>
+	 **/
+	public List<FrontPost> findHotPlostList(FrontPost frontPost,int pageSize);
 }

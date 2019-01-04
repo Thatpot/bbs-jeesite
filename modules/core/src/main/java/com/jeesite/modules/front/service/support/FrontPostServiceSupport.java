@@ -127,4 +127,19 @@ public class FrontPostServiceSupport extends CrudService<FrontPostDao, FrontPost
         }
         return flag;
     }
+    /**
+     * @Author xuyuxiang
+     * @Description 根据分类查询本周热议
+     * @Date 13:41 2019/1/4
+     * @Param [frontPost]
+     * @return java.util.List<com.jeesite.modules.front.entity.FrontPost>
+     **/
+    @Override
+    public List<FrontPost> findHotPlostList(FrontPost frontPost,int pageSize) {
+        Page<FrontPost> page = new Page<FrontPost>();
+        page.setPageSize(pageSize);
+        page.setOrderBy("a.post_comment_count DESC");
+        frontPost.setPage(page);
+        return this.findPage(frontPost).getList();
+    }
 }

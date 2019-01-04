@@ -12,6 +12,7 @@ import com.jeesite.modules.sys.service.OfficeService;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.UserUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -99,5 +100,33 @@ public class FrontUtils {
         frontUser.setUserCode(loginUser.getUserCode());
         frontUser = Static.frontUserService.get(frontUser);
         return frontUser;
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 获取本周区间，查询本周热议用
+     * @Date 14:19 2019/1/4
+     * @Param [date]
+     * @return java.lang.String
+     **/
+    public static String getTimeInterval() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(cal.getTime());
+        // 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了
+        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
+        if (1 == dayWeek) {
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        // System.out.println("要计算日期为:" + sdf.format(cal.getTime())); // 输出要计算日期
+        // 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        // 获得当前日期是一个星期的第几天
+        int day = cal.get(Calendar.DAY_OF_WEEK);
+        // 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值
+        cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String imptimeBegin = sdf.format(cal.getTime());
+        cal.add(Calendar.DATE, 6);
+        String imptimeEnd = sdf.format(cal.getTime());
+        return imptimeBegin + "~" + imptimeEnd;
     }
 }

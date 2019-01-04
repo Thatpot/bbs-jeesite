@@ -7,6 +7,7 @@ import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.front.service.FrontUserService;
+import com.jeesite.modules.front.utils.FrontUtils;
 import com.jeesite.modules.sys.utils.DictUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,10 @@ public class WebColumnController extends BaseController {
             model.addAttribute("postPage",postService.findPage(frontPost));
             model.addAttribute("category",category);
             model.addAttribute("poststatus",null);
+            FrontPost example = new FrontPost();
+            example.setPostCategory(dicCategoryLabel);
+            example.setCreateDate_between(FrontUtils.getTimeInterval());
+            model.addAttribute("hotPostList",postService.findHotPlostList(example,15));
             return "modules/front/column/template";
         }
         try {
@@ -85,6 +90,10 @@ public class WebColumnController extends BaseController {
             model.addAttribute("postPage",postService.findPage(frontPost));
             model.addAttribute("category",category);
             model.addAttribute("poststatus",poststatus);
+            FrontPost example = new FrontPost();
+            example.setPostCategory(dicCategoryLabel);
+            example.setCreateDate_between(FrontUtils.getTimeInterval());
+            model.addAttribute("hotPostList",postService.findHotPlostList(example,15));
             return "modules/front/column/template";
         }
         try {

@@ -62,6 +62,9 @@ public class FrontController extends BaseController {
         model.addAttribute("indexPostList",postService.findPage(frontPost).getList());
         model.addAttribute("category","all");
         model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
+        FrontPost example = new FrontPost();
+        example.setCreateDate_between(FrontUtils.getTimeInterval());
+        model.addAttribute("hotPostList",postService.findHotPlostList(example,15));
         return "modules/front/index";
     }
 

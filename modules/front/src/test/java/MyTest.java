@@ -1,6 +1,7 @@
 import com.jeesite.common.config.Global;
 import com.jeesite.common.io.PropertiesUtils;
 import com.jeesite.common.lang.DateUtils;
+import com.jeesite.modules.front.utils.FrontUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +14,6 @@ import java.util.Date;
  **/
 public class MyTest {
     public static void main(String[] args) {
-        System.out.println(PropertiesUtils.getInstance().getProperty("shiro.filterChainDefinitions"));
+        System.out.println(FrontUtils.getTimeInterval());
     }
 }

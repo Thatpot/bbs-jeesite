@@ -312,5 +312,32 @@ public class WebUserController extends BaseController {
         }
     }
 
+    //======================管理端功能=====================
+    /**
+     * @Author xuyuxiang
+     * @Description 帖子管理页面
+     * @Date 17:11 2018/12/28
+     * @Param [model]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("postmanager"), method = RequestMethod.GET)
+    public String postmanager(Model model) {
+        model.addAttribute("menuType","postmanager");
+        return "modules/front/user/postmanager";
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 帖子管理数据接口
+     * @Date 16:14 2019/1/4
+     * @Param [request, response]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("postmanagerapi"), method = RequestMethod.POST)
+    @ResponseBody
+    public String postmanagerapi(FrontPost frontPost,HttpServletRequest request, HttpServletResponse response){
+        frontPost.setPage(new Page<>(request, response));
+        Page<FrontPost> pageData = frontPostService.findPage(frontPost);
+        return renderResult("true","查询成功",pageData);
+    }
 
 }

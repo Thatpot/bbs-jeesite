@@ -61,7 +61,7 @@
 		<!-- 自定义jar依赖包演示
 		<dependency>
 			<groupId>com.jeesite</groupId>
-			<artifactId>test-core</artifactId>
+			<artifactId>jeesite-module-front</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/test-core-1.0.jar</systemPath>

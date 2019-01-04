@@ -77,7 +77,7 @@ var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
                             <li>
                                 <p>
                                     <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
-                                    在<a href="${ctxf}/front/jie/${item.postId}" target="_blank">${item.postId.postTitle}</a>中回答：
+                                    在<a href="${ctxf}/front/jie/${item.postId}/#item-${item.id}" target="_blank">${item.postId.postTitle}</a>中回答：
                                 </p>
                                 <div class="home-dacontent">
                                     ${item.commentContent}

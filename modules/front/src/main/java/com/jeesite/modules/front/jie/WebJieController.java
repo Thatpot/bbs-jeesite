@@ -50,7 +50,7 @@ public class WebJieController extends BaseController {
      * @Param [id, isNewRecord]
      * @return com.jeesite.modules.front.entity.FrontPost
      **/
-    @ModelAttribute
+   @ModelAttribute
     public FrontPost getFrontPost(String id, boolean isNewRecord,String postUpCode){
         FrontPost frontPost = frontPostService.get(id, isNewRecord);
         if(frontPost.getPostUp()==null && StringUtils.isNotBlank(postUpCode)){
@@ -127,7 +127,7 @@ public class WebJieController extends BaseController {
      * @return java.lang.String
      **/
     @RequestMapping(value = ("{id}"), method = RequestMethod.GET)
-    public String templateIndex(Model model, @PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
+    public String postDetail(Model model, @PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
         FrontPost frontPost = frontPostService.get(id);
         if(frontPost != null){
             frontPost.setPostViewCount(frontPost.getPostViewCount()+1);
@@ -138,6 +138,9 @@ public class WebJieController extends BaseController {
             model.addAttribute("commentPage",frontCommentService.findPage(frontComment));
             model.addAttribute("hasAccept",frontPostService.hasAccept(frontPost));
             model.addAttribute("frontUser",FrontUtils.getCurrentFrontUser());
+            FrontPost example = new FrontPost();
+            example.setCreateDate_between(FrontUtils.getTimeInterval());
+            model.addAttribute("hotPostList",frontPostService.findHotPlostList(example,10));
             return "modules/front/jie/detail";
         }else {
             try {
