@@ -115,6 +115,10 @@ public class WebJieController extends BaseController {
             post.setPostIsgood("0");
             //是否允许回复
             post.setPostIsreply("0");
+            //如果是分享，设置状态待审核
+            if("1".equals(post.getPostCategory())){
+                post.setStatus("2");
+            }
         }
         frontPostService.save(post);
         return renderResult("true","发表成功");
@@ -192,6 +196,21 @@ public class WebJieController extends BaseController {
     public String delete(FrontPost frontPost) {
         frontPostService.delete(frontPost);
         return renderResult(Global.TRUE, text("删除成功！"));
+    }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 审核通过帖子
+     * @Date 14:25 2018/12/28
+     * @Param [frontPost]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("passOrBack"), method = RequestMethod.POST)
+    @ResponseBody
+    public String passOrBack(FrontPost frontPost,String status) {
+        frontPost.setStatus(status);
+        frontPostService.updateStatus(frontPost);
+        return renderResult(Global.TRUE, text("审核通过！"));
     }
 
     /**
@@ -276,7 +295,7 @@ public class WebJieController extends BaseController {
         frontComment = frontCommentService.get(frontComment);
         frontCommentService.delete(frontComment);
         //如果删除的是最佳答案，则
-        if(frontComment.getCommentIsaccept()=="1"){
+        if("1".equals(frontComment.getCommentIsaccept())){
             FrontPost frontPost = frontPostService.get(frontComment.getPostId());
             frontPost.setPostStatus("0");
             frontPostService.save(frontPost);

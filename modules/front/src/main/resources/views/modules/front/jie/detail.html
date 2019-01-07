@@ -10,7 +10,7 @@
                 <div class="fly-panel detail-box">
                     <h1>${frontPost.postTitle}</h1>
                     <div class="fly-detail-info">
-                        <!--<span class="layui-badge">审核中</span>-->
+                        ${frontPost.status=="2"?'<span class="layui-badge">审核中</span>'}
                         <span class="layui-badge layui-bg-green fly-detail-column">${@DictUtils.getDictLabel("front_post_category",frontPost.postCategory,"0")}</span>
                         <span class="layui-badge status-span" style="background-color: ${frontPost.postStatus=="0"?'#999;':'#5FB878;'}">${@DictUtils.getDictLabel("front_post_status",frontPost.postStatus,"0")}</span>
                         ${frontPost.postIstop=="1"?'<span class="layui-badge layui-bg-black">置顶</span>'}

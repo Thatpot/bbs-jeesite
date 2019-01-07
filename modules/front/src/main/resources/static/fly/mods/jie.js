@@ -173,13 +173,7 @@ layui.define('fly', function(exports){
           id: li.data('id')
         }, function(res){
           if(res.result === "true"){
-            var count = dom.jiedaCount.text()|0;
-            dom.jiedaCount.html(--count);
-            li.remove();
-            //如果删除了最佳答案
-            if(li.hasClass('jieda-daan')){
-              $('.jie-status').removeClass('jie-status-ok').text('求解中');
-            }
+              location.reload();
           } else {
             layer.msg(res.msg);
           }

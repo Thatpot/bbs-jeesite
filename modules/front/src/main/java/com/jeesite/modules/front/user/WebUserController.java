@@ -1,20 +1,15 @@
 package com.jeesite.modules.front.user;
 
 import com.jeesite.common.codec.EncodeUtils;
+import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
-import com.jeesite.common.shiro.x.F;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.common.web.http.ServletUtils;
-import com.jeesite.modules.front.entity.FrontCollect;
-import com.jeesite.modules.front.entity.FrontComment;
-import com.jeesite.modules.front.entity.FrontPost;
-import com.jeesite.modules.front.entity.FrontUser;
-import com.jeesite.modules.front.service.FrontCollectService;
-import com.jeesite.modules.front.service.FrontCommentService;
-import com.jeesite.modules.front.service.FrontPostService;
-import com.jeesite.modules.front.service.FrontUserService;
+import com.jeesite.modules.front.entity.*;
+import com.jeesite.modules.front.service.*;
 import com.jeesite.modules.front.utils.FrontUtils;
-import com.jeesite.modules.sys.entity.User;
+import com.jeesite.modules.sys.entity.Role;
+import com.jeesite.modules.sys.service.RoleService;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +21,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.annotation.XmlElementDecl;
 import java.io.IOException;
 import java.util.List;
 
@@ -49,6 +43,10 @@ public class WebUserController extends BaseController {
     private FrontCollectService frontCollectService;
     @Autowired
     private FrontCommentService frontCommentService;
+    @Autowired
+    private FrontService frontService;
+    @Autowired
+    private RoleService roleService;
     /**
      * @Author xuyuxiang
      * @Description 获取用户
@@ -148,7 +146,6 @@ public class WebUserController extends BaseController {
     @ResponseBody
     public String apipost(HttpServletRequest request, HttpServletResponse response){
         FrontUser frontUser = FrontUtils.getCurrentFrontUser();
-        String userCode = frontUser.getUserCode();
         FrontPost frontPost = new FrontPost();
         frontPost.getSqlMap().getWhere().disableAutoAddStatusWhere();
         frontPost.setStatus("");
@@ -336,8 +333,108 @@ public class WebUserController extends BaseController {
     @ResponseBody
     public String postmanagerapi(FrontPost frontPost,HttpServletRequest request, HttpServletResponse response){
         frontPost.setPage(new Page<>(request, response));
+        if(frontPost.getStatus()==null){
+            frontPost.getSqlMap().getWhere().disableAutoAddStatusWhere();
+            frontPost.setStatus("");
+        }
         Page<FrontPost> pageData = frontPostService.findPage(frontPost);
         return renderResult("true","查询成功",pageData);
+    }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 用户管理页面
+     * @Date 17:11 2018/12/28
+     * @Param [model]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("usermanager"), method = RequestMethod.GET)
+    public String usermanager(Model model) {
+        model.addAttribute("menuType","usermanager");
+        return "modules/front/user/usermanager";
+    }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 用户管理数据接口
+     * @Date 16:14 2019/1/4
+     * @Param [request, response]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("usermanagerapi"), method = RequestMethod.POST)
+    @ResponseBody
+    public String usermanagerapi(FrontUser frontUser,HttpServletRequest request, HttpServletResponse response){
+        frontUser.setPage(new Page<>(request, response));
+        if(frontUser.getStatus()==null){
+            frontUser.getSqlMap().getWhere().disableAutoAddStatusWhere();
+            frontUser.setStatus("");
+        }
+        Page<FrontUser> pageData = frontUserService.findPage(frontUser);
+        return renderResult("true","查询成功",pageData);
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 停用用户
+     * @Date 16:39 2019/1/7
+     * @Param [frontUser]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("stop"), method = RequestMethod.POST)
+    @ResponseBody
+    public String stop(FrontUser frontUser) {
+        frontUser.setStatus(FrontUser.STATUS_DISABLE);
+        userService.updateStatus(frontUser);
+        Front front = frontUser.getFront();
+        front.setStatus(FrontUser.STATUS_DISABLE);
+        frontService.updateStatus(front);
+        return renderResult(Global.TRUE, text("停用用户''{0}''成功", frontUser.getUserName()));
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 启用成功
+     * @Date 16:40 2019/1/7
+     * @Param [frontUser]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("start"), method = RequestMethod.POST)
+    @ResponseBody
+    public String start(FrontUser frontUser) {
+        frontUser.setStatus(FrontUser.STATUS_NORMAL);
+        userService.updateStatus(frontUser);
+        Front front = frontUser.getFront();
+        front.setStatus(FrontUser.STATUS_NORMAL);
+        frontService.updateStatus(front);
+        return renderResult(Global.TRUE, text("启用用户''{0}''成功", frontUser.getUserName()));
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 查询该用户角色列表
+     * @Date 16:55 2019/1/7
+     * @Param [frontUser]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("getUserRole"), method = RequestMethod.POST)
+    @ResponseBody
+    public String getUserRole(FrontUser frontUser) {
+        Role role = new Role();
+        role.setUserCode(frontUser.getUserCode());
+        /*List<Role> list = roleService.findListByUserCode(role);*/
+        role.setUserType("front");
+        List<Role> list = roleService.findList(role);
+        return renderResult(Global.TRUE, "查询用户角色成功",list);
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 分配用户角色
+     * @Date 17:18 2019/1/7
+     * @Param [frontUser]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("saveUserRole"), method = RequestMethod.POST)
+    @ResponseBody
+    public String saveUserRole(FrontUser frontUser) {
+        userService.saveAuth(frontUser);
+        return renderResult(Global.TRUE, "分配用户角色成功");
     }
 
 }

@@ -1,7 +1,7 @@
 <%/* Copyright (c) 2013-Now http://jeesite.com All rights reserved. */
 var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
 %>
-<% layout('/layouts/f_default.html', {title: '用户中心',libs: ['']}){ %>
+<% layout('/layouts/f_default.html', {title: '用户管理',libs: ['']}){ %>
 <% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
 <!--主要内容区-->
 <div class="layui-container fly-marginTop fly-user-main">
@@ -13,18 +13,40 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
                 <li class="layui-this">用户列表</li>
             </ul>
             <div class="layui-tab-content" style="padding: 5px 0;">
-                <div class="layui-tab-item layui-show">
-                    <table class="layui-hide" id="LAY_userManager"></table>
-                    <div class="layui-form layui-border-box layui-table-view" lay-id="LAY_userManager" style=" ">
-                        <style>
-                            .laytable-cell-1-0-0{  }
-                            .laytable-cell-1-0-1{ width: 100px; }
-                            .laytable-cell-1-0-2{ width: 100px; }
-                            .laytable-cell-1-0-3{ width: 120px; }
-                            .laytable-cell-1-0-4{ width: 150px; }
-                            .laytable-cell-1-0-5{ width: 100px; }
-                        </style>
+                <form class="layui-form" action="" id="userSearchForm">
+                    <div class="layui-row" style="padding-bottom:5px;">
+                        <div class="layui-col-md3">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="userName" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-col-md3">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-block">
+                                <select name="status" >
+                                    <option></option>
+                                    <option value="0">正常</option>
+                                    <option value="1">已删除</option>
+                                    <option value="2">已停用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="sex" value="1" title="男">
+                                <input type="radio" name="sex" value="2" title="女">
+                            </div>
+                        </div>
+                        <div class="layui-col-md2">
+                            <button class="layui-btn" lay-filter="userSearchForm" lay-submit>搜索</button>
+                            <button class="layui-btn layui-btn-primary" type="reset" id="userSerchResetBtn">重置</button>
+                        </div>
                     </div>
+                </form>
+                <div class="layui-tab-item layui-show">
+                    <table class="layui-hide" id="LAY_userManager" lay-filter="LAY_userManager"></table>
                 </div>
             </div>
         </div>
