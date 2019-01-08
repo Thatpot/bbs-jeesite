@@ -9,6 +9,7 @@ import com.jeesite.common.service.api.CrudServiceApi;
 import com.jeesite.modules.front.dao.FrontUserDao;
 import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.entity.FrontUser;
+import com.jeesite.modules.sys.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,4 +96,13 @@ public interface FrontUserService extends CrudServiceApi<FrontUser> {
 	 * @return com.jeesite.modules.front.entity.FrontUser
 	 **/
 	public FrontUser getByEntity(FrontUser frontUser);
+
+	/**
+	 * @Author xuyuxiang
+	 * @Description 用户注册时候分配角色
+	 * @Date 16:47 2019/1/8
+	 * @Param [frontUser]
+	 * @return void
+	 **/
+	public void saveAuth(User user);
 }

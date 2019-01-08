@@ -5,7 +5,9 @@ package com.jeesite.modules.front.service.support;
 
 import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.collect.MapUtils;
+import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
+import com.jeesite.common.lang.StringUtils;
 import com.jeesite.common.service.CrudService;
 import com.jeesite.modules.front.dao.FrontDao;
 import com.jeesite.modules.front.dao.FrontUserDao;
@@ -13,14 +15,15 @@ import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.entity.FrontUser;
 import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.front.utils.FrontUtils;
+import com.jeesite.modules.sys.dao.UserRoleDao;
+import com.jeesite.modules.sys.entity.User;
+import com.jeesite.modules.sys.entity.UserRole;
+import com.jeesite.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 前台用户表Service
@@ -34,6 +37,8 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
     private FrontDao frontDao;
     @Autowired
     private FrontUserDao frontUserDao;
+    @Autowired
+    private UserRoleDao userRoleDao;
     /**
      * 获取单条数据
      * @param frontUser
@@ -175,6 +180,31 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
     @Override
     public FrontUser getByEntity(FrontUser frontUser) {
         return frontUserDao.getByEntity(frontUser);
+    }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 用户注册时候分配角色
+     * @Date 16:48 2019/1/8
+     * @Param [frontUser]
+     * @return void
+     **/
+    @Override
+    @Transactional(readOnly=false)
+    public void saveAuth(User user) {
+        if (!StringUtils.isBlank(user.getUserCode())) {
+            List list = user.getUserRoleList();
+            Iterator iterator = list.iterator();
+            while(iterator.hasNext()) {
+                UserRole userRole = (UserRole)iterator.next();
+                userRole.setUserCode(user.getUserCode());
+            }
+            if (ListUtils.isNotEmpty(list)) {
+                userRoleDao.insertBatch(user.getUserRoleList());
+            }
+
+            UserUtils.clearCache(user);
+        }
     }
 
 }

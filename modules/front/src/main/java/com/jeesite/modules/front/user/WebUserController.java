@@ -1,6 +1,7 @@
 package com.jeesite.modules.front.user;
 
 import com.jeesite.common.codec.EncodeUtils;
+import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.web.BaseController;
@@ -418,10 +419,13 @@ public class WebUserController extends BaseController {
     public String getUserRole(FrontUser frontUser) {
         Role role = new Role();
         role.setUserCode(frontUser.getUserCode());
-        /*List<Role> list = roleService.findListByUserCode(role);*/
+        List<Role> userRolelist = roleService.findListByUserCode(role);
         role.setUserType("front");
-        List<Role> list = roleService.findList(role);
-        return renderResult(Global.TRUE, "查询用户角色成功",list);
+        List<Role> userRolelistAll = roleService.findList(role);
+        List<List<Role>> data = ListUtils.newArrayList();
+        data.add(userRolelist);
+        data.add(userRolelistAll);
+        return renderResult(Global.TRUE, "查询用户角色成功",data);
     }
     /**
      * @Author xuyuxiang

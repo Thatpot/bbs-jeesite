@@ -14,6 +14,7 @@ import com.jeesite.common.service.ServiceException;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.Front;
 import com.jeesite.modules.front.service.FrontService;
+import com.jeesite.modules.front.service.FrontUserService;
 import com.jeesite.modules.sys.entity.Role;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.service.RoleService;
@@ -49,7 +50,7 @@ public class AccountController extends BaseController{
 	@Autowired
 	private FrontService frontService;
 	@Autowired
-	private RoleService roleService;
+	private FrontUserService frontUserService;
 
 	/**
 	 * 忘记密码页面
@@ -375,8 +376,8 @@ public class AccountController extends BaseController{
 		u.setRefName(front.getUpName());
 		userService.save(u);
 		//给用户分配前台角色
-		u.setUserRoleString(roleString);
-		userService.saveAuth(u);
+		u.setUserRoleString(roleString+",");
+		frontUserService.saveAuth(u);
 
 		// 验证成功后清理验证码，验证码只允许使用一次。
 		UserUtils.removeCache("regUserType");

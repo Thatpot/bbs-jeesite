@@ -310,29 +310,59 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                 });
             });
         }
-        var roleFormTpl = '<form class="layui-form layui-hide" action="" id="roleForm">\n' +
-            '    <div class="layui-form-item">\n' +
-            '        <label class="layui-form-label">角色</label>\n' +
-            '        <div class="layui-input-block">\n' +
-            '            <input type="checkbox" name="userRoleString[front]" title="前台用户">\n' +
-            '            <input type="checkbox" name="userRoleString[frontadmin]" title="前台管理员" checked>\n' +
-            '        </div>\n' +
-            '    </div>\n' +
-            '</form>';
+        //分配角色模板
+        var roleFormTpl = ['<form class="layui-form" action="" lay-filter="roleForm" id="roleForm" style="padding-top:20px">'
+            ,'    <div class="layui-form-item">'
+            ,'        <label class="layui-form-label">角色</label>'
+            ,'        <div class="layui-input-block">'
+            ,'          {{# layui.each(d.data[1], function(index, item){ }}'
+            ,'            <input type="checkbox" name="userRoleString[{{item.roleCode}}]" value="{{item.roleCode}}" title="{{item.roleName}}">'
+            ,'          {{# }) }}'
+            ,'        </div>'
+            ,'    </div>'
+            ,'<div class="layui-form-item">'
+            ,'    <div class="layui-input-block">'
+            ,'      <button class="layui-btn" lay-submit lay-filter="roleForm">确定</button>'
+            ,'      <button type="reset" class="layui-btn layui-btn-primary">重置</button>'
+            ,'    </div>'
+            ,'  </div>'
+            ,'</form>'].join('');
         if(layEvent === 'role'){ //分配角色
                 fly.json('/js/f/front/user/getUserRole', {
                     userCode: data.userCode,
                     status:"0"
                 }, function(res){
-                    var roleForm = $('#roleForm');
-                    roleForm.removeClass("layui-hide");
+                    var html = "";
+                    layui.each(res.data, function(index, item){
+                        html = laytpl(roleFormTpl).render({
+                            data: res.data
+                            ,index: index
+                        });
+                        $(item).html(html);
+                    });
                     layer.open({
                         type: 1,
                         title: '分配角色',
                         shadeClose: true,
                         shade: 0.8,
-                        area: ['600px', '300px'],
-                        content:roleForm
+                        area: ['400px', '200px'],
+                        content: html,
+                        success:function(){
+                            form.render();
+                            var userRoleList = res.data[0];
+                            for(var i=0;i<userRoleList.length;i++){
+                                var roleCode = userRoleList[i].roleCode;
+                                var attrName = "userRoleString["+ roleCode +"]";
+                                var check = $("#roleForm").find("input[name='"+attrName+"']");
+                                $(check).attr("checked","checked");
+                                form.render("checkbox");
+                            }
+                        }
+                    });
+
+                    form.on('submit(roleForm)', function(data) {
+                        console.log(data.field[0].val())
+                        return false;
                     });
                 });
         }
