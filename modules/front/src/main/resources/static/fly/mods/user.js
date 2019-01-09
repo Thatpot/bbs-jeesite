@@ -283,7 +283,6 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
             layer.confirm('确定停用此用户吗', function(index){
                 fly.json('/js/f/front/user/stop', {
                     userCode: data.userCode,
-                    status:"2"
                 }, function(res){
                     obj.update({
                         status: '2'
@@ -299,7 +298,6 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
             layer.confirm('确定启用此用户吗', function(index){
                 fly.json('/js/f/front/user/start', {
                     userCode: data.userCode,
-                    status:"0"
                 }, function(res){
                     obj.update({
                         status: '0'
@@ -311,7 +309,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
             });
         }
         //分配角色模板
-        var roleFormTpl = ['<form class="layui-form" action="" lay-filter="roleForm" id="roleForm" style="padding-top:20px">'
+        var roleFormTpl = ['<form class="layui-form" action="/js/f/front/user/saveUserRole" lay-filter="roleForm" id="roleForm" style="padding-top:20px">'
             ,'    <div class="layui-form-item">'
             ,'        <label class="layui-form-label">角色</label>'
             ,'        <div class="layui-input-block">'
@@ -328,8 +326,9 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
             ,'  </div>'
             ,'</form>'].join('');
         if(layEvent === 'role'){ //分配角色
+                var userCode = data.userCode;
                 fly.json('/js/f/front/user/getUserRole', {
-                    userCode: data.userCode,
+                    userCode: userCode,
                     status:"0"
                 }, function(res){
                     var html = "";
@@ -340,7 +339,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                         });
                         $(item).html(html);
                     });
-                    layer.open({
+                    var index = layer.open({
                         type: 1,
                         title: '分配角色',
                         shadeClose: true,
@@ -361,7 +360,23 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                     });
 
                     form.on('submit(roleForm)', function(data) {
-                        console.log(data.field[0].val())
+                        var dataString = "";
+                        for (var i in data.field) {
+                            dataString += data.field[i] + ",";
+                        }
+                        if(dataString.length > 0){
+                            dataString = dataString.substr(0,dataString.length-1);
+                        }
+                        var obj = {
+                            userCode:userCode,
+                            userRoleString:dataString
+                        }
+                        var action = $(data.form).attr('action');
+                        fly.json(action, obj, function(res){
+                            layer.msg(res.message, {icon: 6,shade: 0.01,time: 500},function () {
+                                layer.close(index)
+                            });
+                        });
                         return false;
                     });
                 });
@@ -385,6 +400,209 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
     $("#userSerchResetBtn").on('click',function(){
         userManagerTable.reload({where:{},page:{ curr: 1}});
         $("#userSearchForm").reset();
+        return false;
+    });
+
+    //广告管理
+    var adManagerTable = table.render({
+        elem: '#LAY_adManager'
+        ,url: '/js/f/front/user/admanagerapi'
+        ,method: 'post'
+        ,request:{
+            pageName:'pageNo',
+            limitName:'pageSize'
+        },
+        parseData:function(res){
+            return {
+                "code":"0",
+                "msg":res.data.message,
+                "count":res.data.count,
+                "data":res.data.list
+            }
+        }
+        ,cols: [[
+            {field: 'title', title: '文字', minWidth: 270, templet: '<div>{{ d.adTitle }}</div>'}
+            ,{field: 'link', title: '链接', minWidth: 100, templet: '<div><a href="{{ d.link }}" target="_blank" class="layui-table-link">{{ d.link }}</a></div>'}
+            ,{field: 'picPath', title: '图片', width: 100, align: 'center', toolbar: '<div><a class="layui-table-link" lay-event="show">点击查看</a></div>'}
+            ,{field: 'adType', title: '类型', width: 120, align: 'center', templet: function(d){
+                    if(d.adType == "1"){
+                        return '<span style="color: #5FB878;">心级赞助商</span>';
+                    }else if(d.adType == "2"){
+                        return '<span style="color: #009688;">钻级赞助商</span>';
+                    }else if(d.adType == "3"){
+                        return '<span style="color: #FF5722;">皇冠赞助商</span>';
+                    }else {
+                        return '<span style="color: #999;">官方产品</span>'
+                    }
+              }}
+            ,{field: 'status', title: '状态', width: 100, align: 'center', templet: function(d){
+                    if(d.status == "1"){
+                        return '<span style="color: #ccc;">已删除</span>';
+                    }else if(d.status == "2"){
+                        return '<span style="color: #009688;">已停用</span>';
+                    }else {
+                        return '<span style="color: #999;">正常</span>'
+                    }
+                }}
+            ,{title: '操作', width: 130, toolbar:'<div>' +
+                    '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>' +
+                    '{{# if(d.status=="2") { }}<a class="layui-btn layui-btn-xs" lay-event="start">启用</a>{{# } }}' +
+                    '{{# if(d.status=="0") { }}<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="stop">停用</a>{{# } }}' +
+                    '</div>'}
+        ]]
+        ,page: true
+        ,skin: 'line'
+    });
+
+    //监听工具条
+    table.on("tool(LAY_adManager)", function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+        var data = obj.data; //获得当前行数据
+        var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+        var tr = obj.tr; //获得当前行 tr 的DOM对象
+        if(layEvent === 'show'){ //展示图片
+            if(typeof data.picPath != "undefined"){
+                var json = {
+                    "title": "", //相册标题
+                    "id": 1, //相册id
+                    "start": 0, //初始显示的图片序号，默认0
+                    "data": [   //相册包含的图片，数组格式
+                        {
+                            "alt": "广告图片",
+                            "pid": 1, //图片id
+                            "src": data.picPath, //原图地址
+                            "thumb": data.picPath //缩略图地址
+                        }
+                    ]
+                };
+                layer.photos({
+                    photos: json
+                });
+            }else{
+                layer.msg("该数据暂无图片", {shift: 6});
+            }
+
+        }
+
+        if(layEvent === 'stop'){ //停用
+            var temp = this;
+            layer.confirm('确定停用此广告吗', function(index){
+                fly.json('/js/f/front/user/stopad', {
+                    id: data.id,
+                }, function(res){
+                    obj.update({
+                        status: '2'
+                    });
+                    $(temp).parent().append("<a class=\"layui-btn layui-btn-xs\" lay-event=\"start\">启用</a>");
+                    $(temp).remove();
+                    layer.close(index);
+                });
+            });
+        }
+        if(layEvent === 'start'){ //启用
+            var temp = this;
+            layer.confirm('确定启用此广告吗', function(index){
+                fly.json('/js/f/front/user/startad', {
+                    id: data.id,
+                }, function(res){
+                    obj.update({
+                        status: '0'
+                    });
+                    $(temp).parent().append("<a class=\"layui-btn layui-btn-danger layui-btn-xs\" lay-event=\"stop\">停用</a>");
+                    $(temp).remove();
+                    layer.close(index);
+                });
+            });
+        }
+
+        if(layEvent === 'edit') { //编辑
+            var editdata = {
+                id:data.id
+            }
+            show(editdata,"编辑广告");
+        }
+    });
+    var show = function(data,title){
+        var adForm = $("#adForm");
+        adForm.removeClass("layui-hide");
+        //弹出广告添加表单
+        fly.json("/js/f/front/user/adform", data, function(res){
+            var data = res.data;
+            layer.open({
+                type: 1,
+                title: title,
+                shadeClose: true,
+                shade: 0.8,
+                area: ['60%', '80%'],
+                content: adForm,
+                success:function(){
+                    var frontAd_image__del = data.delPicId;
+                    form.val("adForm", {
+                        "id":data.id
+                        ,"adTitle":data.adTitle
+                        ,"link": data.link
+                        ,"adType": data.adType
+                    });
+                    $('#adFormThumbnail').attr('src', data.picPath);
+                    var uploadInst = upload.render({
+                        elem: '#test1'
+                        ,url: '/js/a/file/upload'
+                        ,size: 2048
+                        ,acceptMime: 'image/*'
+                        ,before: function(obj){
+                            //预读本地文件示例，不支持ie8
+                            obj.preview(function(index, file, result){
+                                $('#adFormThumbnail').attr('src', result); //图片链接（base64）
+                            });
+                        }
+                        ,choose:function (obj) {
+                            var file = $(".layui-upload-file").get(0).files[0];
+                            this.data = {
+                                "fileName":file.name,
+                                "fileMd5":Math.random(),
+                                "uploadType":"image"
+                            };
+                        }
+                        ,done: function(res){
+                            if(res.result == "true"){
+                                $("#frontAd_image").val(res.fileUpload.id);
+                                $("#frontAd_image__del").val(frontAd_image__del);
+                            } else {
+                                layer.msg(res.message, {icon: 5});
+                            }
+                        }
+                        ,error: function(){
+                            //失败状态，实现重传
+                            var adFormTest = $('#adFormTest');
+                            adFormTest.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs adupload-reload">重试</a>');
+                            adFormTest.find('.adupload-reload').on('click', function(){
+                                uploadInst.upload();
+                            });
+                        }
+                    });
+                },
+                end:function () {
+                    form.val("adForm", {
+                        "id":""
+                        ,"adTitle":""
+                        ,"link": ""
+                        ,"adType": ""
+                        ,"frontAd_image": ""
+                        ,"frontAd_image__del": ""
+                    });
+                    $("#adFormTest").html();
+                    $('#adFormThumbnail').removeAttr("src");
+                }
+            });
+        });
+    };
+    form.on('submit(admanagerForm)', function(data) {
+        var action = $(data.form).attr('action');
+        fly.json(action, data.field, function(res){
+            layer.msg(res.message, {icon: 6,shade: 0.01,time: 500},function () {
+                layer.close(layer.index);
+                location.reload();
+            });
+        });
         return false;
     });
 

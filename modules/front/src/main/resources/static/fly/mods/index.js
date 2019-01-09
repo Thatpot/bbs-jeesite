@@ -165,7 +165,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                                         "fileMd5":Math.random(),
                                         "uploadType":"image"
                                     };
-                                    console.log(util.uid);
                                 }
                                 ,done: function(res){
                                     if(res.result == "true"){

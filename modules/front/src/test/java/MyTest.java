@@ -1,6 +1,7 @@
 import com.jeesite.common.config.Global;
 import com.jeesite.common.io.PropertiesUtils;
 import com.jeesite.common.lang.DateUtils;
+import com.jeesite.common.web.http.ServletUtils;
 import com.jeesite.modules.front.utils.FrontUtils;
 
 import java.util.Calendar;
@@ -14,6 +15,6 @@ import java.util.Date;
  **/
 public class MyTest {
     public static void main(String[] args) {
-        System.out.println(FrontUtils.getTimeInterval());
+        System.out.println(ServletUtils.getParameter("frontAd_image"));
     }
 }

@@ -1,10 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<%/* Copyright (c) 2013-Now http://jeesite.com All rights reserved. */
+var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
+%>
+<% layout('/layouts/f_default.html', {title: '广告管理',libs: ['']}){ %>
+<% include('/include/upgrade.html'){} // 如果客户浏览器版本过低，则显示浏览器升级提示。 %>
+<!--主要内容区-->
+<div class="layui-container fly-marginTop fly-user-main">
+    <!--引入用户左侧菜单栏-->
+    <% layout('./include/f_user_siderbar.html', {}){ }%>
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">广告列表</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 5px 0;">
+                <div class="layui-tab-item layui-show">
+                    <table class="layui-hide" id="LAY_adManager" lay-filter="LAY_adManager"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--引入页脚-->
+<% include('/include/f_footer.html', {libs: ['']}){} %>
+<div id="adForm" class="layui-hide" style="padding: 20px">
+    <form class="layui-form" action="${ctxf}/front/user/adedit" lay-filter="adForm">
+        <input type="text" name="id" hidden>
+        <input type="text" name="frontAd_image" id = "frontAd_image" value="" hidden>
+        <input type="text" name="frontAd_image__del" id = "frontAd_image__del" value="" hidden>
+        <div class="layui-form-item">
+            <label class="layui-form-label">广告文字</label>
+            <div class="layui-input-block">
+                <input type="text" name="adTitle" required  lay-verify="required" placeholder="请输入广告文字" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">广告链接</label>
+            <div class="layui-input-block">
+                <input type="text" name="link" required  lay-verify="required" placeholder="请输入广告链接" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">广告类型</label>
+            <div class="layui-input-block">
+                <select name="adType" lay-verify="required">
+                    <option value=""></option>
+                    <option value="0">官方产品</option>
+                    <option value="1">心级赞助商</option>
+                    <option value="2">钻级赞助商</option>
+                    <option value="3">皇冠赞助商</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">广告图片</label>
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="test1">上传图片</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="adFormThumbnail" style="width:700px;height:120px">
+                        <p id="adFormTest"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="admanagerForm">确定</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
 
-</body>
-</html>
+</div>
+<script>
+
+    layui.cache.page = 'user';
+    layui.cache.user = '${frontUser}';
+
+    layui.config({
+        version: "3.0.0"
+        ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+
+</script>
+
+<% } %>

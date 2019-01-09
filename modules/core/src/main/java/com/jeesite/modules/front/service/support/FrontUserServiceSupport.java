@@ -193,6 +193,10 @@ public class FrontUserServiceSupport extends CrudService<FrontUserDao, FrontUser
     @Transactional(readOnly=false)
     public void saveAuth(User user) {
         if (!StringUtils.isBlank(user.getUserCode())) {
+            UserRole a = new UserRole();
+            a.setUserCode(user.getUserCode());
+            userRoleDao.deleteByEntity(a);
+
             List list = user.getUserRoleList();
             Iterator iterator = list.iterator();
             while(iterator.hasNext()) {

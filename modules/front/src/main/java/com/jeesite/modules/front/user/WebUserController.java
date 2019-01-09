@@ -4,8 +4,11 @@ import com.jeesite.common.codec.EncodeUtils;
 import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
+import com.jeesite.common.io.FileUtils;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.common.web.http.ServletUtils;
+import com.jeesite.modules.file.entity.FileUpload;
+import com.jeesite.modules.file.utils.FileUploadUtils;
 import com.jeesite.modules.front.entity.*;
 import com.jeesite.modules.front.service.*;
 import com.jeesite.modules.front.utils.FrontUtils;
@@ -48,6 +51,8 @@ public class WebUserController extends BaseController {
     private FrontService frontService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private FrontAdService frontAdService;
     /**
      * @Author xuyuxiang
      * @Description 获取用户
@@ -437,8 +442,89 @@ public class WebUserController extends BaseController {
     @RequestMapping(value = ("saveUserRole"), method = RequestMethod.POST)
     @ResponseBody
     public String saveUserRole(FrontUser frontUser) {
-        userService.saveAuth(frontUser);
+        frontUserService.saveAuth(frontUser);
         return renderResult(Global.TRUE, "分配用户角色成功");
     }
 
+
+    /**
+     * @Author xuyuxiang
+     * @Description 广告管理页面
+     * @Date 17:11 2018/12/28
+     * @Param [model]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("admanager"), method = RequestMethod.GET)
+    public String admanager(Model model) {
+        model.addAttribute("menuType","admanager");
+        return "modules/front/user/admanager";
+    }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 用户管理数据接口
+     * @Date 16:14 2019/1/4
+     * @Param [request, response]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("admanagerapi"), method = RequestMethod.POST)
+    @ResponseBody
+    public String admanagerapi(FrontAd frontAd,HttpServletRequest request, HttpServletResponse response){
+        frontAd.setPage(new Page<>(request, response));
+        if(frontAd.getStatus()==null){
+            frontAd.getSqlMap().getWhere().disableAutoAddStatusWhere();
+            frontAd.setStatus("");
+        }
+        Page<FrontAd> pageData = frontAdService.findPage(frontAd);
+        return renderResult("true","查询成功",pageData);
+    }
+
+    /**
+     * @Author xuyuxiang
+     * @Description 停用广告
+     * @Date 16:39 2019/1/7
+     * @Param [frontUser]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("stopad"), method = RequestMethod.POST)
+    @ResponseBody
+    public String stopad(FrontAd frontAd) {
+        frontAd.setStatus(FrontAd.STATUS_DISABLE);
+        frontAdService.updateStatus(frontAd);
+        return renderResult(Global.TRUE, "停用广告成功");
+    }
+
+    @RequestMapping(value = ("startad"), method = RequestMethod.POST)
+    @ResponseBody
+    public String startad(FrontAd frontAd) {
+        frontAd.setStatus(FrontAd.STATUS_NORMAL);
+        frontAdService.updateStatus(frontAd);
+        return renderResult(Global.TRUE, "启用广告成功");
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 弹出表单前获取广告实例
+     * @Date 16:00 2019/1/9
+     * @Param [frontAd]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("adform"), method = RequestMethod.POST)
+    @ResponseBody
+    public String adform(FrontAd frontAd) {
+        frontAd =  frontAdService.get(frontAd);
+        return renderResult(Global.TRUE, "查询成功",frontAd);
+    }
+    /**
+     * @Author xuyuxiang
+     * @Description 广告添加或编辑
+     * @Date 15:02 2019/1/9
+     * @Param [model]
+     * @return java.lang.String
+     **/
+    @RequestMapping(value = ("adedit"), method = RequestMethod.POST)
+    @ResponseBody
+    public String adedit(FrontAd frontAd) {
+        frontAdService.save(frontAd);
+        return renderResult(Global.TRUE, "保存成功");
+    }
 }
