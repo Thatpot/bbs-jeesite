@@ -4,7 +4,7 @@
 
  */
 
-layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
+layui.define(['laypage', 'fly', 'element', 'flow', 'table','colorpicker'], function(exports){
 
     var $ = layui.jquery;
     var layer = layui.layer;
@@ -17,6 +17,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
     var element = layui.element;
     var upload = layui.upload;
     var table = layui.table;
+    var colorpicker = layui.colorpicker;
 
     //我发的贴
     table.render({
@@ -247,7 +248,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                     if(d.status == "1"){
                         return '<span style="color: #ccc;">已删除</span>';
                     }else if(d.status == "2"){
-                        return '<span style="color: #009688;">已停用</span>';
+                        return '<span style="color: #FF5722;">已停用</span>';
                     }else {
                         return '<span style="color: #999;">正常</span>'
                     }
@@ -439,13 +440,13 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                     if(d.status == "1"){
                         return '<span style="color: #ccc;">已删除</span>';
                     }else if(d.status == "2"){
-                        return '<span style="color: #009688;">已停用</span>';
+                        return '<span style="color: #FF5722;">已停用</span>';
                     }else {
                         return '<span style="color: #999;">正常</span>'
                     }
                 }}
             ,{title: '操作', width: 130, toolbar:'<div>' +
-                    '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>' +
+                    '<a class="layui-btn  layui-btn-xs" lay-event="edit">编辑</a>' +
                     '{{# if(d.status=="2") { }}<a class="layui-btn layui-btn-xs" lay-event="start">启用</a>{{# } }}' +
                     '{{# if(d.status=="0") { }}<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="stop">停用</a>{{# } }}' +
                     '</div>'}
@@ -460,7 +461,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
         var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
         var tr = obj.tr; //获得当前行 tr 的DOM对象
         if(layEvent === 'show'){ //展示图片
-            if(typeof data.picPath != "undefined"){
+            if(typeof data.picPath != "undefined" && data.picPath!=""){
                 var json = {
                     "title": "", //相册标题
                     "id": 1, //相册id
@@ -522,11 +523,31 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
         }
     });
     var show = function(data,title){
-        var adForm = $("#adForm");
-        adForm.removeClass("layui-hide");
         //弹出广告添加表单
         fly.json("/js/f/front/user/adform", data, function(res){
             var data = res.data;
+            var frontAd_image__del = "";
+            if(data.isNewRecord!="true"){
+                form.val("adForm", {
+                    "id":data.id
+                    ,"adTitle":data.adTitle
+                    ,"link": data.link
+                    ,"adType": data.adType
+                    ,"adBackColor": data.adBackColor
+                });
+                //表单赋值
+                colorpicker.render({
+                    elem: '#adBackColorForm'
+                    ,color: data.adBackColor
+                    ,done: function(color){
+                        $('#adBackColorInput').val(color);
+                    }
+                });
+                frontAd_image__del =  data.delPicId;
+            }
+            var adForm = $("#adForm");
+            adForm.removeClass("layui-hide");
+            $('#adFormThumbnail').attr('src', data.picPath);
             layer.open({
                 type: 1,
                 title: title,
@@ -535,66 +556,63 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
                 area: ['60%', '80%'],
                 content: adForm,
                 success:function(){
-                    var frontAd_image__del = data.delPicId;
-                    form.val("adForm", {
-                        "id":data.id
-                        ,"adTitle":data.adTitle
-                        ,"link": data.link
-                        ,"adType": data.adType
-                    });
-                    $('#adFormThumbnail').attr('src', data.picPath);
-                    var uploadInst = upload.render({
-                        elem: '#test1'
-                        ,url: '/js/a/file/upload'
-                        ,size: 2048
-                        ,acceptMime: 'image/*'
-                        ,before: function(obj){
-                            //预读本地文件示例，不支持ie8
-                            obj.preview(function(index, file, result){
-                                $('#adFormThumbnail').attr('src', result); //图片链接（base64）
-                            });
-                        }
-                        ,choose:function (obj) {
-                            var file = $(".layui-upload-file").get(0).files[0];
-                            this.data = {
-                                "fileName":file.name,
-                                "fileMd5":Math.random(),
-                                "uploadType":"image"
-                            };
-                        }
-                        ,done: function(res){
-                            if(res.result == "true"){
-                                $("#frontAd_image").val(res.fileUpload.id);
-                                $("#frontAd_image__del").val(frontAd_image__del);
-                            } else {
-                                layer.msg(res.message, {icon: 5});
-                            }
-                        }
-                        ,error: function(){
-                            //失败状态，实现重传
-                            var adFormTest = $('#adFormTest');
-                            adFormTest.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs adupload-reload">重试</a>');
-                            adFormTest.find('.adupload-reload').on('click', function(){
-                                uploadInst.upload();
-                            });
-                        }
-                    });
+                    //初始化上传组件和颜色选择器组件
+                    uploadInst(frontAd_image__del);
                 },
                 end:function () {
-                    form.val("adForm", {
-                        "id":""
-                        ,"adTitle":""
-                        ,"link": ""
-                        ,"adType": ""
-                        ,"frontAd_image": ""
-                        ,"frontAd_image__del": ""
-                    });
-                    $("#adFormTest").html();
-                    $('#adFormThumbnail').removeAttr("src");
+                    clearForm(adForm);
                 }
             });
         });
     };
+    var uploadInst = function(frontAd_image__del){
+        upload.render({
+            elem: '#adFormPic'
+            ,url: '/js/a/file/upload'
+            ,size: 2048
+            ,acceptMime: 'image/*'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#adFormThumbnail').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,choose:function (obj) {
+                var file = $(".layui-upload-file").get(0).files[0];
+                this.data = {
+                    "fileName":file.name,
+                    "fileMd5":Math.random(),
+                    "uploadType":"image"
+                };
+            }
+            ,done: function(res){
+                if(res.result == "true"){
+                    $("#frontAd_image").val(res.fileUpload.id);
+                    $("#frontAd_image__del").val(frontAd_image__del);
+                } else {
+                    layer.msg(res.message, {icon: 5});
+                }
+            }
+            ,error: function(){
+                //失败状态，实现重传
+                var adFormText = $('#adFormText');
+                adFormText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs adupload-reload">重试</a>');
+                adFormText.find('.adupload-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        console.log("渲染完成");
+    }
+
+    var clearForm = function(adForm){
+        $("input").val("");
+        $("select").val("");
+        $("#adFormText").html("");
+        $('#adFormThumbnail').removeAttr("src");
+        adForm.addClass("layui-hide");
+    }
+
     form.on('submit(admanagerForm)', function(data) {
         var action = $(data.form).attr('action');
         fly.json(action, data.field, function(res){
@@ -605,6 +623,13 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'table'], function(exports){
         });
         return false;
     });
+    $("#addBtn").on('click',function(){
+        var adddata = {
+            id:""
+        }
+        show(adddata,"添加广告");
+    })
+
 
     var gather = {}, dom = {
         mine: $('#LAY_mine')

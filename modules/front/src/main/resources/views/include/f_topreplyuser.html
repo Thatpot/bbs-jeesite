@@ -1,0 +1,14 @@
+<div class="fly-panel fly-rank fly-rank-reply" id="LAY_replyRank">
+    <h3 class="fly-panel-title">回贴榜</h3>
+    <dl>
+        <% for(item in topReplyUserList) { %>
+            <dd>
+                <a href="${ctxf}/front/user/${item.userCode}">
+                    <img src="${@item.getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}">
+                    <cite>${item.userName}</cite>
+                    <i>${item.front.upCommentCount}次回答</i>
+                </a>
+            </dd>
+        <% } %>
+    </dl>
+</div>

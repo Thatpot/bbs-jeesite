@@ -22,6 +22,7 @@ import org.springframework.data.annotation.Transient;
 		@Column(name="link", attrName="link", label="链接地址"),
 		@Column(name="ad_type", attrName="adType", label="赞助商类型"),
 		@Column(name="ad_title", attrName="adTitle", label="广告文字", queryType=QueryType.LIKE),
+		@Column(name="ad_back_color", attrName="adBackColor", label="背景色"),
 		@Column(includeEntity=DataEntity.class),
 	}, orderBy="a.create_date DESC"
 )
@@ -35,6 +36,7 @@ public class FrontAd extends DataEntity<FrontAd> {
 	private String picPath;
 	@Transient
 	private String delPicId;
+	private String adBackColor;//背景色
 	
 	public FrontAd() {
 		this(null);
@@ -87,5 +89,13 @@ public class FrontAd extends DataEntity<FrontAd> {
 
 	public void setDelPicId(String delPicId) {
 		this.delPicId = delPicId;
+	}
+
+	public String getAdBackColor() {
+		return adBackColor;
+	}
+
+	public void setAdBackColor(String adBackColor) {
+		this.adBackColor = adBackColor;
 	}
 }

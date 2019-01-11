@@ -524,6 +524,7 @@ public class WebUserController extends BaseController {
     @RequestMapping(value = ("adedit"), method = RequestMethod.POST)
     @ResponseBody
     public String adedit(FrontAd frontAd) {
+        frontAd.setAdBackColor(frontAd.getAdBackColor().replace("﹟","#"));
         frontAdService.save(frontAd);
         return renderResult(Global.TRUE, "保存成功");
     }

@@ -3,7 +3,9 @@ package com.jeesite.modules.front.column;
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.entity.FrontAd;
 import com.jeesite.modules.front.entity.FrontPost;
+import com.jeesite.modules.front.service.FrontAdService;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.front.service.FrontUserService;
@@ -32,6 +34,8 @@ import java.io.IOException;
 public class WebColumnController extends BaseController {
     @Autowired
     private FrontPostService postService;
+    @Autowired
+    private FrontAdService frontAdService;
     /**
      * @Author xuyuxiang
      * @Description 各分类的主页
@@ -55,6 +59,11 @@ public class WebColumnController extends BaseController {
             example.setPostCategory(dicCategoryLabel);
             example.setCreateDate_between(FrontUtils.getTimeInterval());
             model.addAttribute("hotPostList",postService.findHotPlostList(example,15));
+            FrontAd frontAd = new FrontAd();
+            //钻级赞助商
+            frontAd.setPage(new Page<FrontAd>());
+            frontAd.setAdType("2");
+            model.addAttribute("diamandAdList",frontAdService.findPage(frontAd).getList());
             return "modules/front/column/template";
         }
         try {
@@ -94,6 +103,11 @@ public class WebColumnController extends BaseController {
             example.setPostCategory(dicCategoryLabel);
             example.setCreateDate_between(FrontUtils.getTimeInterval());
             model.addAttribute("hotPostList",postService.findHotPlostList(example,15));
+            FrontAd frontAd = new FrontAd();
+            //钻级赞助商
+            frontAd.setPage(new Page<FrontAd>());
+            frontAd.setAdType("2");
+            model.addAttribute("diamandAdList",frontAdService.findPage(frontAd).getList());
             return "modules/front/column/template";
         }
         try {

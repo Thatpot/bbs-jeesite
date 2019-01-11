@@ -5,14 +5,8 @@ import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.lang.StringUtils;
 import com.jeesite.common.web.BaseController;
-import com.jeesite.modules.front.entity.FrontCollect;
-import com.jeesite.modules.front.entity.FrontComment;
-import com.jeesite.modules.front.entity.FrontPost;
-import com.jeesite.modules.front.entity.FrontUser;
-import com.jeesite.modules.front.service.FrontCollectService;
-import com.jeesite.modules.front.service.FrontCommentService;
-import com.jeesite.modules.front.service.FrontPostService;
-import com.jeesite.modules.front.service.FrontUserService;
+import com.jeesite.modules.front.entity.*;
+import com.jeesite.modules.front.service.*;
 import com.jeesite.modules.front.utils.FrontUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +36,8 @@ public class WebJieController extends BaseController {
     private FrontCollectService frontCollectService;
     @Autowired
     private FrontCommentService frontCommentService;
+    @Autowired
+    private FrontAdService frontAdService;
 
     /**
      * @Author xuyuxiang
@@ -145,6 +141,14 @@ public class WebJieController extends BaseController {
             FrontPost example = new FrontPost();
             example.setCreateDate_between(FrontUtils.getTimeInterval());
             model.addAttribute("hotPostList",frontPostService.findHotPlostList(example,10));
+            FrontAd frontAd = new FrontAd();
+            //官方产品
+            frontAd.setPage(new Page<FrontAd>());
+            frontAd.setAdType("0");
+            model.addAttribute("officalAdList",frontAdService.findPage(frontAd).getList());
+            //皇冠赞助商
+            frontAd.setAdType("1");
+            model.addAttribute("heartAdList",frontAdService.findPage(frontAd).getList());
             return "modules/front/jie/detail";
         }else {
             try {
@@ -181,6 +185,9 @@ public class WebJieController extends BaseController {
         frontPost.setPostCommentCount(frontPost.getPostCommentCount()+1);
         frontPost.setFrontCommentList(list);
         frontPostService.save(frontPost);
+        Long count = frontUser.getFront().getUpCommentCount() + new Long(1);
+        frontUser.getFront().setUpCommentCount(count);
+        frontUserService.save(frontUser);
         return renderResult(Global.TRUE,"评论成功");
     }
 

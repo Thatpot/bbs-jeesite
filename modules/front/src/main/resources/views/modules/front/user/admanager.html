@@ -13,6 +13,9 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
                 <li class="layui-this">广告列表</li>
             </ul>
             <div class="layui-tab-content" style="padding: 5px 0;">
+                <button class="layui-btn" id="addBtn">
+                    <i class="layui-icon">&#xe608;</i> 添加
+                </button>
                 <div class="layui-tab-item layui-show">
                     <table class="layui-hide" id="LAY_adManager" lay-filter="LAY_adManager"></table>
                 </div>
@@ -22,6 +25,7 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
 </div>
 <!--引入页脚-->
 <% include('/include/f_footer.html', {libs: ['']}){} %>
+<style>img[src=""],img:not([src]){opacity:0;}</style>
 <div id="adForm" class="layui-hide" style="padding: 20px">
     <form class="layui-form" action="${ctxf}/front/user/adedit" lay-filter="adForm">
         <input type="text" name="id" hidden>
@@ -55,11 +59,22 @@ var secretKey = @Global.getConfig("shiro.loginSubmit.secretKey");
             <label class="layui-form-label">广告图片</label>
             <div class="layui-input-block">
                 <div class="layui-upload">
-                    <button type="button" class="layui-btn" id="test1">上传图片</button>
+                    <button type="button" class="layui-btn" id="adFormPic">上传图片</button>
                     <div class="layui-upload-list">
-                        <img class="layui-upload-img" id="adFormThumbnail" style="width:700px;height:120px">
-                        <p id="adFormTest"></p>
+                        <img class="layui-upload-img" id="adFormThumbnail" style="width:100%">
+                        <p id="adFormText"></p>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">广告背景色</label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline" style="width: 120px;">
+                    <input id="adBackColorInput" type="text" value="" name="adBackColor" placeholder="请选择颜色" class="layui-input">
+                </div>
+                <div class="layui-inline" style="left: -11px;">
+                    <div id="adBackColorForm"></div>
                 </div>
             </div>
         </div>

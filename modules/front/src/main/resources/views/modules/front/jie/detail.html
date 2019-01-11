@@ -54,7 +54,7 @@
                             <% } %>
                         </div>
                     </div>
-                    <div class="detail-body photos">
+                    <div class="detail-body photos" hidden>
                         ${frontPost.postContent}
                     </div>
                 </div>
@@ -62,76 +62,75 @@
                     <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
                         <legend>回帖</legend>
                     </fieldset>
-                    <% if(frontPost.postIsreply=="0") { %>
-                            <ul class="jieda" id="jieda">
-                                <% if(frontPost.frontCommentList.~size==0) { %>
-                                    <li class="fly-none">消灭零回复</li>
-                                <% } else { %>
-                                    <% for(item in commentPage.list) { %>
-                                    <li data-id="${item.id}" ${item.commentIsaccept=="1"?'class="jieda-daan"'}>
-                                        <a name="item-${item.id}"></a>
-                                        <div class="detail-about detail-about-reply">
-                                            <a class="fly-avatar" href="${ctxf}/front/user/${item.commentUp.userCode}">
-                                                <img src="${@item.getCommentUp().getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" alt="${item.commentUp.userName}">
-                                            </a>
-                                            <div class="fly-detail-user">
-                                                <a href="${ctxf}/front/user/${item.commentUp.userCode}" class="fly-link">
-                                                    <cite>${item.commentUp.userName}</cite>
-                                                    ${item.commentUp.front.upAuth!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.commentUp.front.upAuth+'"></i>'}
-                                                    ${item.commentUp.front.upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.commentUp.front.upVlevel+'</i>'}
-                                                </a>
-                                                <% if(@StringUtils.equals(frontPost.postUp.userCode,item.commentUp.userCode)) { %>
-                                                <span>(楼主)</span>
-                                                <% } %>
-                                                ${item.commentUp.status=='2'?' <span style="color:#999">（该号已被封）</span>'}
-                                            </div>
-
-                                            <div class="detail-hits">
-                                                <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
-                                            </div>
-                                            ${item.commentIsaccept=="1"?'<i class="iconfont icon-caina" title="最佳答案"></i>'}
-
-                                        </div>
-                                        <div class="detail-body jieda-body photos">
-                                            ${item.commentContent}
-                                        </div>
-                                        <div class="jieda-reply">
-                                                    <span class="jieda-zan zanok" type="zan">
-                                                        <i class="iconfont icon-zan"></i>
-                                                        <em>66</em>
-                                                    </span>
-                                            <span type="reply">
-                                                        <i class="iconfont icon-svgmoban53"></i>回复
-                                                    </span>
-                                            <% if (hasPermi('front:admin')) { %>
-                                            <div class="jieda-admin">
-                                                <span type="edit">编辑</span>
-                                                <span type="del">删除</span>
-                                                <% if(!hasAccept) { %>
-                                                <% if(@StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
-                                                <span class="jieda-accept" type="accept">采纳</span>
-                                                <% } %>
-                                                <% } %>
-                                            </div>
-                                            <% } else { %>
-                                            <% if(frontUser!=null) { %>
-                                            <% if(!hasAccept && @StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
-                                            <div class="jieda-admin">
-                                                <span class="jieda-accept" type="accept">采纳</span>
-                                            </div>
-                                            <% } %>
-                                            <% } %>
-                                            <% } %>
-                                        </div>
-                                    </li>
+                    <ul class="jieda" id="jieda">
+                        <% if(frontPost.frontCommentList.~size==0) { %>
+                        <li class="fly-none">消灭零回复</li>
+                        <% } else { %>
+                        <% for(item in commentPage.list) { %>
+                        <li data-id="${item.id}" ${item.commentIsaccept=="1"?'class="jieda-daan"'}>
+                            <a name="item-${item.id}"></a>
+                            <div class="detail-about detail-about-reply">
+                                <a class="fly-avatar" href="${ctxf}/front/user/${item.commentUp.userCode}">
+                                    <img src="${@item.getCommentUp().getAvatarUrl().replaceFirst('/ctxPath', ctxPath)}" alt="${item.commentUp.userName}">
+                                </a>
+                                <div class="fly-detail-user">
+                                    <a href="${ctxf}/front/user/${item.commentUp.userCode}" class="fly-link">
+                                        <cite>${item.commentUp.userName}</cite>
+                                        ${item.commentUp.front.upAuth!=null?'<i class="iconfont icon-renzheng" title="认证信息：'+item.commentUp.front.upAuth+'"></i>'}
+                                        ${item.commentUp.front.upVlevel!=null?'<i class="layui-badge fly-badge-vip">VIP'+item.commentUp.front.upVlevel+'</i>'}
+                                    </a>
+                                    <% if(@StringUtils.equals(frontPost.postUp.userCode,item.commentUp.userCode)) { %>
+                                    <span>(楼主)</span>
                                     <% } %>
+                                    ${item.commentUp.status=='2'?' <span style="color:#999">（该号已被封）</span>'}
+                                </div>
+
+                                <div class="detail-hits">
+                                    <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
+                                </div>
+                                ${item.commentIsaccept=="1"?'<i class="iconfont icon-caina" title="最佳答案"></i>'}
+
+                            </div>
+                            <div class="detail-body jieda-body photos" hidden>
+                                ${item.commentContent}
+                            </div>
+                            <div class="jieda-reply">
+                                <!--<span class="jieda-zan zanok" type="zan">
+                                    <i class="iconfont icon-zan"></i>
+                                    <em>66</em>
+                                </span>-->
+                                <span type="reply">
+                                                <i class="iconfont icon-svgmoban53"></i>回复
+                                            </span>
+                                <% if (hasPermi('front:admin')) { %>
+                                <div class="jieda-admin">
+                                    <span type="del">删除</span>
+                                    <% if(!hasAccept) { %>
+                                    <% if(@StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
+                                    <span class="jieda-accept" type="accept">采纳</span>
+                                    <% } %>
+                                    <% } %>
+                                </div>
+                                <% } else { %>
+                                <% if(frontUser!=null) { %>
+                                <% if(!hasAccept && @StringUtils.equals(frontUser.userCode,frontPost.postUp.userCode) && item.commentIsaccept=="0") { %>
+                                <div class="jieda-admin">
+                                    <span class="jieda-accept" type="accept">采纳</span>
+                                </div>
                                 <% } %>
-                            </ul>
-                            <%  if(frontPost.frontCommentList.~size != 0) {
-                                    var url = ctxf + '/front/jie/' + frontPost.id;
-                                    frontPage(commentPage,url);
-                                }
-                            %>
+                                <% } %>
+                                <% } %>
+                            </div>
+                        </li>
+                        <% } %>
+                        <% } %>
+                    </ul>
+                    <%  if(frontPost.frontCommentList.~size != 0) {
+                    var url = ctxf + '/front/jie/' + frontPost.id;
+                    frontPage(commentPage,url);
+                    }
+                    %>
+                    <% if(frontPost.postIsreply=="0") { %>
                         <div class="layui-form layui-form-pane">
                             <form action="${ctxf}/front/jie/reply" method="post">
                                 <div class="layui-form-item layui-form-text">
@@ -147,8 +146,7 @@
                             </form>
                         </div>
                     <% } else { %>
-                        <blockquote class="layui-elem-quote layui-quote-nm layui-disabled"
-                                    style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">
+                        <blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">
                             本帖已设置禁止回复
                         </blockquote>
                     <% } %>
@@ -157,16 +155,17 @@
         </div>
         <div class="layui-col-md4">
         <!--引入公共侧边栏，本周热议-->
-        <% include('/include/f_siderbar.html', {libs: libs!}){} %>
+        <% include('/include/f_siderbar.html', {}){} %>
         <!--广告区域，心级赞助商-->
-        <% include('/include/ad/f_heartad.html', {libs: libs!}){} %>
+        <% include('/include/ad/f_adtemplate.html', {list: heartAdList,title: '心级赞助商'}){} %>
         <!--广告区域，官方产品-->
-        <% include('/include/ad/f_officialad.html', {libs: libs!}){} %>
+        <% include('/include/ad/f_adtemplate.html', {list: officalAdList,title: '官方产品'}){} %>
         <!--广告区域，官方二维码-->
-        <% include('/include/ad/f_qrcode.html', {libs: libs!}){} %>
+        <% include('/include/ad/f_qrcode.html', {}){} %>
         </div>
     </div>
 </div>
+<div id="hiddenHtmlBox" hidden></div>
 <!--引入页脚-->
 <% include('/include/f_footer.html', {libs: ['']}){} %>
 <script>
@@ -177,11 +176,12 @@
         ,base: '${ctxStatic}/fly/mods/'
     }).extend({
         fly: 'index'
-    }).use('fly',function(){
+    }).use(['fly','face'],function(){
         var $ = layui.$,fly = layui.fly;
         $('.detail-body').each(function(){
-            var othis = $(this),html = othis.html();;
-            othis.html(fly.content(html));
+            var othis = $(this),html = fly.content(othis.html());
+            othis.html(html.substring(4));
+            othis.removeAttr("hidden");
         });
     });
 </script>

@@ -1,0 +1,21 @@
+<!--赞助商-->
+<div class="fly-panel">
+    <div class="fly-panel-title">
+        ${title}
+    </div>
+    <div class="fly-panel-main">
+        <% if(list.~size == 0) { %>
+            <div class="fly-none">没有相关数据</div>
+        <% } else { %>
+            <% for(item in list) {%>
+                <% if(@StringUtils.isNotEmpty(item.picPath)) { %>
+                    <a href="${item.link}" target="_blank" rel="nofollow" class="fly-zanzhu fly-zanzhu-img" style="background: none; border: 1px solid #f2f2f2">
+                        <img src="${item.picPath}" alt="${item.adTitle}">
+                    </a>
+                <% } else { %>
+                    <a href="${item.link}" target="_blank" class="fly-zanzhu" style="background-color: ${item.adBackColor};">${item.adTitle}</a>
+                <% } %>
+            <% } %>
+        <% } %>
+    </div>
+</div>

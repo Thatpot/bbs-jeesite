@@ -32,11 +32,15 @@ public class FrontAdServiceSupport extends CrudService<FrontAdDao, FrontAd> impl
 	@Override
 	public FrontAd get(FrontAd frontAd) {
 		frontAd =  super.get(frontAd);
-		List<FileUpload> list = FileUploadUtils.findFileUpload(frontAd.getId(),"frontAd_image");
-		if(list.size()!=0){
-			FileUpload fileUpload =  list.get(0);
-			frontAd.setPicPath("/js"+fileUpload.getFileUrl());
-			frontAd.setDelPicId(fileUpload.getId());
+		if(frontAd != null){
+			List<FileUpload> list = FileUploadUtils.findFileUpload(frontAd.getId(),"frontAd_image");
+			if(list.size()!=0){
+				FileUpload fileUpload =  list.get(0);
+				frontAd.setPicPath("/js"+fileUpload.getFileUrl());
+				frontAd.setDelPicId(fileUpload.getId());
+			}
+		}else{
+			frontAd = new FrontAd();
 		}
 		return frontAd;
 	}

@@ -79,7 +79,7 @@ var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
                                     <span>${@TimeUtils.formatTimeAgo(item.createDate)}</span>
                                     在<a href="${ctxf}/front/jie/${item.postId}/#item-${item.id}" target="_blank">${item.postId.postTitle}</a>中回答：
                                 </p>
-                                <div class="home-dacontent">
+                                <div class="home-dacontent" hidden>
                                     ${item.commentContent}
                                 </div>
                     </li>
@@ -102,7 +102,14 @@ var avatarUrl = @frontUser.getAvatarUrl().replaceFirst('/ctxPath', ctxPath);
         ,base: '${ctxStatic}/fly/mods/' //这里实际使用时，建议改成绝对路径
     }).extend({
         fly: 'index'
-    }).use('fly');
+    }).use(['fly','face'],function(){
+        var $ = layui.$,fly = layui.fly;
+        $('.home-dacontent').each(function(){
+            var othis = $(this),html = fly.content(othis.html());
+            othis.html(html.substring(4));
+            othis.removeAttr("hidden");
+        });
+    });
 
 </script>
 <% } %>

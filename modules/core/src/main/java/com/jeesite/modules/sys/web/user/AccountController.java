@@ -371,6 +371,7 @@ public class AccountController extends BaseController{
 		front.setUpSignCount(new Long(0));
 		front.setUpSignDate(new Date(0));
 		front.setUpWealth(new Long(0));
+		front.setUpCommentCount(new Long(0));
 		frontService.save(front);
 		u.setRefCode(front.getUpCode());
 		u.setRefName(front.getUpName());

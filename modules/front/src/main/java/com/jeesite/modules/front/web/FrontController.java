@@ -6,8 +6,10 @@ import com.jeesite.common.entity.Page;
 import com.jeesite.common.mybatis.mapper.query.QueryType;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.front.entity.Front;
+import com.jeesite.modules.front.entity.FrontAd;
 import com.jeesite.modules.front.entity.FrontPost;
 import com.jeesite.modules.front.entity.FrontUser;
+import com.jeesite.modules.front.service.FrontAdService;
 import com.jeesite.modules.front.service.FrontPostService;
 import com.jeesite.modules.front.service.FrontService;
 import com.jeesite.modules.front.service.FrontUserService;
@@ -33,11 +35,11 @@ import java.util.List;
 @RequestMapping(value = "${frontPath}/front")
 public class FrontController extends BaseController {
     @Autowired
-    private FrontService frontService;
-    @Autowired
     private FrontUserService frontUserService;
     @Autowired
     private FrontPostService postService;
+    @Autowired
+    private FrontAdService frontAdService;
     /**
      * @Author xuyuxiang
      * @Description 首页
@@ -65,6 +67,20 @@ public class FrontController extends BaseController {
         FrontPost example = new FrontPost();
         example.setCreateDate_between(FrontUtils.getTimeInterval());
         model.addAttribute("hotPostList",postService.findHotPlostList(example,15));
+
+        FrontAd frontAd = new FrontAd();
+        //官方产品
+        frontAd.setPage(new Page<FrontAd>());
+        frontAd.setAdType("0");
+        model.addAttribute("officalAdList",frontAdService.findPage(frontAd).getList());
+        frontAd.setAdType("2");
+        model.addAttribute("diamandAdList",frontAdService.findPage(frontAd).getList());
+
+        FrontUser exampleUser = new FrontUser();
+        Page<FrontUser> page = new Page<FrontUser>();
+        page.setOrderBy("f.up_comment_count DESC");
+        exampleUser.setPage(page);
+        model.addAttribute("topReplyUserList",frontUserService.findPage(exampleUser).getList());
         return "modules/front/index";
     }
 
