@@ -520,6 +520,9 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .fly-none p{margin-top: 50px; padding: 0 15px; font-size: 20px; color: #999; font-weight: 300;}
 .fly-list-one .fly-none{min-height: 70px;}
 
+/* 404页面 */
+.notice {width: 600px; margin: 30px auto; padding: 30px 15px; border-top: 5px solid #009688;
+  line-height: 30px; text-align: center; font-size: 16px; font-weight: 300; color: #999; font-size: 18px;}
 
 @media screen and (max-width: 768px) {
 	.fly-main{width: 100%;}

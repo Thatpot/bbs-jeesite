@@ -345,22 +345,41 @@ shiro:
     /ReportServer/** = user
     ${adminPath}/** = user
     ${frontPath}/front/user/index = perms[front:view]
-    ${frontPath}/front/user/infoSaveBase = perms[front:edit]
+    ${frontPath}/front/user/infoSaveBase = perms[front:view,front:edit]
     ${frontPath}/front/user/message = perms[front:view]
     ${frontPath}/front/user/set = perms[front:view]
     ${frontPath}/front/user/post = perms[front:view]
-    ${frontPath}/front/user/upload = perms[front:edit]
+    ${frontPath}/front/user/upload = perms[front:view,front:edit]
     ${frontPath}/front/user/postapi = perms[front:view]
     ${frontPath}/front/user/collectapi = perms[front:view]
 
     ${frontPath}/front/jie/add = perms[front:view]
-    ${frontPath}/front/jie/post = perms[front:edit]
-    ${frontPath}/front/jie/collect = perms[front:edit]
-    ${frontPath}/front/jie/acceptReply = perms[front:edit]
+    ${frontPath}/front/jie/post = perms[front:view,front:edit]
+    ${frontPath}/front/jie/reply = perms[front:view,front:edit]
+    ${frontPath}/front/jie/collect = perms[front:view,front:edit]
+    ${frontPath}/front/jie/isCollected = perms[front:view]
+    ${frontPath}/front/jie/acceptReply = perms[front:view,front:edit]
 
     ${frontPath}/front/jie/delete = perms[front:admin]
+    ${frontPath}/front/jie/passOrBack = perms[front:admin]
     ${frontPath}/front/jie/topOrGoodPost = perms[front:admin]
     ${frontPath}/front/jie/deleteReply = perms[front:admin]
+
+    ${frontPath}/front/user/postmanager = perms[front:admin]
+    ${frontPath}/front/user/postmanagerapi = perms[front:admin]
+    ${frontPath}/front/user/usermanager = perms[front:admin]
+    ${frontPath}/front/user/usermanagerapi = perms[front:admin]
+    ${frontPath}/front/user/stop = perms[front:admin]
+    ${frontPath}/front/user/start = perms[front:admin]
+    ${frontPath}/front/user/getUserRole = perms[front:admin]
+    ${frontPath}/front/user/saveUserRole = perms[front:admin]
+    ${frontPath}/front/user/admanager = perms[front:admin]
+    ${frontPath}/front/user/admanagerapi = perms[front:admin]
+    ${frontPath}/front/user/stopad = perms[front:admin]
+    ${frontPath}/front/user/startad = perms[front:admin]
+    ${frontPath}/front/user/adform = perms[front:admin]
+    ${frontPath}/front/user/adedit = perms[front:admin]
+
   
   # 默认的授权过滤定义，如果在filterChainDefinitions中已经定义，则该定义会被覆盖。
   defaultFilterChainDefinitions: |

@@ -4,11 +4,8 @@ import com.jeesite.common.codec.EncodeUtils;
 import com.jeesite.common.collect.ListUtils;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
-import com.jeesite.common.io.FileUtils;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.common.web.http.ServletUtils;
-import com.jeesite.modules.file.entity.FileUpload;
-import com.jeesite.modules.file.utils.FileUploadUtils;
 import com.jeesite.modules.front.entity.*;
 import com.jeesite.modules.front.service.*;
 import com.jeesite.modules.front.utils.FrontUtils;
@@ -16,6 +13,7 @@ import com.jeesite.modules.sys.entity.Role;
 import com.jeesite.modules.sys.service.RoleService;
 import com.jeesite.modules.sys.service.UserService;
 import com.jeesite.modules.sys.utils.UserUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -397,7 +395,7 @@ public class WebUserController extends BaseController {
     }
     /**
      * @Author xuyuxiang
-     * @Description 启用成功
+     * @Description 启用用户
      * @Date 16:40 2019/1/7
      * @Param [frontUser]
      * @return java.lang.String
@@ -462,7 +460,7 @@ public class WebUserController extends BaseController {
 
     /**
      * @Author xuyuxiang
-     * @Description 用户管理数据接口
+     * @Description 广告管理数据接口
      * @Date 16:14 2019/1/4
      * @Param [request, response]
      * @return java.lang.String
@@ -493,7 +491,13 @@ public class WebUserController extends BaseController {
         frontAdService.updateStatus(frontAd);
         return renderResult(Global.TRUE, "停用广告成功");
     }
-
+    /**
+     * @Author xuyuxiang
+     * @Description 启用广告
+     * @Date 10:28 2019/1/14
+     * @Param [frontAd]
+     * @return java.lang.String
+     **/
     @RequestMapping(value = ("startad"), method = RequestMethod.POST)
     @ResponseBody
     public String startad(FrontAd frontAd) {

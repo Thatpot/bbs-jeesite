@@ -9,6 +9,7 @@ import com.jeesite.modules.front.entity.*;
 import com.jeesite.modules.front.service.*;
 import com.jeesite.modules.front.utils.FrontUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,25 +55,7 @@ public class WebJieController extends BaseController {
         }
         return frontPost;
     }
-    /**
-     * @Author xuyuxiang
-     * @Description 去发表新帖，Ajax调用
-     * @Date 11:56 2018/12/24
-     * @Param [model]
-     * @return java.lang.String
-     **/
-    @RequestMapping(value = ("ajaxTurn"), method = RequestMethod.POST)
-    @ResponseBody
-    public String ajaxTurn(Model model) {
-        FrontUser frontUser = FrontUtils.getCurrentFrontUser();
-        if(frontUser==null){
-            return renderResult("false","请登录");
-        }else if(!UserUtils.getSubject().isPermitted("front:view")){
-            return renderResult("false","您的操作权限不足");
-        }else{
-            return renderResult("true","跳转到发帖页...","/js/f/front/jie/add");
-        }
-    }
+
     /**
      * @Author xuyuxiang
      * @Description 发表新帖跳转

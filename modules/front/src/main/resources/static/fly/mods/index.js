@@ -709,7 +709,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         });
         return false;
     });
-    //发表新帖按钮点击事件
+    /*//发表新帖按钮点击事件
     var addPostBtn = $(".LAY_ADDPOST");
     addPostBtn.on('click', function(){
         var url = "/js/f/front/jie/ajaxTurn";
@@ -717,7 +717,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
             location.href = res.data;
         });
         return false;
-    });
+    });*/
     exports('fly', fly);
 
 });
